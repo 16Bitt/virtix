@@ -1,0 +1,6 @@
+Style and formatting for code in this project
+
+C code:
+	-
+
+VM code:
