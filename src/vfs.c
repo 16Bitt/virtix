@@ -7,7 +7,7 @@
 
 #undef data
 
-heap_t* vheap;
+//heap_t* vheap;
 vfs_node_t* vfs_root = NULL;
 
 vfs_node_t* get_file(char* name){
@@ -26,7 +26,7 @@ vfs_node_t* get_file(char* name){
 }
 
 void init_vfs(){
-	vheap = kbmalloc("VFS");
+	//vheap = kbmalloc("VFS");
 	
 	//Copy every part of the ramdisk into the new (actual) ramdisk
 	int i;
@@ -36,9 +36,9 @@ void init_vfs(){
 
 void vfs_ramload(char* name, void* address, unsigned int size){
 	//Create new buffers to copy everything
-	vfs_node_t* new_file = (vfs_node_t*) kmalloc(vheap, sizeof(vfs_node_t));
-	char* new_name = (char*) kmalloc(vheap, strlen(name) + 1);
-	void* new_data = kmalloc(vheap, size);
+	vfs_node_t* new_file = (vfs_node_t*) kmalloc(sizeof(vfs_node_t));
+	char* new_name = (char*) kmalloc(strlen(name) + 1);
+	void* new_data = kmalloc(size);
 	
 	//Start copying
 	memcpy(new_name, name, strlen(name) + 1);
@@ -87,9 +87,9 @@ unsigned int vfs_rm(char* name){
 		deleting->next->last = deleting->last;
 	}
 
-	kfree(vheap, deleting->name);
-	kfree(vheap, deleting->buffer);
-	kfree(vheap, deleting);
+	kfree(deleting->name);
+	kfree(deleting->buffer);
+	kfree(deleting);
 
 	return 0;
 }
@@ -115,8 +115,8 @@ unsigned int vfs_reassoc(char* name, char* new_name){
 		vfs_rm(new_name);
 
 	//Manually ensure no memory leaks/invalid references
-	char* new_name_buf = (char*) kmalloc(vheap, strlen(new_name) + 1);
-	kfree(vheap, renaming->name);
+	char* new_name_buf = (char*) kmalloc(strlen(new_name) + 1);
+	kfree(renaming->name);
 	memcpy(new_name_buf, new_name, strlen(new_name) + 1);
 	renaming->name = new_name_buf;
 

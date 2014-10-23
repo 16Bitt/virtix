@@ -16,17 +16,17 @@ void mnt_initrd(unsigned int ptr){
 
 	ASSERT((magic_footer == FFS_MAGIC) && (magic_header == FFS_MAGIC));
 
-	fs_root = (directory_t*) kmalloc(kheap, sizeof(directory_t));
+	fs_root = (directory_t*) kmalloc(sizeof(directory_t));
 	fs_root->start = address;
 
 	unsigned int num_files = *(unsigned int*)(address + 8);
 	fs_root->num_files = num_files;
 
-	file_t** files_list = (file_t**) kmalloc(kheap, sizeof(file_t*) * num_files);
+	file_t** files_list = (file_t**) kmalloc(sizeof(file_t*) * num_files);
 	
 	int i;
 	for(i = 0; i < num_files; i++){
-		file_t* new_file = (file_t*) kmalloc(kheap, sizeof(file_t));
+		file_t* new_file = (file_t*) kmalloc(sizeof(file_t));
 		files_list[i] = new_file;
 		
 		new_file->name 		= (char*) (address + 12 + (i * FFS_ENTRY_SIZE));

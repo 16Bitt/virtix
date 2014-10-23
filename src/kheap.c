@@ -2,71 +2,33 @@
 #include "kheap.h"
 #include "monitor.h"
 
-#define KHEAP_INC (BHEAP_SIZE + sizeof(heap_t))
+unsigned int placement_address;
 
-int num_bheaps;
-
-void init_kheaps(int num_heaps){
-	int i;
-	for(i = 0; i < num_heaps; i++){
-		heap_t* curr_heap = (heap_t*) (end + (i * KHEAP_INC));	
-		curr_heap->placement_address 	= ((unsigned int) curr_heap) + sizeof(heap_t);
-		curr_heap->bottom		= ((unsigned int) curr_heap) + sizeof(heap_t);
-		curr_heap->associated		= NULL;
-		curr_heap->magic		= KHEAP_MAGIC;
-	}
-
-	num_bheaps = num_heaps;
+void init_kheap(){
+	placement_address = end;
 }
 
-heap_t* kbmalloc(char* proc_name){
-	int i;
-	for(i = 0; i < num_bheaps; i++){
-		heap_t* curr_heap = (heap_t*) (end + (i * KHEAP_INC));
-		
-		if(curr_heap->associated == NULL){
-			curr_heap->associated = proc_name;
-			return curr_heap;
-		}
-	}
-
-	return NULL;
+void* kmalloc(unsigned int size){
+	ASSERT(placement_address + size < MEM_END);
+	unsigned int hold = placement_address;
+	placement_address += size;
+	return (void*) hold;
 }
 
-void kbfree(heap_t* heap){
-	ASSERT(heap->magic == KHEAP_MAGIC);
-	heap->associated 	= NULL;
-	heap->placement_address	= heap->bottom;
+void kfree(void* ptr){
+	vga_puts("WARN: leak at ");
+	vga_puts_hex(ptr);
+	vga_puts(" because of fake kfree() call\n");
+	return;
 }
 
-void* kmalloc(heap_t* heap, size_t size){
-	ASSERT(heap->magic == KHEAP_MAGIC);
+void* kmalloc_a(unsigned int size){
+	ASSERT(((placement_address & 0xFFFFF000) + 1024) + size < MEM_END);
+	placement_address &= 0xFFFFF000;
+	placement_address += 1024;
 	
-	heap->placement_address &= 0xFFFFF000;
-	heap->placement_address += 0x1000;
+	unsigned int hold = placement_address;
+	placement_address += size;
 
-	ASSERT((heap->placement_address + size) < (heap->bottom + BHEAP_SIZE));
-
-	void* ptr = (void*) heap->placement_address;
-	heap->placement_address += size;
-	return ptr;
-}
-
-void kfree(heap_t* heap, void* ptr){
-	ASSERT(heap->magic == KHEAP_MAGIC);	
-}
-
-void kheap_list(){
-	vga_puts("KHEAPS:");
-	int i;
-	for(i = 0; i < num_bheaps; i++){
-		heap_t* curr_heap = (heap_t*) (end + (i * KHEAP_INC));
-		if(curr_heap->associated){
-			vga_puts("\t");
-			vga_puts(curr_heap->associated);
-			vga_puts(":\t");
-			vga_puts_hex(curr_heap->bottom);
-			vga_puts("\n");
-		}
-	}
+	return (void*) hold;
 }

@@ -30,15 +30,15 @@ void enable_paging(){
 }
 
 void init_paging(){
-	current_dir		= (unsigned int*) 0x400000;
+	current_dir		= (unsigned int*) PAGE_S;
 	page_dir_location	= (unsigned int) current_dir;
-	last_page		= (unsigned int*) 0x404000;
+	last_page		= (unsigned int*) (PAGE_S + 4096);
 
 	unsigned int i;
 	for(i = 0; i < 1024; i++)
 		current_dir[i] = 0 | 2;
 
-	for(i = 0; i < 0x8000000; i += 0x400000)
+	for(i = 0; i < 0x8000000; i += PAGE_S)
 		map_vpage_to_ppage(i, i);	//Identity mapping the entire kernel
 	
 	register_interrupt_handler(14, page_fault);
@@ -49,4 +49,22 @@ void init_paging(){
 
 void page_fault(registers_t registers){
 	PANIC("PAGE FAULT");
+}
+
+void mmap_page(unsigned int* page_dir, unsigned int vpage, unsigned int ppage){
+	short id = vpage >> 22;
+
+	unsigned int* page = kmalloc_a(4096);
+
+	int i;
+	for(i = 0; i < 1024; i++){
+		page[i] = ppage | 3;
+		ppage += 4096;
+	}
+
+	page_dir[id] = ((unsigned int) page) | 3;
+}
+
+unsigned int* mk_page(){
+	return (unsigned int*) kmalloc_a(4096);
 }

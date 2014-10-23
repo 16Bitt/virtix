@@ -12,7 +12,6 @@ heap_t* dheap;
 var stream_num = 0;
 
 void init_streams(){
-	dheap = kbmalloc("STREAMS");
 }
 
 stream_t* find_stream(var id){
@@ -43,7 +42,7 @@ stream_t* find_parent(stream_t* child){
 }
 
 var mk_stream(){
-	stream_t* new_stream = (stream_t*) kmalloc(dheap, sizeof(stream_t));	
+	stream_t* new_stream = (stream_t*) kmalloc( sizeof(stream_t));	
 	
 	if(stream_root == NULL)
 		stream_root = new_stream;
@@ -62,7 +61,7 @@ var mk_stream(){
 	new_stream->end_pos	= 0;
 
 	//Set file attributes
-	new_stream->buffer	= (char*) kmalloc(dheap, STREAM_RSZ_INC);
+	new_stream->buffer	= (char*) kmalloc( STREAM_RSZ_INC);
 	new_stream->open	= STREAM_READ;
 	new_stream->type	= RAM_STREAM;
 	new_stream->size	= STREAM_RSZ_INC;
@@ -86,8 +85,8 @@ void rm_stream(var id){
 	
 	parent->next = open->next;
 	if(open->child != 0)
-		kfree(dheap, open->buffer);
-	kfree(dheap, open);
+		kfree( open->buffer);
+	kfree( open);
 }
 
 void stream_rsz(var id){
@@ -95,9 +94,9 @@ void stream_rsz(var id){
 	if(open == NULL)
 		return;
 
-	char* new_buf = kmalloc(dheap, open->size + STREAM_RSZ_INC);
+	char* new_buf = kmalloc( open->size + STREAM_RSZ_INC);
 	memcpy(new_buf, open->buffer, open->size);
-	kfree(dheap, open->buffer);
+	kfree( open->buffer);
 
 	open->buffer = new_buf;
 	open->size += STREAM_RSZ_INC;
@@ -150,7 +149,7 @@ var clone_stream(var id, var mode){
 	if(open == NULL)
 		return VM_NOT_OK;
 
-	stream_t* new_stream = (stream_t*) kmalloc(dheap, sizeof(stream_t));
+	stream_t* new_stream = (stream_t*) kmalloc( sizeof(stream_t));
 	memcpy(new_stream, open, sizeof(stream_t));
 	
 	new_stream->id = stream_num++;

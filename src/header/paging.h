@@ -4,6 +4,8 @@
 #include "common.h"
 #include "isr.h"
 
+#define PAGE_S 0x400000
+
 typedef struct{
 	unsigned int present	: 1;
 	unsigned int rw		: 1;
@@ -27,6 +29,10 @@ typedef struct{
 void init_paging();
 void enable_paging();
 void map_vpage_to_ppage(unsigned int vpage, unsigned int ppage);
+
+//Create new pages
+unsigned int* mk_page();
+void mmap_page(unsigned int* page, unsigned int vpage, unsigned int ppage);
 
 void page_fault(registers_t regs);
 

@@ -2,23 +2,37 @@
 #define KHEAP_H
 
 #include "common.h"
-#define BHEAP_SIZE (2 * 1024 * 1024)
 #define KHEAP_MAGIC 0x04206969
 
-extern int num_bheaps;
+#define MEM_END 0x8000000
+#undef data
+
 extern unsigned int end;
 
-typedef struct{
-	unsigned int placement_address;
-	unsigned int bottom;
-	unsigned int magic;
-	char* associated;
+typedef struct heap_type{
+	unsigned int magic;		//Confirms validity
+	unsigned int size;		//Size of heap
+	
+	void* data;			//Location of data (addr + HEAP_S)
+
+	struct heap_type* parent;	//Previous heap
+	struct heap_type* child1;	//left branch
+	struct heap_type* child2;	//right branch
+
+	int free;			//Is this open?
 } heap_t;
 
-heap_t*	kbmalloc(char* proc_name);
-void 	kbfree(heap_t* heap);
-void* 	kmalloc(heap_t* heap, size_t size);
-void 	kfree(heap_t* heap, void* ptr);
-void	kheap_list();
+#define HEAP_S (sizeof(heap_t))
+
+//void init_kheap();			//Initialize heap globally
+
+void* kmalloc(unsigned int size);	//straight kmalloc
+void* kmalloc_a(unsigned int size);	//page aligned kmalloc
+void kfree(void* ptr);			//Free unused memory
+
+//heap_t* find_first_free(heap_t* parent, unsigned int size);	//Find first available node
+
+//void heap_split(heap_t* parent, unsigned int size);		//Subdivide a parent into two heaps with a data pool of
+//void heap_collapse(heap_t* parent);				//Converge children and parent into one big heap
 
 #endif

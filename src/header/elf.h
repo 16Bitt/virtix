@@ -155,16 +155,7 @@ typedef struct {
 #define DO_386_32(S, A)	((S) + (A))
 #define DO_386_PC32(S, A, P)	((S) + (A) - (P))
 
-bool 		elf_check_file(elf32_ehdr* header);
-bool 		elf_check_supported(elf32_ehdr* header);
-void* 		elf_load_rel(elf32_ehdr* header);
-void* 		elf_load_file(void* file);
-elf32_shdr*	elf_sheader(elf32_ehdr* header);
-char*		elf32_str_table(elf32_ehdr* header);
-char*		elf32_lookup_string(elf32_ehdr* header, int offset);
-int		elf32_get_sym_val(elf32_ehdr* header, int table, unsigned int offset);
-int		elf_load_stage1(elf32_ehdr* header);
-int		elf_load_stage2(elf32_ehdr* header);
-int		elf_do_reloc(elf32_ehdr* header, elf32_rel* rel, elf32_shdr* reltab);
+int		validate_elf(void* data);
+virtix_proc_t*	elf_load(void* elf_data);
 
 #endif
