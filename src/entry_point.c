@@ -22,19 +22,6 @@ int main(struct multiboot* mboot_ptr){
 	vga_puts("main(): making kheap\n");
 	init_kheap();
 	
-	void* x = kmalloc(16);
-	void* y = kmalloc(16);
-	vga_puts_hex(x);
-	vga_puts("\n");
-	vga_puts_hex(y);
-	vga_puts("\n");
-	kfree(x);
-	kfree(y);
-	x = kmalloc(16);
-	y = kmalloc(16);
-	vga_puts_hex(x);
-	vga_puts("\n");
-	
 	vga_puts("main(): initializing read-only ramdisk\n");
 	mnt_initrd(mboot_ptr->mods_addr);
 

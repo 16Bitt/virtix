@@ -1,7 +1,6 @@
 #include "common.h"
 #include "stream.h"
 #include "kheap.h"
-#include "vproc.h"
 
 #include "monitor.h"
 
@@ -9,12 +8,12 @@ stream_t* stream_root = NULL;
 
 heap_t* dheap;
 
-var stream_num = 0;
+unsigned int stream_num = 0;
 
 void init_streams(){
 }
 
-stream_t* find_stream(var id){
+stream_t* find_stream(unsigned int id){
 	stream_t* current = stream_root;
 	while(current != NULL){
 		if(current->id == id)
@@ -38,10 +37,10 @@ stream_t* find_parent(stream_t* child){
 		current = current->next;
 	}
 
-	return 0xFFFFFFFF;
+	return (stream_t*) 0xFFFFFFFF;
 }
 
-var mk_stream(){
+unsigned int mk_stream(){
 	stream_t* new_stream = (stream_t*) kmalloc( sizeof(stream_t));	
 	
 	if(stream_root == NULL)
@@ -72,7 +71,7 @@ var mk_stream(){
 	return new_stream->id;
 }
 
-void rm_stream(var id){
+void rm_stream(unsigned int id){
 	stream_t* open = find_stream(id);
 	if(open == NULL)
 		return;
@@ -89,7 +88,7 @@ void rm_stream(var id){
 	kfree( open);
 }
 
-void stream_rsz(var id){
+void stream_rsz(unsigned int id){
 	stream_t* open = find_stream(id);
 	if(open == NULL)
 		return;
@@ -102,11 +101,11 @@ void stream_rsz(var id){
 	open->size += STREAM_RSZ_INC;
 }
 
-var fwrite_char(var id, char val){
+unsigned int fwrite_char(unsigned int id, char val){
 	stream_t* open = find_stream(id);
 	
 	if(open == NULL)
-		return VM_NOT_OK;
+		return 0xFFFFFFFF;
 	
 	open->buffer[open->write_pos++] = val & 0xFF;
 	
@@ -119,35 +118,35 @@ var fwrite_char(var id, char val){
 	return 0;
 }
 
-var fread_char(var id){
+unsigned int fread_char(unsigned int id){
 	stream_t* open = find_stream(id);
 	
 	if(open == NULL)
-		return VM_NOT_OK;
+		return 0xFFFFFFFF;
 	
 	//vga_puts("Survived?");
 	if(open->read_pos > open->end_pos)
-		return VM_NOT_OK;
+		return 0xFFFFFFFF;
 	
 	return open->buffer[open->read_pos++];
 }
 
-var stream_rewind(var id){
+unsigned int stream_rewind(unsigned int id){
 	stream_t* open = find_stream(id);
 
 	if(open == NULL)
-		return VM_NOT_OK;
+		return 0xFFFFFFFF;
 	
 	//Simply change read position
 	open->read_pos = 0;
 
-	return VM_OK;
+	return 0;
 }
 
-var clone_stream(var id, var mode){
+unsigned int clone_stream(unsigned int id, unsigned int mode){
 	stream_t* open = find_stream(id);
 	if(open == NULL)
-		return VM_NOT_OK;
+		return 0xFFFFFFFF;
 
 	stream_t* new_stream = (stream_t*) kmalloc( sizeof(stream_t));
 	memcpy(new_stream, open, sizeof(stream_t));
@@ -176,8 +175,8 @@ var clone_stream(var id, var mode){
 		//Invalid mode, bail out
 		default:
 			rm_stream(new_stream->id);
-			return VM_NOT_OK;
+			return 0xFFFFFFFF;
 	}
 
-	return VM_NOT_OK;
+	return 0xFFFFFFFF;
 }

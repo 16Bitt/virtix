@@ -36,9 +36,9 @@ unsigned int	vfs_reassoc(char* name, char* new_name);
 unsigned int	vfs_isfile(char* name);
 
 //Copies file into a stream and returns the stream
-var		vfs_open(char* name, unsigned int mode);
+unsigned int		vfs_open(char* name, unsigned int mode);
 
 //Writes all of the file names in the VFS to the desired stream
-void		vfs_list(var stream_id);
+void		vfs_list(unsigned int stream_id);
 
 #endif

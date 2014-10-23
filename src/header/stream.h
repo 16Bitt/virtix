@@ -2,7 +2,6 @@
 #define STREAM_H
 
 #include "common.h"
-#include "vproc.h"
 #include "kheap.h"
 
 #define RAM_STREAM	0
@@ -15,18 +14,18 @@
 extern heap_t* dheap;
 
 typedef struct stream{
-	var id;			//Stream ID
+	unsigned int id;			//Stream ID
 	
-	var read_pos;		//reading position
-	var write_pos;		//writing position
-	var end_pos;		//Where the file actually ends
+	unsigned int read_pos;		//reading position
+	unsigned int write_pos;		//writing position
+	unsigned int end_pos;		//Where the file actually ends
 
 	char* buffer;		//Location of the actual data
-	var	open;		//State of buffer
-	var	type;		//Type of the buffer (ram|physical)
-	var	size;		//Length of the buffer
+	unsigned int	open;		//State of buffer
+	unsigned int	type;		//Type of the buffer (ram|physical)
+	unsigned int	size;		//Length of the buffer
 	
-	var	child;		//Whether or not this stream is original
+	unsigned int	child;		//Whether or not this stream is original
 
 	struct stream* next;
 } stream_t;
@@ -34,16 +33,16 @@ typedef struct stream{
 //Initialize all of the streaming utillities
 void	init_streams();
 
-var	mk_stream();
-void	rm_stream(var id);
-void	stream_rsz(var id);
-var	stream_rewind(var id);
+unsigned int	mk_stream();
+void	rm_stream(unsigned int id);
+void	stream_rsz(unsigned int id);
+unsigned int	stream_rewind(unsigned int id);
 
-var	clone_stream(var id, var mode);
+unsigned int	clone_stream(unsigned int id, unsigned int mode);
 
-var	fwrite_char(var stream_id, char val);
-var	fread_char(var stream_id);
+unsigned int	fwrite_char(unsigned int stream_id, char val);
+unsigned int	fread_char(unsigned int stream_id);
 
-stream_t* find_stream(var id);
+stream_t* find_stream(unsigned int id);
 
 #endif

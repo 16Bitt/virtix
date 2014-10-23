@@ -18,14 +18,18 @@ typedef struct virtix_proc {
 	struct virtix_proc* last;
 } virtix_proc_t;
 
-void kill_proc(unsigned int pid);				//End a process
-void spawn_proc(virtix_proc_t* process);			//Start a process
-void susp_proc(unsigned int pid);				//Suspend a process
-void wake_proc(unsigned int pid);				//Wake a process back up
-void child_proc(virtix_proc_t* process, unsigned int pid);	//Sleep the process
-void fork_proc(unsigned int pid);				//Fork the process
+void kill_proc(unsigned int pid);					//End a process
+unsigned int spawn_proc(virtix_proc_t* process);			//Start a process
+void susp_proc(unsigned int pid);					//Suspend a process
+void wake_proc(unsigned int pid);					//Wake a process back up
+unsigned int child_proc(virtix_proc_t* process, unsigned int pid);	//Sleep the process
+unsigned int fork_proc(unsigned int pid);				//Fork the process
 
-void init_procs(virtix_proc_t* process);			//maps a process handler to the PIT
+virtix_proc_t* pid_to_proc(unsigned int pid);				//Get a process from a PID
+
+void init_procs(virtix_proc_t* process);				//maps a process handler to the PIT
+
+#define PID_NOT_FOUND	((virtix_proc_t*) 0xFFFFFFFF)
 
 #define PROC_RUNNING	0
 #define PROC_ASLEEP	1

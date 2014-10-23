@@ -54,7 +54,7 @@ void page_fault(registers_t registers){
 void mmap_page(unsigned int* page_dir, unsigned int vpage, unsigned int ppage){
 	short id = vpage >> 22;
 
-	unsigned int* page = kmalloc_a(4096);
+	unsigned int* page = (unsigned int*) kmalloc_a(4096);
 
 	int i;
 	for(i = 0; i < 1024; i++){

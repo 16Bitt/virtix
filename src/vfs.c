@@ -130,12 +130,12 @@ unsigned int vfs_isfile(char* name){
 	return FILE_EXIST;
 }
 
-var vfs_open(char* name, unsigned int mode){
+unsigned int vfs_open(char* name, unsigned int mode){
 	if(vfs_isfile(name) == FILE_NO_EXIST)
-		return VM_NOT_OK;
+		return 0xFFFFFFFF;
 
 	vfs_node_t* file = get_file(name);
-	var fid = mk_stream();
+	unsigned int fid = mk_stream();
 	char* buffer = (char*) file->buffer;
 
 	int i;
@@ -148,7 +148,7 @@ var vfs_open(char* name, unsigned int mode){
 	return fid;
 }
 
-void vfs_list(var stream_id){
+void vfs_list(unsigned int stream_id){
 	vfs_node_t* current = vfs_root;
 
 	while(current != NULL){

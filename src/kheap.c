@@ -17,7 +17,7 @@ void* kmalloc(unsigned int size){
 
 void kfree(void* ptr){
 	vga_puts("WARN: leak at ");
-	vga_puts_hex(ptr);
+	vga_puts_hex((unsigned int) ptr);
 	vga_puts(" because of fake kfree() call\n");
 	return;
 }
