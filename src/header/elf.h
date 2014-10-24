@@ -2,7 +2,7 @@
 #define ELF_H
 
 #include "common.h"
-#include "proc.h"
+#include "virtix_proc.h"
 
 typedef unsigned short	elf32_half;
 typedef unsigned int	elf32_offs;

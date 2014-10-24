@@ -6,6 +6,7 @@
 
 typedef struct virtix_proc {
 	registers_t* registers;
+	unsigned int cr3;
 
 	unsigned int pid;
 	char* name;
