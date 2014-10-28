@@ -28,6 +28,7 @@ typedef struct{
 
 void init_paging();
 void enable_paging();
+void switch_page(unsigned int* page_dir);
 void map_vpage_to_ppage(unsigned int vpage, unsigned int ppage);
 
 //Create new pages

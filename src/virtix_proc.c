@@ -3,13 +3,13 @@
 #include "virtix_proc.h"
 #include "clock.h"
 #include "isr.h"
+#include "paging.h"
 
 unsigned int pid;
 virtix_proc_t* root;
 virtix_proc_t* current_proc;
 
 void scheduler(registers_t regs){
-	cli();
 	memcpy(current_proc->registers, &regs, sizeof(registers_t));
 	
 	current_proc = current_proc->next;
@@ -17,7 +17,7 @@ void scheduler(registers_t regs){
 		current_proc = current_proc->next;
 
 	memcpy(&regs, current_proc->registers, sizeof(registers_t));
-	sti();
+	switch_page(current_proc->cr3);
 }
 
 void init_procs(virtix_proc_t* process){
@@ -91,4 +91,13 @@ virtix_proc_t* pid_to_proc(unsigned int pid){
 	}
 
 	return PID_NOT_FOUND;
+}
+
+virtix_proc_t* mk_empty_proc(){
+	virtix_proc_t* proc = (virtix_proc_t*) kmalloc(sizeof(virtix_proc_t));
+	proc->registers->cs = 0x08;
+	proc->registers->ds = 0x10;
+	proc->registers->ss = 0x10;
+
+	return proc;
 }

@@ -5,10 +5,12 @@
 #include "isr.h"
 #include "multiboot.h"
 #include "clock.h"
+#include "fs.h"
 
 //Untested
 #include "kheap.h"
 #include "paging.h"
+#include "elf.h"
 
 int main(struct multiboot* mboot_ptr){
 	vga_clear();
@@ -28,6 +30,8 @@ int main(struct multiboot* mboot_ptr){
 	vga_puts("main(): starting interrupts\n");
 	sti();
 	
+	vga_puts("main(): attempting to load binary\n");
+	virtix_proc_t* proc = elf_load(get_file_data("userland.x"));
 
 	vga_puts("main(): reached end of execution, hanging the CPU");
 	for(;;);

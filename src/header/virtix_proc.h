@@ -6,7 +6,7 @@
 
 typedef struct virtix_proc {
 	registers_t* registers;
-	unsigned int cr3;
+	unsigned int* cr3;
 
 	unsigned int pid;
 	char* name;
@@ -29,6 +29,8 @@ unsigned int fork_proc(unsigned int pid);				//Fork the process
 virtix_proc_t* pid_to_proc(unsigned int pid);				//Get a process from a PID
 
 void init_procs(virtix_proc_t* process);				//maps a process handler to the PIT
+
+virtix_proc_t* mk_empty_proc();						//Make an empty (initialized) process structure
 
 #define PID_NOT_FOUND	((virtix_proc_t*) 0xFFFFFFFF)
 

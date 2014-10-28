@@ -15,6 +15,8 @@ link:
 	nasm $(ASFLAGS) $<
 
 mkinitramfs:
+	cd test && make
+	cp test/*.x initramfs/
 	cd initramfs && make
 
 run: all

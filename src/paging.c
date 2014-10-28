@@ -7,6 +7,8 @@ static unsigned int* current_dir	= 0;
 static unsigned int page_dir_location	= 0;
 static unsigned int* last_page		= 0;
 
+static unsigned int* proc_dir		= 0;
+
 extern unsigned int end;
 
 void map_vpage_to_ppage(unsigned int virtual, unsigned int physical){
@@ -24,6 +26,14 @@ void map_vpage_to_ppage(unsigned int virtual, unsigned int physical){
 
 void enable_paging(){
 	asm volatile ("mov %%eax, %%cr3" :: "a" (page_dir_location));
+	asm volatile ("mov %cr0, %eax");
+	asm volatile ("orl $0x80000000, %eax");
+	asm volatile ("mov %eax, %cr0");
+}
+
+void switch_page(unsigned int* page_dir){
+	proc_dir = page_dir;
+	asm volatile ("mov %%eax, %%cr3" :: "a" ((unsigned int) proc_dir));
 	asm volatile ("mov %cr0, %eax");
 	asm volatile ("orl $0x80000000, %eax");
 	asm volatile ("mov %eax, %cr0");
