@@ -31,7 +31,7 @@ virtix_proc_t* elf_load(void* elf_data){
 		return (virtix_proc_t*) NULL;
 	}
 
-	unsigned int* cr3 = mk_page();
+	unsigned int* cr3 = mk_page_dir();
 	elf32_phdr* phdr = (elf32_phdr*) (((unsigned int) elf_data) + header->e_phoff);
 
 	int i;
@@ -42,7 +42,7 @@ virtix_proc_t* elf_load(void* elf_data){
 			case 1:
 				vga_puts("Allocating space for ELF binary section...\n");
 				unsigned int loc = (unsigned int) kmalloc_a(PAGE_S);
-				mmap_page(cr3, phdr->p_vaddr, loc);
+				mmap_page(*cr3, phdr->p_vaddr, loc);
 				map_vpage_to_ppage(phdr->p_vaddr, loc);
 				memcpy((void*) phdr->p_vaddr, ((void*) ((unsigned int) elf_data) + phdr->p_offset), phdr->p_filesz);
 				break;
@@ -54,7 +54,7 @@ virtix_proc_t* elf_load(void* elf_data){
 	
 	virtix_proc_t* proc = mk_empty_proc();
 	proc->name = "ELF_PROGRAM";
-	proc->cr3 = cr3;
+	proc->cr3 = current_dir;
 	proc->registers->eip = header->e_entry;
 
 	return proc;

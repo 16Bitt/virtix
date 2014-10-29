@@ -3,6 +3,9 @@
 
 #include "common.h"
 
+extern unsigned int* istack_base;
+extern unsigned int stack_hold;
+
 typedef struct registers{
 	u32int ds;
 	u32int edi, esi, ebp, esp, ebx, edx, ecx, eax;

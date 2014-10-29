@@ -1,5 +1,5 @@
 
 
 void main(){
-	asm volatile ("int $31");
+	asm volatile ("int $12");
 }

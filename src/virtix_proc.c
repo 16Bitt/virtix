@@ -5,30 +5,54 @@
 #include "isr.h"
 #include "paging.h"
 
-unsigned int pid;
+unsigned int pid = 0;
 virtix_proc_t* root;
-virtix_proc_t* current_proc;
+virtix_proc_t* current_proc = NULL;
+
+registers_t hold_root;
 
 void scheduler(registers_t regs){
+	//vga_puts("scheduler(): copying data\n");
 	memcpy(current_proc->registers, &regs, sizeof(registers_t));
 	
 	current_proc = current_proc->next;
-	while(current_proc->state == PROC_ASLEEP)
+	while(current_proc->state == PROC_ASLEEP){
+		vga_puts("scheduler(): skipping sleeping thread\n");
 		current_proc = current_proc->next;
+	}
 
 	memcpy(&regs, current_proc->registers, sizeof(registers_t));
 	switch_page(current_proc->cr3);
 }
 
-void init_procs(virtix_proc_t* process){
-	root = process;
+void force_stub(registers_t regs){
+	sti();
+	vga_puts("force_stub(): initializing processes\n");
+	memcpy(&hold_root, &regs, sizeof(registers_t));
+	vga_puts("force_stub(): exiting\n");
+}
 
-	process->next = process;
-	process->last = process;
-	process->thread = PROC_ROOT; //Unkillable
-	process->state = PROC_RUNNING;
+void init_procs(void* goto_here){
+	register_interrupt_handler(31, force_stub);
+	asm volatile ("int $31");
+	
+	vga_puts("init_procs(): captured root\n");
 
-	start_timer(50);
+	root = mk_empty_proc();
+	root->registers = &hold_root;
+	root->pid	= pid++;
+	root->cr3	= current_dir;
+	root->next	= root;
+	root->last	= root;
+	root->thread	= PROC_ROOT; //Unkillable
+	root->state	= PROC_RUNNING;
+	
+	current_proc = root;
+
+	current_proc->registers->eip = (unsigned int) goto_here;
+
+	cli();
+	start_timer(5);
 	cli();
 	register_interrupt_handler(32, scheduler);
 	sti();
@@ -40,7 +64,17 @@ void kill_proc(unsigned int pid){
 
 unsigned int spawn_proc(virtix_proc_t* process){
 	vga_puts("WARN: spawn_proc() is dummy stub\n");
-	return pid++;
+	process->pid = pid++;
+	
+	virtix_proc_t* hold = root->next;
+	root->next = process;
+	process->last = root;
+	hold->last = process;
+	process->next = hold;
+
+	process->state = PROC_RUNNING;
+
+	return process->pid;
 }
 
 void susp_proc(unsigned int pid){
@@ -95,6 +129,7 @@ virtix_proc_t* pid_to_proc(unsigned int pid){
 
 virtix_proc_t* mk_empty_proc(){
 	virtix_proc_t* proc = (virtix_proc_t*) kmalloc(sizeof(virtix_proc_t));
+	proc->registers = (registers_t*) kmalloc(sizeof(registers_t));
 	proc->registers->cs = 0x08;
 	proc->registers->ds = 0x10;
 	proc->registers->ss = 0x10;

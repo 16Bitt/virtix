@@ -6,6 +6,8 @@
 
 #define PAGE_S 0x400000
 
+extern unsigned int* current_dir;
+
 typedef struct{
 	unsigned int present	: 1;
 	unsigned int rw		: 1;
@@ -33,6 +35,7 @@ void map_vpage_to_ppage(unsigned int vpage, unsigned int ppage);
 
 //Create new pages
 unsigned int* mk_page();
+unsigned int* mk_page_dir();
 void mmap_page(unsigned int* page, unsigned int vpage, unsigned int ppage);
 
 void page_fault(registers_t regs);

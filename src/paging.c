@@ -2,8 +2,9 @@
 #include "monitor.h"
 #include "paging.h"
 #include "isr.h"
+#include "virtix_proc.h"
 
-static unsigned int* current_dir	= 0;
+unsigned int* current_dir		= 0;
 static unsigned int page_dir_location	= 0;
 static unsigned int* last_page		= 0;
 
@@ -58,13 +59,18 @@ void init_paging(){
 }
 
 void page_fault(registers_t registers){
+	if(current_proc != NULL){
+		vga_puts("\nIn process ");
+		vga_puts(current_proc->name);
+	}
 	PANIC("PAGE FAULT");
 }
 
 void mmap_page(unsigned int* page_dir, unsigned int vpage, unsigned int ppage){
 	short id = vpage >> 22;
-
-	unsigned int* page = (unsigned int*) kmalloc_a(4096);
+	
+	unsigned int* page = mk_page();
+	memset(page, 0, 4096);
 
 	int i;
 	for(i = 0; i < 1024; i++){
@@ -77,4 +83,14 @@ void mmap_page(unsigned int* page_dir, unsigned int vpage, unsigned int ppage){
 
 unsigned int* mk_page(){
 	return (unsigned int*) kmalloc_a(4096);
+}
+
+unsigned int* mk_page_dir(){
+	unsigned int* dir = (unsigned int*) kmalloc_a(4096);
+	
+	int i;
+	for(i = 0; i < 1024; i++)
+		dir[i] = 2;
+	
+	return (unsigned int*) kmalloc_a(dir);
 }

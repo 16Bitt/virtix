@@ -43,3 +43,7 @@ _Special Thanks To_
 * Brokenthorn OS development series - Taught me OS dev basics/advanced x86 assembly
 * Ralph Brown - His interrupt list is indispencable
 * And of course, The OSDev Wiki - This is a spectacular resource
+
+_Update_
+
+For the sake of time, multitasking is being put on hold. I will add it later, but as of typing this, my brain has had 10000000 too many triple faults for one night. I will return to this later on.

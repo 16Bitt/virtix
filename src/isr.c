@@ -4,6 +4,8 @@
 
 isr_t interrupt_handlers[256];
 
+unsigned int* istack_base;
+
 void isr_handler(registers_t regs){
 	vga_puts("CAUGHT INTERRUPT: ");
 	vga_puts_hex(regs.int_no);

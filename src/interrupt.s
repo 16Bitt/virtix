@@ -1,7 +1,12 @@
+	[EXTERN istack_base]
+	[EXTERN stack_hold]
+
 %macro ISR_BLANK 1
 		[GLOBAL isr%1]
 	isr%1:
 		cli
+		;mov [stack_hold], esp
+		;mov esp, [istack_base]
 		push byte 0
 		push byte %1
 		jmp isr_common_stub
@@ -11,6 +16,8 @@
 		[GLOBAL isr%1]
 	isr%1:
 		cli
+		;mov [stack_hold], esp
+		;mov esp, [istack_base]
 		push byte %1
 		jmp isr_common_stub
 %endmacro
@@ -52,7 +59,6 @@ ISR_BLANK 31
 
 isr_common_stub:
 	pusha
-
 	mov ax, ds
 	push eax
 
@@ -72,6 +78,7 @@ isr_common_stub:
 
 	popa
 	add esp, 8
+	;mov esp, [stack_hold]
 	sti
 	iret
 
@@ -80,6 +87,8 @@ isr_common_stub:
 	
 	irq%1:
 		cli
+		;mov [stack_hold], esp
+		;mov esp, [istack_base]
 		push byte 0
 		push byte %2
 		jmp irq_common_stub
@@ -126,5 +135,6 @@ irq_common_stub:
 
 	popa
 	add esp, 8
+	;mov esp, [stack_hold]
 	sti
 	iret

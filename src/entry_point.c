@@ -11,6 +11,14 @@
 #include "kheap.h"
 #include "paging.h"
 #include "elf.h"
+#include "virtix_proc.h"
+#include "flat.h"
+
+void waiting(registers_t regs){
+	vga_puts("Waiting...");
+}
+
+unsigned int stack_hold;
 
 int main(struct multiboot* mboot_ptr){
 	vga_clear();
@@ -31,8 +39,8 @@ int main(struct multiboot* mboot_ptr){
 	sti();
 	
 	vga_puts("main(): attempting to load binary\n");
-	virtix_proc_t* proc = elf_load(get_file_data("userland.x"));
-
+	virtix_proc_t* proc = flat_load_bin(get_file_data("userland.x"));
+	
 	vga_puts("main(): reached end of execution, hanging the CPU");
 	for(;;);
 }
