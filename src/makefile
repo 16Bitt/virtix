@@ -20,4 +20,4 @@ mkinitramfs:
 	cd initramfs && make
 
 run: all
-	qemu-system-x86_64 -kernel build/kernel -initrd initramfs/initrd -monitor stdio
+	qemu-system-x86_64 -d cpu_reset,pcall -no-reboot -kernel build/kernel -initrd initramfs/initrd -monitor stdio

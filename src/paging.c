@@ -8,7 +8,7 @@ unsigned int* current_dir		= 0;
 static unsigned int page_dir_location	= 0;
 static unsigned int* last_page		= 0;
 
-static unsigned int* proc_dir		= 0;
+static unsigned int proc_dir		= 0;
 
 extern unsigned int end;
 
@@ -33,8 +33,8 @@ void enable_paging(){
 }
 
 void switch_page(unsigned int* page_dir){
-	proc_dir = page_dir;
-	asm volatile ("mov %%eax, %%cr3" :: "a" ((unsigned int) proc_dir));
+	proc_dir = (unsigned int) page_dir;
+	asm volatile ("mov %%eax, %%cr3" :: "a" (proc_dir));
 	asm volatile ("mov %cr0, %eax");
 	asm volatile ("orl $0x80000000, %eax");
 	asm volatile ("mov %eax, %cr0");
@@ -69,28 +69,31 @@ void page_fault(registers_t registers){
 void mmap_page(unsigned int* page_dir, unsigned int vpage, unsigned int ppage){
 	short id = vpage >> 22;
 	
-	unsigned int* page = mk_page();
-	memset(page, 0, 4096);
+	unsigned int* page = mk_page();				//CONFIRMED
 
 	int i;
 	for(i = 0; i < 1024; i++){
-		page[i] = ppage | 3;
+		page[i] = ppage | 4 | 2 | 1;			//User mode, RW, present
 		ppage += 4096;
 	}
 
-	page_dir[id] = ((unsigned int) page) | 3;
+	page_dir[id] = ((unsigned int) page) | 4 | 2 | 1;	//User mode, RW, present
 }
 
-unsigned int* mk_page(){
-	return (unsigned int*) kmalloc_a(4096);
+unsigned int* mk_page(){				//WORKS
+	unsigned int* page = (unsigned int*) kmalloc_a(4096);
+	memset(page, 0, 4096);
+	return page;
 }
 
-unsigned int* mk_page_dir(){
+unsigned int* mk_page_dir(){				//WORKS
 	unsigned int* dir = (unsigned int*) kmalloc_a(4096);
 	
 	int i;
 	for(i = 0; i < 1024; i++)
-		dir[i] = 2;
+		dir[i] = 4 | 2 | 0; //User mode, RW, not present
 	
-	return (unsigned int*) kmalloc_a(dir);
+	return (unsigned int*) dir;
 }
+
+

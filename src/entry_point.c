@@ -14,13 +14,17 @@
 #include "virtix_proc.h"
 #include "flat.h"
 
+void* stack = NULL;
+
 void waiting(registers_t regs){
 	vga_puts("Waiting...");
+	for(;;);
 }
 
 unsigned int stack_hold;
 
-int main(struct multiboot* mboot_ptr){
+int main(struct multiboot* mboot_ptr, unsigned int esp){
+	stack_hold = esp;
 	vga_clear();
 	vga_puts("main(): loaded Kernel\n");
 	init_descriptor_tables();
@@ -38,9 +42,20 @@ int main(struct multiboot* mboot_ptr){
 	vga_puts("main(): starting interrupts\n");
 	sti();
 	
+	vga_puts("main(): starting scheduler\n");
+	init_procs(waiting);
+
 	vga_puts("main(): attempting to load binary\n");
-	virtix_proc_t* proc = flat_load_bin(get_file_data("userland.x"));
+	virtix_proc_t* proc = mk_empty_proc();
+	memcpy(proc->registers, current_proc->registers, sizeof(registers_t));
 	
+	proc->cr3 = current_proc->cr3;
+	proc->registers->eip = current_proc->registers->eip - 8;
+	vga_puts_hex(proc->registers->eip);
+
+	spawn_proc(proc);
+	
+	vga_puts_hex(proc->registers->eip);
 	vga_puts("main(): reached end of execution, hanging the CPU");
 	for(;;);
 }

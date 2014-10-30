@@ -23,12 +23,12 @@ void kfree(void* ptr){
 }
 
 void* kmalloc_a(unsigned int size){
-	ASSERT(((placement_address & 0xFFFFF000) + 1024) + size < MEM_END);
+	ASSERT(((placement_address & 0xFFFFF000) + 0x1000) + size < MEM_END);
 	placement_address &= 0xFFFFF000;
-	placement_address += 1024;
-	
+	placement_address += 0x1000;
+
 	unsigned int hold = placement_address;
 	placement_address += size;
-
+	
 	return (void*) hold;
 }

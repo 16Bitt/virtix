@@ -29,6 +29,7 @@ mboot:				;This is simply a data section for the bootloader
 	[EXTERN main]		;Use 'main' from outside
 
 start:
+	push esp		;Save initial stack pointer
 	push ebx		;Save stack frame
 	cli			;Disable interrupts
 	call main		;Call C entry point

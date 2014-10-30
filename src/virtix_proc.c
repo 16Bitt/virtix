@@ -11,18 +11,26 @@ virtix_proc_t* current_proc = NULL;
 
 registers_t hold_root;
 
+int x = 0;
+
+#define HANG if(x){cli();hlt();}
+
 void scheduler(registers_t regs){
 	//vga_puts("scheduler(): copying data\n");
 	memcpy(current_proc->registers, &regs, sizeof(registers_t));
 	
+
+	//vga_puts("scheduler(): finding open process\n");
 	current_proc = current_proc->next;
 	while(current_proc->state == PROC_ASLEEP){
 		vga_puts("scheduler(): skipping sleeping thread\n");
 		current_proc = current_proc->next;
 	}
-
+	//vga_puts("scheduler(): found open process\n");
 	memcpy(&regs, current_proc->registers, sizeof(registers_t));
-	switch_page(current_proc->cr3);
+	
+	//vga_puts("scheduler(): copied registers\n");
+	//switch_page(current_proc->cr3);
 }
 
 void force_stub(registers_t regs){
@@ -63,7 +71,6 @@ void kill_proc(unsigned int pid){
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){
-	vga_puts("WARN: spawn_proc() is dummy stub\n");
 	process->pid = pid++;
 	
 	virtix_proc_t* hold = root->next;
