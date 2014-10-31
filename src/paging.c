@@ -60,8 +60,7 @@ void init_paging(){
 
 void page_fault(registers_t registers){
 	if(current_proc != NULL){
-		vga_puts("\nIn process ");
-		vga_puts(current_proc->name);
+		dump_proc(current_proc);
 	}
 	PANIC("PAGE FAULT");
 }

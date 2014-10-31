@@ -7,18 +7,15 @@
 
 virtix_proc_t* flat_load_bin(void* addr){
 	virtix_proc_t* proc = mk_empty_proc();
-	proc->registers->esp = 1023;
-	proc->registers->eip = 1024;
-
-	unsigned int* dir = mk_page_dir();	//Page directory
-	void* page = kmalloc_a(PAGE_S);		//Buffer
-
-	mmap_page(dir, 0x1000, page);		//&directory[0] = page
-	proc->cr3 = dir;
+	proc->registers.esp = 1023;
+	proc->registers.eip = 1024;
 	
-	vga_puts_hex(dir);
-	vga_puts_hex(dir[0]);
-	HANG()
+	proc->name = "FLAT_BIN";
+
+	proc->mmap.text		= kmalloc_a(PAGE_S); //0 M
+	proc->mmap.bss		= kmalloc_a(PAGE_S); //4 M
+	proc->mmap.data		= kmalloc_a(PAGE_S); //8 M
+	proc->mmap.stack	= kmalloc_a(PAGE_S); //12 M
 
 	return proc;
 }

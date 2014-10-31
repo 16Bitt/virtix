@@ -54,8 +54,8 @@ virtix_proc_t* elf_load(void* elf_data){
 	
 	virtix_proc_t* proc = mk_empty_proc();
 	proc->name = "ELF_PROGRAM";
-	proc->cr3 = current_dir;
-	proc->registers->eip = header->e_entry;
+	//proc->cr3 = current_dir;
+	proc->registers.eip = header->e_entry;
 
 	return proc;
 }

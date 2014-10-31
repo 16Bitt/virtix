@@ -17,8 +17,8 @@
 void* stack = NULL;
 
 void waiting(registers_t regs){
+	while(1)
 	vga_puts("Waiting...");
-	for(;;);
 }
 
 unsigned int stack_hold;
@@ -43,19 +43,16 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	sti();
 	
 	vga_puts("main(): starting scheduler\n");
-	init_procs(waiting);
+	init_procs(&waiting);
 
-	vga_puts("main(): attempting to load binary\n");
+	vga_puts("main(): attempting to load thread\n");
 	virtix_proc_t* proc = mk_empty_proc();
-	memcpy(proc->registers, current_proc->registers, sizeof(registers_t));
-	
-	proc->cr3 = current_proc->cr3;
-	proc->registers->eip = current_proc->registers->eip - 8;
-	vga_puts_hex(proc->registers->eip);
 
+	memcpy(&proc->registers, &current_proc->registers, sizeof(registers_t));
+	proc->name = "TEST CHILD";
+	/*proc->registers.esp */proc->registers.useresp = kmalloc_a(1024) - 1024;
 	spawn_proc(proc);
 	
-	vga_puts_hex(proc->registers->eip);
 	vga_puts("main(): reached end of execution, hanging the CPU");
 	for(;;);
 }
