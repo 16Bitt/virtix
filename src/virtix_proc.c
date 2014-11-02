@@ -11,9 +11,9 @@ virtix_proc_t* current_proc = NULL;
 
 registers_t hold_root;
 
-void scheduler(registers_t regs){
-	memcpy(&current_proc->registers, &regs, sizeof(registers_t));
-	
+void scheduler(registers_t* regs){
+	memcpy(&current_proc->registers, regs, sizeof(registers_t));
+
 	current_proc = current_proc->next;
 	if(current_proc == NULL)
 		current_proc = root;
@@ -24,19 +24,21 @@ void scheduler(registers_t regs){
 			current_proc = root;
 	}*/
 
-	memcpy(&regs, &current_proc->registers, sizeof(registers_t));
+	memcpy(regs, &current_proc->registers, sizeof(registers_t));
+	if(current_proc != root)
+		dump_proc(current_proc);
 }
 
-void force_stub(registers_t regs){
+void force_stub(registers_t* regs){
 	sti();
 	vga_puts("force_stub(): initializing processes\n");
-	memcpy(&hold_root, &regs, sizeof(registers_t));
+	memcpy(&hold_root, regs, sizeof(registers_t));
 	vga_puts("force_stub(): exiting\n");
 }
 
-void force_load_stub(registers_t regs){
+void force_load_stub(registers_t* regs){
 	vga_puts("force_load_stub(): forcibly loading thread\n");
-	memcpy(&regs, &root->registers, sizeof(registers_t));
+	memcpy(regs, &root->registers, sizeof(registers_t));
 }
 
 void init_procs(void* goto_here){
@@ -54,17 +56,13 @@ void init_procs(void* goto_here){
 	
 	current_proc = root;
 
-	current_proc->registers.eip = (unsigned int) goto_here - 4;
 	current_proc->name = "ROOT";
-
+	
 	cli();
-	start_timer(5000);
+	start_timer(1000);
 	cli();
 	register_interrupt_handler(32, scheduler);
 	sti();
-
-	register_interrupt_handler(31, force_load_stub);
-	asm volatile ("int $31");
 }
 
 void kill_proc(unsigned int pid){
@@ -72,6 +70,7 @@ void kill_proc(unsigned int pid){
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){
+	vga_puts("swawn_proc(): creating new process\n");
 	process->pid = pid++;
 	
 	process->next = root->next;

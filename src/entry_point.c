@@ -50,9 +50,9 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 
 	memcpy(&proc->registers, &current_proc->registers, sizeof(registers_t));
 	proc->name = "TEST CHILD";
-	/*proc->registers.esp */proc->registers.useresp = kmalloc_a(1024) - 1024;
+	proc->registers.eip = waiting;
 	spawn_proc(proc);
-	
+
 	vga_puts("main(): reached end of execution, hanging the CPU");
 	for(;;);
 }

@@ -67,9 +67,12 @@ isr_common_stub:
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
+	mov eax, esp
+	push eax
 
 	call isr_handler
 	
+	pop eax
 	pop ebx
 	mov ds, bx
 	mov es, bx
@@ -124,9 +127,12 @@ irq_common_stub:
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
+	mov eax, esp
+	push eax
 
 	call irq_handler
 	
+	pop eax
 	pop ebx
 	mov ds, bx
 	mov es, bx
