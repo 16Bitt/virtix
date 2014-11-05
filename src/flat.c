@@ -12,10 +12,7 @@ virtix_proc_t* flat_load_bin(void* addr){
 	
 	proc->name = "FLAT_BIN";
 
-	proc->mmap.text		= kmalloc_a(PAGE_S); //0 M
-	proc->mmap.bss		= kmalloc_a(PAGE_S); //4 M
-	proc->mmap.data		= kmalloc_a(PAGE_S); //8 M
-	proc->mmap.stack	= kmalloc_a(PAGE_S); //12 M
+	mmap_page(proc->cr3, 0, kmalloc_a(PAGE_S));
 
 	return proc;
 }

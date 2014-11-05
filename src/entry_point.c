@@ -48,9 +48,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	vga_puts("main(): attempting to load thread\n");
 	virtix_proc_t* proc = mk_empty_proc();
 
-	memcpy(&proc->registers, &current_proc->registers, sizeof(registers_t));
-	proc->name = "TEST CHILD";
-	proc->registers.eip = waiting;
+	proc = flat_load_bin(get_file_data("userland.x"));
 	spawn_proc(proc);
 
 	vga_puts("main(): reached end of execution, hanging the CPU");
