@@ -3,7 +3,7 @@
 #include "isr.h"
 #include "monitor.h"
 
-void timer_handler(registers_t regs){
+void timer_handler(registers_t* regs){
 	vga_puts("Tick()\n");
 }
 

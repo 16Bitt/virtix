@@ -13,7 +13,7 @@ typedef struct registers{
 	u32int eip, cs, eflags, useresp, ss;
 }registers_t;
 
-typedef void (*isr_t)(registers_t);
+typedef void (*isr_t)(registers_t*);
 void register_interrupt_handler(unsigned char index, isr_t handler);
 void cli();
 void sti();

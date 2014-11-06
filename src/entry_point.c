@@ -45,11 +45,11 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	vga_puts("main(): starting scheduler\n");
 	init_procs(&waiting);
 
-	vga_puts("main(): attempting to load thread\n");
+	vga_puts("main(): attempting to load process\n");
 	virtix_proc_t* proc = mk_empty_proc();
 
-	proc = flat_load_bin(get_file_data("userland.x"));
-	spawn_proc(proc);
+	//proc = flat_load_bin(get_file_data("userland.x"));
+	//spawn_proc(proc);
 
 	vga_puts("main(): reached end of execution, hanging the CPU");
 	for(;;);

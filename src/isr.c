@@ -6,25 +6,25 @@ isr_t interrupt_handlers[256];
 
 unsigned int* istack_base;
 
-void isr_handler(registers_t regs){
+void isr_handler(registers_t* regs){
 	vga_puts("CAUGHT INTERRUPT: ");
-	vga_puts_hex(regs.int_no);
+	vga_puts_hex(regs->int_no);
 	vga_putc('\n');
 
-	if(interrupt_handlers[regs.int_no]){
-		isr_t handler = interrupt_handlers[regs.int_no];
+	if(interrupt_handlers[regs->int_no]){
+		isr_t handler = interrupt_handlers[regs->int_no];
 		handler(regs);
 	}
 }
 
-void irq_handler(registers_t regs){
-	if(regs.int_no >= 40)
+void irq_handler(registers_t* regs){
+	if(regs->int_no >= 40)
 		outb(0xA0, 0x20);
 
 	outb(0x20, 0x20);
 
-	if(interrupt_handlers[regs.int_no]){
-		isr_t handler = interrupt_handlers[regs.int_no];
+	if(interrupt_handlers[regs->int_no]){
+		isr_t handler = interrupt_handlers[regs->int_no];
 		handler(regs);
 	}
 }

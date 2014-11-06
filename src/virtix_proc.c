@@ -13,22 +13,26 @@ registers_t hold_root;
 
 void scheduler(registers_t* regs){
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
+	//vga_puts("scheduler(): entered interrupt\n");
+	//dump_proc(current_proc);
 
 	current_proc = current_proc->next;
 	if(current_proc == NULL)
 		current_proc = root;
 
-	/*while(current_proc->state == PROC_ASLEEP){
+	while(current_proc->state == PROC_ASLEEP){
 		current_proc = current_proc->next;
 		if(current_proc == NULL)
 			current_proc = root;
-	}*/
+	}
 
 	memcpy(regs, &current_proc->registers, sizeof(registers_t));
 	if(current_proc != root)
 		dump_proc(current_proc);
-
-	switch_page(current_proc->cr3);
+	
+	current_dir = current_proc->cr3;
+	enable_paging();
+	//switch_page(current_proc->cr3);
 }
 
 void force_stub(registers_t* regs){

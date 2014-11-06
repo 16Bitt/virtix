@@ -5,6 +5,8 @@
 #include "virtix_proc.h"
 
 unsigned int* current_dir		= 0;
+unsigned int* process_dir		= 0;
+
 static unsigned int page_dir_location	= 0;
 static unsigned int* last_page		= 0;
 
@@ -26,6 +28,7 @@ void map_vpage_to_ppage(unsigned int virtual, unsigned int physical){
 }
 
 void enable_paging(){
+	//page_dir_location = (unsigned int) current_dir;
 	asm volatile ("mov %%eax, %%cr3" :: "a" (page_dir_location));
 	asm volatile ("mov %cr0, %eax");
 	asm volatile ("orl $0x80000000, %eax");
