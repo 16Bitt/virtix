@@ -1,6 +1,17 @@
 Style and formatting for code in this project
+----------------------------------
 
-C code:
-	-
+1. All functions and block statements follow the following rule:
+	TYPE|STMT(ARGS){
+Note that the opening bracket touches the argument. When avoidable, don't use the brackets at all
 
-VM code:
+2 . All functions are expected to be defined in a header inside of ../header/
+The only exceptions are functions that are private but need to be defined lower in the file for clarity
+
+3. Headers will have the following at the top to avoid collisions:
+	#define FILE_NAME_H
+
+
+
+
+

@@ -38,6 +38,6 @@ unsigned int* mk_page();
 unsigned int* mk_page_dir();
 void mmap_page(unsigned int* page, unsigned int vpage, unsigned int ppage);
 
-void page_fault(registers_t regs);
+void page_fault(registers_t* regs);
 
 #endif

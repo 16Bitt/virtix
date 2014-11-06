@@ -27,8 +27,8 @@ void scheduler(registers_t* regs){
 	}
 
 	memcpy(regs, &current_proc->registers, sizeof(registers_t));
-	if(current_proc != root)
-		dump_proc(current_proc);
+	//if(current_proc != root)
+	//	dump_proc(current_proc);
 	
 	current_dir = current_proc->cr3;
 	enable_paging();
@@ -66,7 +66,7 @@ void init_procs(void* goto_here){
 	current_proc->cr3 = current_dir;
 	
 	cli();
-	start_timer(1000);
+	start_timer(2000);
 	cli();
 	register_interrupt_handler(32, scheduler);
 	sti();
@@ -74,6 +74,7 @@ void init_procs(void* goto_here){
 
 void kill_proc(unsigned int pid){
 	vga_puts("WARN: kill_proc() is dummy stub\n");
+	susp_proc(pid);
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){

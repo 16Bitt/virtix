@@ -61,7 +61,7 @@ void init_paging(){
 	enable_paging();
 }
 
-void page_fault(registers_t registers){
+void page_fault(registers_t* registers){
 	if(current_proc != NULL){
 		dump_proc(current_proc);
 	}

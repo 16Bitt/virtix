@@ -13,12 +13,13 @@
 #include "elf.h"
 #include "virtix_proc.h"
 #include "flat.h"
+#include "kthread.h"
 
 void* stack = NULL;
 
 void waiting(registers_t regs){
-	while(1)
-	vga_puts("Waiting...");
+	vga_puts("Waiting...\n");
+	kthread_exit();
 }
 
 unsigned int stack_hold;
@@ -46,11 +47,10 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	init_procs(&waiting);
 
 	vga_puts("main(): attempting to load process\n");
-	virtix_proc_t* proc = mk_empty_proc();
+	mk_kthread("Root child", waiting);
 
-	//proc = flat_load_bin(get_file_data("userland.x"));
-	//spawn_proc(proc);
+	mk_kthread("Root II: electric boogaloo", waiting);
 
-	vga_puts("main(): reached end of execution, hanging the CPU");
+	vga_puts("main(): reached end of execution, hanging the CPU\n");
 	for(;;);
 }
