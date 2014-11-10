@@ -61,10 +61,33 @@ void init_paging(){
 	enable_paging();
 }
 
-void page_fault(registers_t* registers){
+void page_fault(registers_t* regs){
+	cli();
 	if(current_proc != NULL){
 		dump_proc(current_proc);
 	}
+
+	unsigned int err_pos;
+	asm volatile ("mov %%cr2, %0" : "=r" (err_pos));
+
+	vga_puts("Page fault occurred at ");
+	vga_puts_hex(err_pos);
+	
+	vga_puts("\nReasons:");
+
+	int no_page = regs->err_code & 1;
+	int rw = regs->err_code & 2;
+	int um = regs->err_code & 4;
+	int re = regs->err_code & 8;
+	int dc = regs->err_code & 16;
+
+	if(dc)		vga_puts(" (Instruction decode error) ");
+	if(!no_page)	vga_puts(" (No page present) ");
+	if(um)		vga_puts(" (in user mode) ");
+	if(rw)		vga_puts(" (Write permissions) ");
+	if(re)			vga_puts(" (RE) ");
+	
+
 	PANIC("PAGE FAULT");
 }
 

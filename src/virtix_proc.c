@@ -13,9 +13,6 @@ registers_t hold_root;
 
 void scheduler(registers_t* regs){
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
-	//vga_puts("scheduler(): entered interrupt\n");
-	//dump_proc(current_proc);
-
 	current_proc = current_proc->next;
 	if(current_proc == NULL)
 		current_proc = root;
@@ -27,38 +24,16 @@ void scheduler(registers_t* regs){
 	}
 
 	memcpy(regs, &current_proc->registers, sizeof(registers_t));
-	//if(current_proc != root)
-	//	dump_proc(current_proc);
-	
 	current_dir = current_proc->cr3;
 	enable_paging();
-	//switch_page(current_proc->cr3);
-}
-
-void force_stub(registers_t* regs){
-	sti();
-	vga_puts("force_stub(): initializing processes\n");
-	memcpy(&hold_root, regs, sizeof(registers_t));
-	vga_puts("force_stub(): exiting\n");
-}
-
-void force_load_stub(registers_t* regs){
-	vga_puts("force_load_stub(): forcibly loading thread\n");
-	memcpy(regs, &root->registers, sizeof(registers_t));
 }
 
 void init_procs(void* goto_here){
-	register_interrupt_handler(31, force_stub);
-	asm volatile ("int $31");
-	
-	vga_puts("init_procs(): captured root\n");
-
 	root = mk_empty_proc();
 	root->pid	= pid++;
 	root->next	= NULL;
 	root->thread	= PROC_ROOT; //Unkillable
 	root->state	= PROC_RUNNING;
-	memcpy(&root->registers, &hold_root, sizeof(registers_t));
 	
 	current_proc = root;
 
@@ -66,7 +41,7 @@ void init_procs(void* goto_here){
 	current_proc->cr3 = current_dir;
 	
 	cli();
-	start_timer(2000);
+	start_timer(1000);
 	cli();
 	register_interrupt_handler(32, scheduler);
 	sti();
