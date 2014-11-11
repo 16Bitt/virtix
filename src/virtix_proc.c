@@ -13,6 +13,7 @@ registers_t hold_root;
 
 void scheduler(registers_t* regs){
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
+	
 	current_proc = current_proc->next;
 	if(current_proc == NULL)
 		current_proc = root;
@@ -24,8 +25,10 @@ void scheduler(registers_t* regs){
 	}
 
 	memcpy(regs, &current_proc->registers, sizeof(registers_t));
-	current_dir = current_proc->cr3;
-	enable_paging();
+	//current_dir = current_proc->cr3;
+	//enable_paging();
+	
+	switch_page(current_proc->cr3);
 }
 
 void init_procs(void* goto_here){
@@ -41,7 +44,7 @@ void init_procs(void* goto_here){
 	current_proc->cr3 = current_dir;
 	
 	cli();
-	start_timer(1000);
+	start_timer(200);
 	cli();
 	register_interrupt_handler(32, scheduler);
 	sti();
@@ -114,7 +117,7 @@ virtix_proc_t* pid_to_proc(unsigned int pid){
 }
 
 virtix_proc_t* mk_empty_proc(){
-	virtix_proc_t* proc = (virtix_proc_t*) kmalloc(sizeof(virtix_proc_t));
+	virtix_proc_t* proc = (virtix_proc_t*) kmalloc_a(sizeof(virtix_proc_t));
 	proc->registers.cs = 0x08;
 	proc->registers.ds = 0x10;
 	proc->registers.ss = 0x10;
@@ -161,6 +164,14 @@ void dump_proc(virtix_proc_t* proc){
 	vga_puts_hex(proc->registers.eflags);
 	vga_puts("\t*EIP*=");
 	vga_puts_hex(proc->registers.eip);
+
+	vga_puts("\t*CR3*=");
+	vga_puts_hex(proc->cr3);
+	vga_puts("/");
+
+	unsigned int cr3;
+	asm volatile ("mov %%cr3, %0" : "=r" (cr3));
+	vga_puts_hex(cr3);
 	
 	vga_puts("\n");
 }

@@ -7,6 +7,8 @@
 unsigned int* current_dir		= 0;
 unsigned int* process_dir		= 0;
 
+unsigned int* root_dir		= 0;
+
 static unsigned int page_dir_location	= 0;
 static unsigned int* last_page		= 0;
 
@@ -28,7 +30,7 @@ void map_vpage_to_ppage(unsigned int virtual, unsigned int physical){
 }
 
 void enable_paging(){
-	//page_dir_location = (unsigned int) current_dir;
+	//page_dir_location = (unsigned int) &current_dir[0];
 	asm volatile ("mov %%eax, %%cr3" :: "a" (page_dir_location));
 	asm volatile ("mov %cr0, %eax");
 	asm volatile ("orl $0x80000000, %eax");
@@ -36,17 +38,19 @@ void enable_paging(){
 }
 
 void switch_page(unsigned int* page_dir){
-	proc_dir = (unsigned int) page_dir;
-	asm volatile ("mov %%eax, %%cr3" :: "a" (proc_dir));
-	asm volatile ("mov %cr0, %eax");
-	asm volatile ("orl $0x80000000, %eax");
-	asm volatile ("mov %eax, %cr0");
+	current_dir = page_dir;
+	asm volatile("mov %0, %%cr3":: "r"(page_dir));
+	u32int cr0;
+	asm volatile("mov %%cr0, %0": "=r"(cr0));
+	cr0 |= 0x80000000;
+	asm volatile("mov %0, %%cr0":: "r"(cr0));
 }
 
 void init_paging(){
 	current_dir		= (unsigned int*) PAGE_S;
 	page_dir_location	= (unsigned int) current_dir;
 	last_page		= (unsigned int*) (PAGE_S + 4096);
+	root_dir		= current_dir;
 
 	unsigned int i;
 	for(i = 0; i < 1024; i++)
@@ -58,7 +62,7 @@ void init_paging(){
 	register_interrupt_handler(14, page_fault);
 	cli();
 	
-	enable_paging();
+	switch_page(root_dir);
 }
 
 void page_fault(registers_t* regs){
@@ -98,14 +102,14 @@ void mmap_page(unsigned int* page_dir, unsigned int vpage, unsigned int ppage){
 
 	int i;
 	for(i = 0; i < 1024; i++){
-		page[i] = ppage | 4 | 2 | 1;			//User mode, RW, present
+		page[i] = ppage  | 2 | 1;			//User mode, RW, present
 		ppage += 4096;
 	}
 
-	page_dir[id] = ((unsigned int) page) | 4 | 2 | 1;	//User mode, RW, present
+	page_dir[id] = ((unsigned int) page)  | 2 | 1;	//User mode, RW, present
 }
 
-unsigned int* mk_page(){				//WORKS
+unsigned int* mk_page(){					//WORKS
 	unsigned int* page = (unsigned int*) kmalloc_a(4096);
 	memset(page, 0, 4096);
 	return page;
@@ -116,9 +120,21 @@ unsigned int* mk_page_dir(){				//WORKS
 	
 	int i;
 	for(i = 0; i < 1024; i++)
-		dir[i] = 4 | 2 | 0; //User mode, RW, not present
+		dir[i] =  2 | 0; //User mode, RW, not present
 	
 	return (unsigned int*) dir;
 }
 
+void dump_page(unsigned int* dir){
+	vga_puts("Dumping page at ");
+	vga_puts_hex(dir);
+	vga_puts(":\n");
 
+	int i;
+	for(i = 0; i < 4; i++){
+		vga_puts_hex(dir[i]);
+		vga_puts(" ");
+	}
+
+	vga_puts("\n");
+}

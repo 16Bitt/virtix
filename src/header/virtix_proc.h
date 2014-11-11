@@ -12,6 +12,8 @@ typedef struct {
 } mmap_t;
 
 typedef struct virtix_proc {
+	unsigned int* cr3;			//Memory pages
+	
 	registers_t registers;		//Process state
 
 	unsigned int pid;			//Process integer ID
@@ -19,8 +21,6 @@ typedef struct virtix_proc {
 		
 	int state;					//Sleeping | running
 	int thread;					//Whether process is thread
-
-	unsigned int* cr3;			//Memory pages
 
 	struct virtix_proc* parent;	//If child, this will be set
 	struct virtix_proc* next;	//Next process

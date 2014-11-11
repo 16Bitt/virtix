@@ -45,13 +45,16 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): starting scheduler\n");
 	init_procs(&waiting);
-
+	
 	vga_puts("main(): attempting to load process\n");
 	mk_kthread("Root child", waiting);
 	mk_kthread("Root II: electric boogaloo", waiting);
-	
+
 	virtix_proc_t* proc = flat_load_bin(get_file_data("userland.x"));
 	spawn_proc(proc);
+	
+	dump_page(current_dir);
+	dump_page(proc->cr3);
 
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
 	kthread_hlt();
