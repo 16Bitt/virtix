@@ -3,11 +3,12 @@
 #include "paging.h"
 #include "isr.h"
 #include "virtix_proc.h"
+#include "kheap.h"
 
 unsigned int* current_dir		= 0;
 unsigned int* process_dir		= 0;
 
-unsigned int* root_dir		= 0;
+unsigned int* root_dir			= 0;
 
 static unsigned int page_dir_location	= 0;
 static unsigned int* last_page		= 0;
@@ -50,6 +51,7 @@ void init_paging(){
 	current_dir		= (unsigned int*) PAGE_S;
 	page_dir_location	= (unsigned int) current_dir;
 	last_page		= (unsigned int*) (PAGE_S + 4096);
+	//last_page		= ((unsigned int) current_dir) + PAGE_S;
 	root_dir		= current_dir;
 
 	unsigned int i;
