@@ -40,6 +40,15 @@ void enable_paging(){
 
 void switch_page(unsigned int* page_dir){
 	current_dir = page_dir;
+	
+	if(page_dir != root_dir){
+		vga_puts_hex(page_dir);
+		vga_puts("->");
+		vga_puts_hex(page_dir[0]);
+		cli();
+		hlt();
+	}
+
 	asm volatile("mov %0, %%cr3":: "r"(page_dir));
 	u32int cr0;
 	asm volatile("mov %%cr0, %0": "=r"(cr0));

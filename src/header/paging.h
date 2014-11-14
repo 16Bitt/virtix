@@ -7,6 +7,7 @@
 #define PAGE_S 0x400000
 
 extern unsigned int* current_dir;
+extern unsigned int* root_dir;
 
 typedef struct{
 	unsigned int present	: 1;

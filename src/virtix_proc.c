@@ -20,6 +20,7 @@ void scheduler(registers_t* regs){
 
 	while(current_proc->state == PROC_ASLEEP){
 		current_proc = current_proc->next;
+		vga_puts("scheduler(): skipping sleeping process\n");
 		if(current_proc == NULL)
 			current_proc = root;
 	}
@@ -44,7 +45,7 @@ void init_procs(void* goto_here){
 	current_proc->cr3 = current_dir;
 	
 	cli();
-	start_timer(200);
+	start_timer(20);
 	cli();
 	register_interrupt_handler(32, scheduler);
 	sti();

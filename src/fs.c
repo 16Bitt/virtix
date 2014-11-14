@@ -8,7 +8,6 @@ directory_t* fs_root = (directory_t*) 0;
 unsigned int size = 0;
 
 void mnt_initrd(unsigned int ptr){
-	vga_puts_hex(ptr);
 	unsigned int address = *((unsigned int*) ptr);
 	size = *((unsigned int*) address);
 	
