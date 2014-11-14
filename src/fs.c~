@@ -76,7 +76,7 @@ unsigned int get_file_size(char* name){
 }
 
 unsigned char* get_file_data(char* name){
-	ASSERT(is_file(name));
+	//ASSERT(is_file(name));
 
 	int i;
 	for(i = 0; i < fs_root->num_files; i++)

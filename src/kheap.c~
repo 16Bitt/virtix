@@ -5,6 +5,9 @@
 unsigned int placement_address;
 
 void init_kheap(){
+	vga_puts("KHEAP STARTING AT ");
+	vga_puts_hex(&end);
+	vga_puts("\n");
 	end = (unsigned int) &end;
 	placement_address = end;
 }

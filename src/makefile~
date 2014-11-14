@@ -22,7 +22,7 @@ mkinitramfs:
 	cd initramfs && make
 
 run: all
-	qemu-system-x86_64 -m 1G -kernel build/kernel -initrd initramfs/initrd
+	qemu-system-x86_64 -kernel build/kernel -initrd initramfs/initrd
 
 debug: all
 	objcopy --only-keep-debug build/kernel build/ksym

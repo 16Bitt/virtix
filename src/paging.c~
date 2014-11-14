@@ -122,9 +122,7 @@ void mmap_page(unsigned int* page_dir, unsigned int vpage, unsigned int ppage){
 
 unsigned int* mk_page(){					//WORKS
 	unsigned int* page = (unsigned int*) kmalloc_a(4096);
-	int i;
-	for(i = 0; i < 1024; i++)
-		page[i] = 2;
+	memset(page, 2, 4096);
 	return page;
 }
 
