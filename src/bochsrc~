@@ -1,2 +1,0 @@
-boot:	cdrom
-ata0-master:	type=cdrom,	path=grub.iso,	status=inserted
