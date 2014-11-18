@@ -4,6 +4,7 @@
 #include "isr.h"
 #include "virtix_proc.h"
 #include "kheap.h"
+#include "virtix_page.h"
 
 unsigned int* current_dir		= 0;
 unsigned int* process_dir		= 0;
@@ -14,7 +15,7 @@ static unsigned int page_dir_location	= 0;
 static unsigned int* last_page		= 0;
 
 static unsigned int proc_dir		= 0;
-
+/*
 void map_vpage_to_ppage(unsigned int virtual, unsigned int physical){
 	short id = virtual >> 22;
 
@@ -152,3 +153,4 @@ void dump_page(unsigned int* dir){
 
 	vga_puts("\n");
 }
+*/

@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "isr.h"
+#include "virtix_page.h"
 
 typedef struct {
 	unsigned int text;
@@ -12,7 +13,7 @@ typedef struct {
 } mmap_t;
 
 typedef struct virtix_proc {
-	unsigned int* cr3;			//Memory pages
+	vpage_dir_t* cr3;			//Memory pages
 	
 	registers_t registers;		//Process state
 

@@ -56,7 +56,7 @@ void mnt_initrd(unsigned int ptr){
 int is_file(char* name){
 	int i;
 	for(i = 0; i < fs_root->num_files; i++){
-		vga_puts("SEARCHING: "); vga_puts(fs_root->files[i]->name); vga_puts("\n");
+	//	vga_puts("SEARCHING: "); vga_puts(fs_root->files[i]->name); vga_puts("\n");
 		if(!strcmp(fs_root->files[i]->name, name))
 			return 1;
 	}

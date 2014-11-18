@@ -2,7 +2,7 @@
 #include "virtix_proc.h"
 #include "monitor.h"
 #include "isr.h"
-#include "paging.h"
+#include "virtix_page.h"
 
 void mk_kthread(char* name, void* addr){
 	cli();
@@ -12,7 +12,7 @@ void mk_kthread(char* name, void* addr){
 	proc->name = name;
 	proc->registers.eip = (unsigned int) addr;
 	proc->registers.useresp = ((unsigned int) kmalloc_a(512)) - 500;
-	proc->cr3 = root_dir;
+	proc->cr3 = root_vpage_dir;
 	spawn_proc(proc);
 }
 

@@ -3,7 +3,7 @@
 #include "virtix_proc.h"
 #include "clock.h"
 #include "isr.h"
-#include "paging.h"
+#include "virtix_page.h"
 
 unsigned int pid = 0;
 virtix_proc_t* root;
@@ -26,10 +26,8 @@ void scheduler(registers_t* regs){
 	}
 
 	memcpy(regs, &current_proc->registers, sizeof(registers_t));
-	//current_dir = current_proc->cr3;
-	//enable_paging();
 	
-	switch_page(current_proc->cr3);
+	switch_vpage_dir(current_proc->cr3);
 }
 
 void init_procs(void* goto_here){
@@ -42,7 +40,7 @@ void init_procs(void* goto_here){
 	current_proc = root;
 
 	current_proc->name = "ROOT";
-	current_proc->cr3 = current_dir;
+	current_proc->cr3 = root_vpage_dir;
 	
 	cli();
 	start_timer(20);
@@ -72,7 +70,8 @@ void susp_proc(unsigned int pid){
 	
 	if(proc == PID_NOT_FOUND)
 		return;
-
+	
+	DISP("suspending process", pid);
 	proc->state = PROC_ASLEEP;
 }
 
@@ -122,7 +121,7 @@ virtix_proc_t* mk_empty_proc(){
 	proc->registers.cs = 0x08;
 	proc->registers.ds = 0x10;
 	proc->registers.ss = 0x10;
-	proc->cr3 = mk_page_dir();
+	proc->cr3 = mk_vpage_dir();
 
 	return proc;
 }

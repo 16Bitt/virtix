@@ -29,7 +29,7 @@ typedef struct{
 	unsigned int physical_address;
 } page_directory_t;
 
-void init_paging();
+/*void init_paging();
 void enable_paging();
 void switch_page(unsigned int* page_dir);
 void map_vpage_to_ppage(unsigned int vpage, unsigned int ppage);
@@ -41,5 +41,6 @@ void mmap_page(unsigned int* page, unsigned int vpage, unsigned int ppage);
 
 void page_fault(registers_t* regs);
 void dump_page(unsigned int* dir);
+*/
 
 #endif

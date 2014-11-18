@@ -14,13 +14,8 @@ virtix_proc_t* flat_load_bin(void* addr){
 	proc->name = "FLAT_BIN";
 
 	unsigned int mem = (unsigned int) kmalloc_a(PAGE_S);
-	vga_puts("flat_load_bin(): move ");
-	vga_puts_hex(addr);
-	vga_puts(" to ");
-	vga_puts_hex(mem);
-	vga_puts("\n");
 
-	mmap_page(proc->cr3, 0, mem);
+	vpage_map(proc->cr3, 0, mem);
 	memcpy(mem, addr, 512);
 
 	sti();

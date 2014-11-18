@@ -1,6 +1,6 @@
 SOURCES	= entry_point.o clock.o common.o monitor.o boot.o descriptor_tables.o interrupt.o isr.o table.o kheap.o fs.o stream.o vfs.o paging.o virtix_proc.o elf.o flat.o kthread.o virtix_page.o
 CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -Iheader/ -g
-LDFLAGS	= -Tlink.ld #-melf_i386
+LDFLAGS	= -Tlink.ld -melf_i386
 ASFLAGS	= -felf
 
 all: $(SOURCES) link mkinitramfs
@@ -22,7 +22,7 @@ mkinitramfs:
 	cd initramfs && make
 
 run: all
-	qemu-system-x86_64 -m 1G -kernel build/kernel -initrd initramfs/initrd
+	qemu-system-x86_64 -kernel build/kernel -initrd initramfs/initrd
 
 debug: all
 	objcopy --only-keep-debug build/kernel build/ksym

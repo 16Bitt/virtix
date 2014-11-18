@@ -2,6 +2,10 @@
 #include "monitor.h"
 #include "virtix_page.h"
 #include "kheap.h"
+#include "virtix_proc.h"
+
+vpage_dir_t* current_vpage_dir = NULL;
+vpage_dir_t* root_vpage_dir = NULL;
 
 //Assembly abstraction for more maintainable code
 page_table_t* get_cr3(){
@@ -23,7 +27,7 @@ void set_cr3(vpage_dir_t* dir){
 	asm volatile ("movl %%eax, %%cr3" :: "a" (addr));
 }
 
-void set_cr0(unsigned int new_cr0){
+inline void set_cr0(unsigned int new_cr0){
 	asm volatile ("movl %%eax, %%cr0" :: "a" (new_cr0));
 }
 
@@ -67,4 +71,47 @@ void vpage_map(vpage_dir_t* dir, unsigned int phys, unsigned int virt){
 		tab->pages[i].present = 1;
 		phys += 4096;
 	}
+}
+
+void vpage_fault(registers_t* regs){
+	cli();
+	if(current_proc != NULL){
+		dump_proc(current_proc);
+	}
+
+	unsigned int err_pos;
+	asm volatile ("mov %%cr2, %0" : "=r" (err_pos));
+
+	vga_puts("Page fault occurred at ");
+	vga_puts_hex(err_pos);
+	
+	vga_puts("\nReasons:");
+
+	int no_page = regs->err_code & 1;
+	int rw = regs->err_code & 2;
+	int um = regs->err_code & 4;
+	int re = regs->err_code & 8;
+	int dc = regs->err_code & 16;
+
+	if(dc)		vga_puts(" (Instruction decode error) ");
+	if(!no_page)	vga_puts(" (No page present) ");
+	if(um)		vga_puts(" (in user mode) ");
+	if(rw)		vga_puts(" (Write permissions) ");
+	if(re)		vga_puts(" (RE) ");
+	
+
+	PANIC("vpage fault");
+}
+
+void virtix_page_init(){
+	current_vpage_dir = mk_vpage_dir();
+	root_vpage_dir = current_vpage_dir;
+
+	unsigned int i;
+	for(i = 0; i < 0x8000000; i += PAGE_S)
+		vpage_map(root_vpage_dir, i, i);
+	
+	register_interrupt_handler(14, vpage_fault);
+	cli();
+	switch_vpage_dir(root_vpage_dir);
 }
