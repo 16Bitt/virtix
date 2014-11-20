@@ -14,7 +14,6 @@ typedef struct {
 
 typedef struct virtix_proc {
 	vpage_dir_t* cr3;			//Memory pages
-	
 	registers_t registers;		//Process state
 
 	unsigned int pid;			//Process integer ID
@@ -43,6 +42,8 @@ virtix_proc_t* mk_empty_proc();								//Make an empty (initialized) process str
 void dump_proc(virtix_proc_t* proc);
 
 extern virtix_proc_t* current_proc;
+
+extern unsigned int stack_hold;
 
 #define PID_NOT_FOUND	((virtix_proc_t*) 0xFFFFFFFF)
 

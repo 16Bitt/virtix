@@ -11,6 +11,8 @@ virtix_proc_t* current_proc = NULL;
 
 registers_t hold_root;
 
+extern unsigned int stack_hold;
+
 void scheduler(registers_t* regs){
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
 	
@@ -26,7 +28,6 @@ void scheduler(registers_t* regs){
 	}
 
 	memcpy(regs, &current_proc->registers, sizeof(registers_t));
-	
 	switch_vpage_dir(current_proc->cr3);
 }
 

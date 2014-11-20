@@ -2,8 +2,8 @@
 #define DESC_TABLE_H
 
 struct gdt_entry_struct{
-	u16int limit_low;
-	u16int base_low;
+	unsigned short limit_low;
+	unsigned short base_low;
 	u8int base_middle;
 	u8int access;
 	u8int granularity;
@@ -12,25 +12,61 @@ struct gdt_entry_struct{
 typedef struct gdt_entry_struct gdt_entry_t;
 
 struct gdt_ptr_struct{
-	u16int limit;
-	u32int base;
+	unsigned short limit;
+	unsigned int base;
 }__attribute__((packed));
 typedef struct gdt_ptr_struct gdt_ptr_t;
 
 struct idt_entry_struct{
-	u16int base_lo;
-	u16int sel;
+	unsigned short base_lo;
+	unsigned short sel;
 	u8int always0;
 	u8int flags;
-	u16int base_hi;
+	unsigned short base_hi;
 }__attribute__((packed));
 typedef struct idt_entry_struct idt_entry_t;
 
 struct idt_ptr_struct{
-	u16int limit;
-	u32int base;
+	unsigned short limit;
+	unsigned int base;
 }__attribute__((packed));
 typedef struct idt_ptr_struct idt_ptr_t;
+
+// A struct describing a Task State Segment.
+struct tss_entry_struct
+{
+    unsigned int prev_tss;   // The previous TSS - if we used hardware task switching this would form a linked list.
+    unsigned int esp0;       // The stack pointer to load when we change to kernel mode.
+    unsigned int ss0;        // The stack segment to load when we change to kernel mode.
+    unsigned int esp1;       // Unused...
+    unsigned int ss1;
+    unsigned int esp2;  
+    unsigned int ss2;   
+    unsigned int cr3;   
+    unsigned int eip;   
+    unsigned int eflags;
+    unsigned int eax;
+    unsigned int ecx;
+    unsigned int edx;
+    unsigned int ebx;
+    unsigned int esp;
+    unsigned int ebp;
+    unsigned int esi;
+    unsigned int edi;
+    unsigned int es;         // The value to load into ES when we change to kernel mode.
+    unsigned int cs;         // The value to load into CS when we change to kernel mode.
+    unsigned int ss;         // The value to load into SS when we change to kernel mode.
+    unsigned int ds;         // The value to load into DS when we change to kernel mode.
+    unsigned int fs;         // The value to load into FS when we change to kernel mode.
+    unsigned int gs;         // The value to load into GS when we change to kernel mode.
+    unsigned int ldt;        // Unused...
+    unsigned short trap;
+    unsigned short iomap_base;
+
+} __attribute__((packed));
+
+typedef struct tss_entry_struct tss_t;
+
 
 void init_descriptor_tables();
 

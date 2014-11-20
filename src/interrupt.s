@@ -56,6 +56,7 @@ ISR_BLANK 30
 ISR_BLANK 31
 
 	[EXTERN isr_handler]
+	[EXTERN stack_hold]
 
 isr_common_stub:
 	pusha
@@ -72,7 +73,6 @@ isr_common_stub:
 
 	call isr_handler
 	
-	pop eax
 	pop ebx
 	mov ds, bx
 	mov es, bx

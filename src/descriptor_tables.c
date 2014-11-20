@@ -9,11 +9,15 @@ static void gdt_set_gate(int index, unsigned int base, unsigned int limit, unsig
 static void init_idt();
 static void idt_set_gate(unsigned char index, unsigned int base, unsigned short sel, unsigned char flags);
 
+static void write_tss(int, unsigned short, unsigned int);
+extern void tss_flush();
 
 gdt_entry_t gdt_entries[5];
 gdt_ptr_t gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t idt_ptr;
+
+extern unsigned int stack_hold;
 
 void init_descriptor_tables(){
 	init_gdt();
@@ -29,8 +33,10 @@ static void init_gdt(){
 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+	//write_tss(5, 0x10, 0);
 
 	gdt_flush((unsigned int) &gdt_ptr);
+	//tss_flush();
 }
 
 static void gdt_set_gate(int index, unsigned int base, unsigned int limit, unsigned char access, unsigned char granularity){
@@ -121,4 +127,23 @@ static void idt_set_gate(unsigned char index, unsigned int base, unsigned short 
 	idt_entries[index].sel = sel;
 	idt_entries[index].always0 = 0;
 	idt_entries[index].flags = flags /*| 0x60*/;
+}
+
+tss_t tss_entry;
+static void write_tss(int num, unsigned short ss0, unsigned int esp0){
+	unsigned int base	= (unsigned int) &tss_entry;
+	unsigned int limit	= base + sizeof(tss_entry);
+
+	gdt_set_gate(num, base, limit, 0xE9, 0x00);
+	memset(&tss_entry, 0, sizeof(tss_entry));
+	
+	tss_entry.ss0		= ss0;
+	tss_entry.esp0		= esp0;
+	tss_entry.cs		= 0x0B;
+	tss_entry.ss = tss_entry.ds = tss_entry.es = tss_entry.fs = tss_entry.gs = 0x13;
+}
+
+void tss_flush(){
+	asm volatile("movw $0x2B, %ax");
+	asm volatile("ltr %ax");
 }
