@@ -19,13 +19,15 @@ idt_ptr_t idt_ptr;
 
 extern unsigned int stack_hold;
 
+tss_t tss_entry;
+
 void init_descriptor_tables(){
 	init_gdt();
 	init_idt();
 }
 
 static void init_gdt(){
-	gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
+	gdt_ptr.limit = (sizeof(gdt_entry_t) * 6) - 1;
 	gdt_ptr.base = (unsigned int) &gdt_entries;
 
 	gdt_set_gate(0, 0, 0, 0, 0);
@@ -33,7 +35,7 @@ static void init_gdt(){
 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
-	write_tss(5, 0x10, 0);
+	write_tss(5, 0x10, stack_hold);
 
 	gdt_flush((unsigned int) &gdt_ptr);
 	flush_tss();
@@ -43,7 +45,6 @@ static void gdt_set_gate(int index, unsigned int base, unsigned int limit, unsig
 	gdt_entries[index].base_low = (base & 0xFFFF);
 	gdt_entries[index].base_middle = (base >> 16) & 0xFF;
 	gdt_entries[index].base_high = (base >> 24) & 0xFF;
-
 	gdt_entries[index].limit_low = (limit & 0xFFFF);
 	
 	gdt_entries[index].granularity = (limit >> 16) & 0x0F;
@@ -129,7 +130,6 @@ static void idt_set_gate(unsigned char index, unsigned int base, unsigned short 
 	idt_entries[index].flags = flags /*| 0x60*/;
 }
 
-tss_t tss_entry;
 static void write_tss(int num, unsigned short ss0, unsigned int esp0){
 	unsigned int base	= (unsigned int) &tss_entry;
 	unsigned int limit	= base + sizeof(tss_entry);
@@ -141,4 +141,8 @@ static void write_tss(int num, unsigned short ss0, unsigned int esp0){
 	tss_entry.esp0		= esp0;
 	tss_entry.cs		= 0x0B;
 	tss_entry.ss = tss_entry.ds = tss_entry.es = tss_entry.fs = tss_entry.gs = 0x13;
+}
+
+void set_kernel_stack(unsigned int stack){
+	tss_entry.esp0 = stack;
 }

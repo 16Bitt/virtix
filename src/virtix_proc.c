@@ -14,6 +14,7 @@ registers_t hold_root;
 extern unsigned int stack_hold;
 
 void scheduler(registers_t* regs){
+	set_kernel_stack(stack_hold);
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
 	
 	current_proc = current_proc->next;

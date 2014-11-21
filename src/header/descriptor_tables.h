@@ -120,4 +120,6 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
+void set_kernel_stack(unsigned int stack);
+
 #endif

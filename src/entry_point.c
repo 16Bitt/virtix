@@ -50,5 +50,5 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	sti();
 	
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
-	cli(); hlt();
+	kthread_hlt();
 }

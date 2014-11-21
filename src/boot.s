@@ -40,3 +40,20 @@ flush_tss:
 	mov ax, 0x2B
 	ltr ax
 	ret
+
+	[GLOBAL hard_usermode]
+	[EXTERN usermode_loader]
+hard_usermode:
+	mov ax, 0x23
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+
+	mov eax, esp
+	push 0x23
+	push eax
+	pushf
+	push 0x1B
+	push usermode_loader
+	iret
