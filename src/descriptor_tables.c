@@ -10,7 +10,7 @@ static void init_idt();
 static void idt_set_gate(unsigned char index, unsigned int base, unsigned short sel, unsigned char flags);
 
 static void write_tss(int, unsigned short, unsigned int);
-extern void tss_flush();
+extern void flush_tss();
 
 gdt_entry_t gdt_entries[5];
 gdt_ptr_t gdt_ptr;
@@ -33,10 +33,10 @@ static void init_gdt(){
 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
-	//write_tss(5, 0x10, 0);
+	write_tss(5, 0x10, 0);
 
 	gdt_flush((unsigned int) &gdt_ptr);
-	//tss_flush();
+	flush_tss();
 }
 
 static void gdt_set_gate(int index, unsigned int base, unsigned int limit, unsigned char access, unsigned char granularity){
@@ -141,9 +141,4 @@ static void write_tss(int num, unsigned short ss0, unsigned int esp0){
 	tss_entry.esp0		= esp0;
 	tss_entry.cs		= 0x0B;
 	tss_entry.ss = tss_entry.ds = tss_entry.es = tss_entry.fs = tss_entry.gs = 0x13;
-}
-
-void tss_flush(){
-	asm volatile("movw $0x2B, %ax");
-	asm volatile("ltr %ax");
 }
