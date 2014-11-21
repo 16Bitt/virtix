@@ -34,3 +34,9 @@ start:
 	cli			;Disable interrupts
 	call main		;Call C entry point
 	jmp $			;Hang when this ends
+
+	[GLOBAL flush_tss]
+flush_tss:
+	mov ax, 0x2B
+	ltr ax
+	ret
