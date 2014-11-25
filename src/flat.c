@@ -15,7 +15,7 @@ virtix_proc_t* flat_load_bin(void* addr){
 
 	unsigned int mem = (unsigned int) kmalloc_a(PAGE_S);
 	vpage_map(proc->cr3, 0, mem);
-	memcpy(mem, addr, 1024);
+	memcpy((void*) mem, (void*) addr, 1024);
 	
 	mem = (unsigned int) kmalloc_a(PAGE_S);
 	unsigned int esp = current_proc->registers.esp;

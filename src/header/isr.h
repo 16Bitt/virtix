@@ -19,4 +19,6 @@ void cli();
 void sti();
 void hlt();
 
+void register_default_handlers();
+
 #endif

@@ -115,3 +115,16 @@ void virtix_page_init(){
 	cli();
 	switch_vpage_dir(root_vpage_dir);
 }
+
+void convert_vpage(vpage_dir_t* kdir){
+	int i;
+	for(i = 0; i < 1024; i++){
+		kdir->tables[i] = (page_table_t*) ((unsigned int) kdir->tables[i] | 4); //Set usermode bit
+		
+		if(((unsigned int) kdir->tables[i]) & 1){ 				//The page is present
+			int j;
+			for(j = 0; j < 1024; j++)
+				kdir->tables[i]->pages[j].user = 1;			//Make every page within run in usermode
+		}
+	}
+}

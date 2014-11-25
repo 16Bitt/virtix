@@ -6,15 +6,13 @@
 #include "multiboot.h"
 #include "clock.h"
 #include "fs.h"
-#include "kthread.h"
 #include "kheap.h"
 
 //Untested
-#include "elf.h"
-#include "virtix_proc.h"
 #include "virtix_page.h"
 #include "flat.h"
-
+#include "single.h"
+#include "virtix_proc.h"
 
 void* stack = NULL;
 
@@ -41,14 +39,23 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 
 	vga_puts("main(): relocating modules\n");
 	void* mod_loc = kmalloc_a(1024 * 10);
-	memcpy(mod_loc, mboot_ptr->mods_addr, 1024 * 6);
+	memcpy(mod_loc, (void*) mboot_ptr->mods_addr, 1024 * 6);
 
 	vga_puts("main(): initializing read-only ramdisk\n");
-	mnt_initrd(mod_loc);
+	mnt_initrd((unsigned int) mod_loc);
+	
+	vga_puts("main(): registering default handlers\n");
+	register_default_handlers();
 
 	vga_puts("main(): starting interrupts\n");
 	sti();
 	
+	vga_puts("main(): loading a binary...\n");
+	virtix_proc_t* proc = flat_load_bin(get_file_data("userland.x"));
+
+	//vga_puts("main(): attempting to hardload userspace\n");
+	enter_userspace(proc);
+
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
-	kthread_hlt();
+	cli(); hlt();
 }

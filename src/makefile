@@ -1,13 +1,13 @@
 SOURCES	= entry_point.o clock.o common.o monitor.o boot.o descriptor_tables.o interrupt.o isr.o table.o kheap.o fs.o stream.o vfs.o paging.o virtix_proc.o elf.o flat.o kthread.o virtix_page.o single.o
-CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -Iheader/ -g
-LDFLAGS	= -Tlink.ld -melf_i386
+CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -Iheader/ -g -Werror
+LDFLAGS	= -Tlink.ld #-melf_i386
 ASFLAGS	= -felf
 CC	= colorgcc
 
 all: $(SOURCES) link mkinitramfs
 
 clean:
-	-rm *.o build/* grub.iso
+	-rm *.o grub.iso
 	-rm -rf build/*
 	-rm *.log
 

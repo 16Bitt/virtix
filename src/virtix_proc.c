@@ -168,7 +168,7 @@ void dump_proc(virtix_proc_t* proc){
 	vga_puts_hex(proc->registers.eip);
 
 	vga_puts("\t*CR3*=");
-	vga_puts_hex(proc->cr3);
+	vga_puts_hex((unsigned int) proc->cr3);
 	vga_puts("/");
 
 	unsigned int cr3;

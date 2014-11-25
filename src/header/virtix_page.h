@@ -12,17 +12,19 @@ extern vpage_dir_t* root_vpage_dir;
 
 #define EMPTY_TAB ((page_table_t*) 0x00000002)
 
-page_table_t* get_cr3();
-unsigned int get_cr0();
+page_table_t* get_cr3();			//contents of cr3 register
+unsigned int get_cr0();				//contents of cr0 register
 
-void set_cr3(vpage_dir_t* dir);
-inline void set_cr0(unsigned int new_cr0);
+void set_cr3(vpage_dir_t* dir);			//set cr3 register
+inline void set_cr0(unsigned int new_cr0);	//set cr0 register
 
-void switch_vpage_dir(vpage_dir_t* dir);
+void switch_vpage_dir(vpage_dir_t* dir);	//Change address space
 
-vpage_dir_t* mk_vpage_dir();
+vpage_dir_t* mk_vpage_dir();			//Make empty root page dir
 page_table_t* mk_vpage_table();
 
-void virtix_page_init();
+void virtix_page_init();			//Start paging
+
+void convert_vpage(vpage_dir_t* kdir);		//Change page to usermode
 
 #endif
