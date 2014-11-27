@@ -5,8 +5,6 @@
 		[GLOBAL isr%1]
 	isr%1:
 		cli
-		;mov [stack_hold], esp
-		;mov esp, [istack_base]
 		push byte 0
 		push byte %1
 		jmp isr_common_stub
@@ -15,8 +13,6 @@
 %macro ISR_ERR 1
 		[GLOBAL isr%1]
 	isr%1:
-		;mov [stack_hold], esp
-		;mov esp, [istack_base]
 		push byte %1
 		jmp isr_common_stub
 %endmacro
@@ -79,7 +75,7 @@ isr_common_stub:
 	mov gs, bx
 
 	popa			;--
-	add esp, 8
+	add esp, 10
 	iret
 
 %macro IRQ 2
@@ -90,7 +86,7 @@ isr_common_stub:
 		;mov esp, [istack_base]
 		push byte 0
 		push byte %2
-		jmp irq_common_stub
+		jmp isr_common_stub
 %endmacro
 	
 IRQ 0, 32
@@ -109,30 +105,3 @@ IRQ 12, 44
 IRQ 13, 45
 IRQ 14, 46
 IRQ 15, 47
-
-	[EXTERN irq_handler]
-
-irq_common_stub:
-	pusha		;REGS
-	mov ax, ds
-	push eax	;REGS, EAX	
-
-	mov ax, 0x10
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	push esp	;REGS, EAX, ESP
-
-	call irq_handler
-	
-	add esp, 4	;REGS, EAX
-	pop ebx		;REGS
-	mov ds, bx
-	mov es, bx
-	mov fs, bx
-	mov gs, bx
-
-	popa		;--
-	add esp, 8
-	iret

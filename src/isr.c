@@ -8,9 +8,16 @@ isr_t interrupt_handlers[256];
 unsigned int* istack_base;
 
 void isr_handler(registers_t* regs){
-	vga_puts("CAUGHT INTERRUPT: ");
-	vga_puts_hex(regs->int_no);
-	vga_putc('\n');
+	if(regs->int_no != 0x20){
+		vga_puts("CAUGHT INTERRUPT: ");
+		vga_puts_hex(regs->int_no);
+		vga_putc('\n');
+	}
+
+	if(regs->int_no >= 40)
+		outb(0xA0, 0x20);
+
+	outb(0x20, 0x20);
 
 	if(interrupt_handlers[regs->int_no]){
 		isr_t handler = interrupt_handlers[regs->int_no];
@@ -51,7 +58,7 @@ void ex_double_fault(registers_t* regs){
 }
 
 void ex_div_by_zero(registers_t* regs){
-	PANIC("division by zero");
+	vga_puts("\nHW exception thrown: division by zero\n");
 }
 
 void ex_bad_opcode(registers_t* regs){
