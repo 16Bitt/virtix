@@ -75,7 +75,7 @@ isr_common_stub:
 	mov gs, bx
 
 	popa			;--
-	add esp, 10
+	add esp, 8
 	iret
 
 %macro IRQ 2

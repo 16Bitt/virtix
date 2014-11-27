@@ -12,7 +12,7 @@ static void idt_set_gate(unsigned char index, unsigned int base, unsigned short 
 static void write_tss(int, unsigned short, unsigned int);
 extern void flush_tss();
 
-gdt_entry_t gdt_entries[5];
+gdt_entry_t gdt_entries[6];
 gdt_ptr_t gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t idt_ptr;
@@ -127,7 +127,7 @@ static void idt_set_gate(unsigned char index, unsigned int base, unsigned short 
 	idt_entries[index].base_hi = (base >> 16) & 0xFFFF;
 	idt_entries[index].sel = sel;
 	idt_entries[index].always0 = 0;
-	idt_entries[index].flags = flags /*| 0x60*/;
+	idt_entries[index].flags = flags | 0x60;
 }
 
 static void write_tss(int num, unsigned short ss0, unsigned int esp0){

@@ -53,9 +53,6 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	vga_puts("main(): loading a binary...\n");
 	virtix_proc_t* proc = flat_load_bin(get_file_data("userland.x"));
 
-	int x = 0;
-	esp /= x;
-
 	vga_puts("main(): attempting to hardload userspace\n");
 	enter_userspace(proc);
 
