@@ -15,7 +15,6 @@
 %macro ISR_ERR 1
 		[GLOBAL isr%1]
 	isr%1:
-		cli
 		;mov [stack_hold], esp
 		;mov esp, [istack_base]
 		push byte %1
@@ -59,26 +58,27 @@ ISR_BLANK 31
 	[EXTERN stack_hold]
 
 isr_common_stub:
-	pusha
+	pusha			;REGS
 	mov ax, ds
-	push eax
+	push eax		;REGS, EAX
 
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
-	push esp
+	push esp		;REGS, EAX, ESP
 
 	call isr_handler
 	
-	add esp, 4
+	add esp, 4		;REGS, EAX
+	pop ebx			;REGS
 	mov ds, bx
 	mov es, bx
 	mov fs, bx
 	mov gs, bx
 
-	popa
+	popa			;--
 	add esp, 8
 	iret
 
@@ -86,7 +86,6 @@ isr_common_stub:
 		[GLOBAL irq%1]
 	
 	irq%1:
-		cli
 		;mov [stack_hold], esp
 		;mov esp, [istack_base]
 		push byte 0
@@ -114,30 +113,26 @@ IRQ 15, 47
 	[EXTERN irq_handler]
 
 irq_common_stub:
-	pusha
-
+	pusha		;REGS
 	mov ax, ds
-	push eax
+	push eax	;REGS, EAX	
 
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
-	mov eax, esp
-	push eax
+	push esp	;REGS, EAX, ESP
 
 	call irq_handler
 	
-	pop eax
-	pop ebx
+	add esp, 4	;REGS, EAX
+	pop ebx		;REGS
 	mov ds, bx
 	mov es, bx
 	mov fs, bx
 	mov gs, bx
 
-	popa
+	popa		;--
 	add esp, 8
-	;mov esp, [stack_hold]
-	sti
 	iret
