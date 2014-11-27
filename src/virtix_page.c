@@ -73,6 +73,21 @@ void vpage_map(vpage_dir_t* dir, unsigned int phys, unsigned int virt){
 	}
 }
 
+void vpage_map_user(vpage_dir_t* dir, unsigned int phys, unsigned int virt){
+	short id = virt >> 22;
+	page_table_t* tab = mk_vpage_table();
+	
+	dir->tables[id] = ((page_table_t*)((unsigned int) tab | 3 | 4)); //Writeable/present + usermode
+	
+	int i;
+	for(i = 0; i < 1024; i++){
+		tab->pages[i].frame = phys >> 12;
+		tab->pages[i].present = 1;
+		tab->pages[i].user = 1;
+		phys += 4096;
+	}
+}
+
 void vpage_fault(registers_t* regs){
 	cli();
 	if(current_proc != NULL){
@@ -127,4 +142,9 @@ void convert_vpage(vpage_dir_t* kdir){
 				kdir->tables[i]->pages[j].user = 1;			//Make every page within run in usermode
 		}
 	}
+}
+
+void dump_page(vpage_dir_t* dir, unsigned int address){
+	unsigned short id = address >> 22;
+	DISP("Index salt =", (unsigned int) dir->tables[id]);
 }

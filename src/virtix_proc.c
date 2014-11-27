@@ -125,6 +125,10 @@ virtix_proc_t* mk_empty_proc(){
 	proc->registers.ss = 0x10;
 	proc->cr3 = mk_vpage_dir();
 
+	int i;
+	for(i = 0; i < 1024; i++)
+		proc->cr3->tables[i] = root_vpage_dir->tables[i];
+
 	return proc;
 }
 

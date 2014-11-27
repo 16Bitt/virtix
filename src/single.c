@@ -17,10 +17,7 @@ unsigned int sp_child(){
 
 void enter_userspace(virtix_proc_t* proc){
 	hl_eip = proc->registers.eip;
-	hl_cr3 = (unsigned int) &proc->cr3->tables[0];
-	hl_esp = proc->registers.esp;
-	//What more could a process ask for?
-
+	switch_vpage_dir(proc->cr3);
 	hard_usermode();
 }
 

@@ -25,6 +25,11 @@ page_table_t* mk_vpage_table();
 
 void virtix_page_init();			//Start paging
 
+void vpage_map(vpage_dir_t* cr3, unsigned int virt, unsigned int phys);
+void vpage_map_user(vpage_dir_t* cr3, unsigned int virt, unsigned int phys);
+
 void convert_vpage(vpage_dir_t* kdir);		//Change page to usermode
+
+void dump_page(vpage_dir_t* dir, unsigned int address);
 
 #endif

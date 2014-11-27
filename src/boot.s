@@ -59,9 +59,4 @@ hard_usermode:
 	push 0x1B
 	push dword [hl_eip] 	;Sets up a fake stack
 	
-	mov eax, dword [hl_cr3]	;Change address space
-	mov cr3, eax
-	cli
-	hlt
-	mov cr0, eax
 	iret			;Hard load
