@@ -68,12 +68,11 @@ isr_common_stub:
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
-	mov eax, esp
-	push eax
+	push esp
 
 	call isr_handler
 	
-	pop ebx
+	add esp, 4
 	mov ds, bx
 	mov es, bx
 	mov fs, bx
@@ -81,8 +80,6 @@ isr_common_stub:
 
 	popa
 	add esp, 8
-	;mov esp, [stack_hold]
-	sti
 	iret
 
 %macro IRQ 2
