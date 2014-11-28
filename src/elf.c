@@ -31,7 +31,13 @@ virtix_proc_t* elf_load(void* elf_data){
 		return (virtix_proc_t*) NULL;
 	}
 
-	vpage_dir_t* cr3 = mk_vpage_dir();
+	virtix_proc_t* proc = mk_empty_proc();
+	proc->name = "ELF_PROGRAM";
+	proc->registers.eip = header->e_entry;
+	proc->registers.esp = header->e_entry + PAGE_S - 1;
+
+	switch_vpage_dir(proc->cr3);
+
 	elf32_phdr* phdr = (elf32_phdr*) (((unsigned int) elf_data) + header->e_phoff);
 
 	int i;
@@ -42,20 +48,14 @@ virtix_proc_t* elf_load(void* elf_data){
 			case 1:
 				vga_puts("Allocating space for ELF binary section...\n");
 				unsigned int loc = (unsigned int) kmalloc_a(PAGE_S);
-				vpage_map(cr3, phdr->p_vaddr, loc);
-				//map_vpage_to_ppage(phdr->p_vaddr, loc);
+				vpage_map_user(proc->cr3, loc, phdr->p_vaddr);
 				memcpy((void*) phdr->p_vaddr, ((void*) ((unsigned int) elf_data) + phdr->p_offset), phdr->p_filesz);
 				break;
 			default:
-				PANIC("unknown header in elf parser");
-			return 0;
+				vga_puts("WARN: skipping unknown file header in elf\n");
 		}
 	}
-	
-	virtix_proc_t* proc = mk_empty_proc();
-	proc->name = "ELF_PROGRAM";
-	//proc->cr3 = current_dir;
-	proc->registers.eip = header->e_entry;
 
+	switch_vpage_dir(root_vpage_dir);
 	return proc;
 }

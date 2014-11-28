@@ -13,6 +13,7 @@
 #include "flat.h"
 #include "single.h"
 #include "virtix_proc.h"
+#include "elf.h"
 
 void* stack = NULL;
 
@@ -51,7 +52,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	sti();
 	
 	vga_puts("main(): loading a binary...\n");
-	virtix_proc_t* proc = flat_load_bin(get_file_data("userland.x"));
+	virtix_proc_t* proc = elf_load(get_file_data("userland.x"));
 
 	vga_puts("main(): attempting to hardload userspace\n");
 	enter_userspace(proc);

@@ -52,7 +52,7 @@ hard_usermode:
 	mov fs, ax
 	mov gs, ax
 
-	mov eax, esp
+	mov eax, dword [hl_esp]
 	push 0x23
 	push eax
 	pushf
