@@ -4,6 +4,7 @@
 #include "clock.h"
 #include "isr.h"
 #include "virtix_page.h"
+#include "single.h"
 
 unsigned int pid = 0;
 virtix_proc_t* root;
@@ -14,12 +15,12 @@ registers_t hold_root;
 extern unsigned int stack_hold;
 
 void scheduler(registers_t* regs){
-	set_kernel_stack(stack_hold);
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
 	
 	current_proc = current_proc->next;
-	if(current_proc == NULL)
+	if(current_proc == NULL){
 		current_proc = root;
+	}
 
 	while(current_proc->state == PROC_ASLEEP){
 		current_proc = current_proc->next;
@@ -32,28 +33,31 @@ void scheduler(registers_t* regs){
 	switch_vpage_dir(current_proc->cr3);
 }
 
-void init_procs(void* goto_here){
-	root = mk_empty_proc();
+void init_procs(virtix_proc_t* proc){
+	root		= proc;
 	root->pid	= pid++;
 	root->next	= NULL;
 	root->thread	= PROC_ROOT; //Unkillable
 	root->state	= PROC_RUNNING;
 	
 	current_proc = root;
-
-	current_proc->name = "ROOT";
-	current_proc->cr3 = root_vpage_dir;
 	
 	cli();
-	start_timer(20);
+	start_timer(1000);
 	cli();
+	
 	register_interrupt_handler(32, scheduler);
-	sti();
+	enter_userspace(proc);
 }
 
 void kill_proc(unsigned int pid){
 	vga_puts("WARN: kill_proc() is dummy stub\n");
-	susp_proc(pid);
+	virtix_proc_t* proc = pid_to_proc(pid);
+
+	if(proc == PID_NOT_FOUND)
+		PANIC("can't kill unknown PID");
+
+	proc->state = PROC_ASLEEP;
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){
@@ -70,10 +74,11 @@ unsigned int spawn_proc(virtix_proc_t* process){
 void susp_proc(unsigned int pid){
 	virtix_proc_t* proc = pid_to_proc(pid);
 	
-	if(proc == PID_NOT_FOUND)
+	if(proc == PID_NOT_FOUND){
+		vga_puts("WARN: couldn't find PID for suspension\n");
 		return;
-	
-	DISP("suspending process", pid);
+	}
+
 	proc->state = PROC_ASLEEP;
 }
 

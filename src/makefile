@@ -1,4 +1,4 @@
-SOURCES	= entry_point.o clock.o common.o monitor.o boot.o descriptor_tables.o interrupt.o isr.o table.o kheap.o fs.o stream.o vfs.o paging.o virtix_proc.o elf.o flat.o kthread.o virtix_page.o single.o
+SOURCES	= entry_point.o clock.o common.o monitor.o boot.o descriptor_tables.o interrupt.o isr.o table.o kheap.o fs.o stream.o vfs.o paging.o virtix_proc.o elf.o flat.o kthread.o virtix_page.o single.o userspace.o
 CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -Iheader/ -g -Werror
 LDFLAGS	= -Tlink.ld -melf_i386
 ASFLAGS	= -felf
@@ -7,6 +7,7 @@ CC	= colorgcc
 all: $(SOURCES) link mkinitramfs
 
 clean:
+	cd userland && make clean
 	-rm *.o grub.iso
 	-rm -rf build/*
 	-rm *.log
@@ -17,9 +18,7 @@ link:
 .s.o:
 	nasm $(ASFLAGS) $<
 
-mkinitramfs:
-	cd test && make
-	cp test/*.x initramfs/
+mkinitramfs: binaries
 	cd initramfs && make
 
 run: all
@@ -41,3 +40,7 @@ dimg: all
 
 bochs: dimg
 	-bochs -q 2> bochs.log
+
+binaries:
+	cd userland && make
+	cp userland/*.x initramfs/

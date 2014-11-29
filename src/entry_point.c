@@ -4,23 +4,15 @@
 #include "descriptor_tables.h"
 #include "isr.h"
 #include "multiboot.h"
-#include "clock.h"
 #include "fs.h"
 #include "kheap.h"
+#include "virtix_page.h"
 
 //Untested
-#include "virtix_page.h"
-#include "flat.h"
-#include "single.h"
 #include "virtix_proc.h"
 #include "elf.h"
 
 void* stack = NULL;
-
-void waiting(registers_t regs){
-	vga_puts("Waiting...\n");
-	kthread_exit();
-}
 
 unsigned int stack_hold;
 
@@ -47,15 +39,19 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): registering default handlers\n");
 	register_default_handlers();
+	
+	vga_puts("main(): registering userspace handler\n");
+	init_userspace();
 
 	vga_puts("main(): starting interrupts\n");
 	sti();
 	
 	vga_puts("main(): loading a binary...\n");
-	virtix_proc_t* proc = elf_load(get_file_data("userland.x"));
+	virtix_proc_t* proc = elf_load(get_file_data("hello.x"));
 
-	vga_puts("main(): attempting to hardload userspace\n");
-	enter_userspace(proc);
+	vga_puts("main(): entering usermode\n");
+	//enter_userspace(proc);
+	init_procs(proc);
 
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
 	cli(); hlt();
