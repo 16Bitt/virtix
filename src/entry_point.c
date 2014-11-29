@@ -50,8 +50,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	virtix_proc_t* proc = elf_load(get_file_data("hello.x"));
 
 	vga_puts("main(): entering usermode\n");
-	//enter_userspace(proc);
-	init_procs(proc);
+	enter_userspace(proc);
 
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
 	cli(); hlt();

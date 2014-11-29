@@ -3,6 +3,7 @@
 #include "isr.h"
 #include "virtix_proc.h"
 #include "userspace.h"
+#include "single.h"
 
 uint c_err;
 
@@ -33,7 +34,7 @@ void userspace_handler(registers_t* regs){
 
 		//Modifies the process
 		case SYS_EXIT:
-			regs->eax = _exit(regs->ebx);
+			regs->eax = single_exit(regs);	//leave return code for parent	
 			return;
 
 		default:

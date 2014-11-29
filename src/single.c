@@ -3,8 +3,7 @@
 #include "virtix_proc.h"
 #include "isr.h"
 
-virtix_proc_t* pstack[10];
-int psp	= 0;
+virtix_proc_t* proc_bottom = NULL;
 
 //These values are read by hardload function
 unsigned int hl_cr3;
@@ -16,6 +15,8 @@ unsigned int sp_child(){
 }
 
 void enter_userspace(virtix_proc_t* proc){
+	proc_bottom = proc;
+	proc->next = NULL;
 	hl_eip = proc->registers.eip;
 	hl_esp = proc->registers.esp;
 	switch_vpage_dir(proc->cr3);
@@ -24,7 +25,25 @@ void enter_userspace(virtix_proc_t* proc){
 	hard_usermode();
 }
 
-void usermode_loader(){
-	//vga_puts("You made it to the usermode party!\n");
-	hlt();
+void single_yield(virtix_proc_t* proc, registers_t* regs){
+	memcpy(&proc_bottom->registers, regs, sizeof(registers_t));
+	
+	proc->next = proc_bottom;
+	proc_bottom = proc;
+	
+	memcpy(regs, &proc->registers, sizeof(registers_t));
+	switch_vpage_dir(proc->cr3);
+}
+
+unsigned int single_exit(registers_t* regs){
+	unsigned int hold = regs->ebx;
+	proc_bottom = proc_bottom->next;
+
+	if(proc_bottom == NULL)
+		PANIC("return from process with no parent");
+
+	memcpy(regs, &proc_bottom->registers, sizeof(registers_t));
+	switch_vpage_dir(proc_bottom->cr3);
+
+	return hold;
 }

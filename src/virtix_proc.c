@@ -125,9 +125,9 @@ virtix_proc_t* pid_to_proc(unsigned int pid){
 
 virtix_proc_t* mk_empty_proc(){
 	virtix_proc_t* proc = (virtix_proc_t*) kmalloc_a(sizeof(virtix_proc_t));
-	proc->registers.cs = 0x08;
-	proc->registers.ds = 0x10;
-	proc->registers.ss = 0x10;
+	proc->registers.cs = 0x1B;
+	proc->registers.ds = 0x23;
+	proc->registers.ss = 0x23;
 	proc->cr3 = mk_vpage_dir();
 
 	int i;
