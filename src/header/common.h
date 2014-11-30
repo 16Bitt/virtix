@@ -8,6 +8,9 @@ typedef short 		s16int;
 typedef unsigned char	u8int;
 typedef char		s8int;
 typedef int		size_t;
+typedef unsigned int	uint;
+typedef unsigned char	uchar;
+typedef unsigned short	ushort;
 
 #define NULL 0
 #define FALSE 0
@@ -19,6 +22,7 @@ typedef int bool;
 
 void outb(unsigned short port, unsigned char value);
 unsigned char inb(unsigned short port);
+ushort inw(ushort port);
 void* memset(void* s, int c, size_t n);
 void* memcpy(void* dest, const void* src, size_t n);
 
