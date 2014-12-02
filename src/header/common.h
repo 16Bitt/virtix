@@ -21,6 +21,7 @@ typedef int bool;
 #define true (!false)
 
 void outb(unsigned short port, unsigned char value);
+void outw(ushort port, ushort value);
 unsigned char inb(unsigned short port);
 ushort inw(ushort port);
 void* memset(void* s, int c, size_t n);

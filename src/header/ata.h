@@ -86,10 +86,14 @@
 #define ATA_MASTER_SEL 0xA0
 #define ATA_SLAVE_SEL 0xB0
 
-void reset_ata(uchar bus);
-void select_ata(uchar bus, uint master);
-uchar ident_ata(uchar bus, uchar drive);
-void ata_wait(ushort io);
+void select_ata(uchar bus, uint master);	//Sets controller to given drive
+uchar ident_ata(uchar bus, uchar drive);	//Checks that current drive is valid ATA
+
+void ata_wait(ushort io);	//Proper 400ns delay
+void ata_poll(ushort io);	//Polls until disk is ready for next command after 400ns delay
+
+void ata_read_block(ushort* buffer, uint lba);	//Read block into buffer from ATA
+void ata_write_block(ushort* buffer, uint lba);	//Write block from buffer to ATA
 
 void init_ata();
 
