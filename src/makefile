@@ -2,7 +2,7 @@ SOURCES	= entry_point.o clock.o common.o monitor.o boot.o descriptor_tables.o in
 CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -Iheader/ -g -Werror
 LDFLAGS	= -Tlink.ld -melf_i386
 ASFLAGS	= -felf
-CC	= colorgcc
+CC	= gcc
 
 all: $(SOURCES) link mkinitramfs
 
