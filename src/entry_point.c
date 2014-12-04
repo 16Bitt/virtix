@@ -11,6 +11,8 @@
 //Untested
 #include "virtix_proc.h"
 #include "elf.h"
+#include "fat.h"
+#include "ata.h"
 
 void* stack = NULL;
 
@@ -56,6 +58,11 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 
 	vga_puts("main(): starting ATA driver\n");
 	init_ata();
+	
+	vga_puts("main(): starting FAT driver\n");
+	init_fat();
+	disp_bpb();
+	disp_fat_dir();
 
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
 	cli(); hlt();

@@ -4,10 +4,15 @@ LDFLAGS	= -Tlink.ld -melf_i386
 CC	= gcc
 TARGET	= hello.x
 
-all: $(SOURCES) link
+all: $(SOURCES) link disk
+
+disk:
+	dd if=/dev/zero of=hdd.img bs=512 count=419328
+	/sbin/mkdosfs hdd.img
+	mcopy -i hdd.img *.c ::/
 
 link:
 	ld $(LDFLAGS) -o $(TARGET) $(SOURCES)
 
 clean:
-	-rm *.o *.x
+	-rm *.o *.x *.img

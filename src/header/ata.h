@@ -94,6 +94,8 @@ void ata_poll(ushort io);	//Polls until disk is ready for next command after 400
 
 void ata_read_block(ushort* buffer, uint lba);	//Read block into buffer from ATA
 void ata_write_block(ushort* buffer, uint lba);	//Write block from buffer to ATA
+void ata_read_blocks(ushort* buffer, uint lba, uint length);
+void ata_write_blocks(ushort* buffer, uint lba, uint length);
 
 void init_ata();
 

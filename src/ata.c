@@ -114,6 +114,15 @@ void ata_read_block(ushort* buffer, uint lba){
 	ata_wait(io);
 }
 
+void ata_read_blocks(ushort* buffer, uint lba, uint length){
+	while(length != 0){
+		ata_read_block(buffer, lba);
+		buffer = (ushort*) ((uint) buffer + 512);
+		lba++;
+		length--;
+	}
+}
+
 void ata_write_block(ushort* buffer, uint lba){
 	//TODO: these are hardcoded for the primary master
 	uchar cmd = 0xE0;
@@ -138,6 +147,15 @@ void ata_write_block(ushort* buffer, uint lba){
 		outw(io + ATA_REG_DATA, buffer[i]);
 
 	ata_wait(io);
+}
+
+void ata_write_blocks(ushort* buffer, uint lba, uint length){
+	while(length != 0){
+		ata_write_block(buffer, lba);
+		buffer = (ushort*) ((uint) buffer + 512);
+		lba++;
+		length--;
+	}
 }
 
 void init_ata(){
