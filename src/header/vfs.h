@@ -1,6 +1,9 @@
 #ifndef VFS_H
 #define VFS_H
 
+//The aim of this header is to provide basic
+//POSIX VFS style operation for the OS
+
 #include "common.h"
 
 typedef uint (*read_type_t)(struct fs_node*, uint, uint, char*);
@@ -32,5 +35,29 @@ typedef struct fs_node{
 
 	struct fs_node* link;
 } vfs_node_t;
+
+struct dirent{
+	char name[128];
+	uint ino;
+};
+
+#define FS_FILE		1
+#define FS_DIRECTORY	2
+#define FS_CHARDEVICE	3
+#define FS_BLOCKDEVICE	4
+#define FS_PIPE		5
+#define FS_SYMLINK	6
+#define FS_MOUNTPOINT	8
+
+extern fs_node_t* root_node;
+
+uint read_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
+uint write_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
+
+void open_fs(fs_node_t* node);
+void close_fs(fs_node_t* node);
+
+struct dirent* readdir_fs(fs_node_t* node, uint index);
+fs_node_t* finddir_fs(fs_node_t* node, char* name);
 
 #endif
