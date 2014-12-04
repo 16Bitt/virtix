@@ -2,43 +2,35 @@
 #define VFS_H
 
 #include "common.h"
-#include "stream.h"
 
-typedef struct vfs_node{
-	char*			name;	//Name of node
-	void* 			buffer;	//Address of data
-	unsigned int		size;	//size of data
-	struct vfs_node*	next;	//Pointer to next node in linked list
-	struct vfs_node*	last;	//Parent
+typedef uint (*read_type_t)(struct fs_node*, uint, uint, char*);
+typedef uint (*write_type_t)(struct fs_node*, uint, uint, char*);
+typedef uint (*open_type_t)(struct fs_node*);
+typedef uint (*close_type_t)(struct fs_node*);
+
+typedef struct dirent* (*readdir_type_t)(struct fs_node*, uint);
+typedef struct fs_node* (*finddir_type_t)(struct fs_node*, char* name);
+
+typedef struct fs_node{
+	char name[128];
+	uint permissions;
+
+	uint uid;
+	uint gid;
+	uint flags;
+
+	uint inode;
+	uint length;
+
+	read_type_t	read;
+	write_type_t	write;
+	open_type_t	open;
+	close_type_t	close;
+
+	readdir_type_t	readdir;
+	finddir_type_t	finddir;
+
+	struct fs_node* link;
 } vfs_node_t;
-
-//Constants for more readable code
-#define FILE_EXIST 1
-#define FILE_NO_EXIST 0
-
-#define FILE_BOT 0
-#define FILE_TOP 1
-
-//Initializes all state required for the vfs
-void		init_vfs();
-//Creates a new file from RAM
-void		vfs_ramload(char* name, void* address, unsigned int size);
-
-//Associate a stream with a name
-unsigned int	vfs_assoc(char* name, stream_t* stream);		
-//Remove (delete) a file
-unsigned int	vfs_rm(char* name);
-//Copy a file into another
-unsigned int	vfs_cp(char* orig, char* new_file);
-//Renames a file
-unsigned int	vfs_reassoc(char* name, char* new_name);
-//Check if a file exists
-unsigned int	vfs_isfile(char* name);
-
-//Copies file into a stream and returns the stream
-unsigned int		vfs_open(char* name, unsigned int mode);
-
-//Writes all of the file names in the VFS to the desired stream
-void		vfs_list(unsigned int stream_id);
 
 #endif
