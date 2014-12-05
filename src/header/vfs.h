@@ -6,10 +6,12 @@
 
 #include "common.h"
 
+struct fs_node;
+
 typedef uint (*read_type_t)(struct fs_node*, uint, uint, char*);
 typedef uint (*write_type_t)(struct fs_node*, uint, uint, char*);
-typedef uint (*open_type_t)(struct fs_node*);
-typedef uint (*close_type_t)(struct fs_node*);
+typedef void (*open_type_t)(struct fs_node*);
+typedef void (*close_type_t)(struct fs_node*);
 
 typedef struct dirent* (*readdir_type_t)(struct fs_node*, uint);
 typedef struct fs_node* (*finddir_type_t)(struct fs_node*, char* name);
@@ -34,7 +36,7 @@ typedef struct fs_node{
 	finddir_type_t	finddir;
 
 	struct fs_node* link;
-} vfs_node_t;
+} fs_node_t;
 
 struct dirent{
 	char name[128];
