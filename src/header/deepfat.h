@@ -20,4 +20,9 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name);
 //Convert DF inode to FAT filename
 char* get_fat_name(uint inode);
 
+//Utilities for rapid file deployment
+fs_node_t* mk_empty_node();
+fs_node_t* mk_empty_fnode();
+fs_node_t* mk_empty_dnode();
+
 #endif
