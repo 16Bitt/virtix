@@ -44,6 +44,8 @@ typedef struct{
 	uint	bytes;
 }__attribute__((packed)) fat_dir_t;
 
+extern fat_header_t fat_header;
+
 void init_fat();
 uint cluster_to_lba(uint cluster);
 void disp_bpb();

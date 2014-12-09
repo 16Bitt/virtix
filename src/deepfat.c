@@ -84,3 +84,5 @@ fs_node_t* parse_dir(char* dir){
 void init_deepfat(){
 	df_root = parse_dir("DFATROOTDIR");
 }
+
+
