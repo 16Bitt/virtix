@@ -17,14 +17,14 @@ uint write_fs(fs_node_t* node, uint offset, uint size, uchar* buffer){
 		return 0;
 }
 
-void open_fs(fs_node_t* node){
+void open_fs(fs_node_t* node, uint offset){
 	if(node->open != NULL)
-		node->open(node);
+		node->open(node, offset);
 }
 
 void close_fs(fs_node_t* node){
 	if(node->close != NULL)
-		node->open(node);
+		node->close(node);
 }
 
 struct dirent* readdir_fs(fs_node_t* node, uint index){

@@ -56,7 +56,7 @@ extern fs_node_t* root_node;
 uint read_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
 uint write_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
 
-void open_fs(fs_node_t* node);
+void open_fs(fs_node_t* node, uint offset);
 void close_fs(fs_node_t* node);
 
 struct dirent* readdir_fs(fs_node_t* node, uint index);

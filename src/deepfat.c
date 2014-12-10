@@ -40,20 +40,32 @@ fs_node_t* mk_empty_dnode(){
 }
 
 fs_node_t* parse_dir(char* dir){
+	vga_puts("parse_dir(): making vfs node for '");
+	vga_puts(dir);
+	vga_puts("'\n");
+
 	fs_node_t* node = mk_empty_dnode();
+	vga_puts("parse_dir(): reading .DIR file\n");
 	char* fat_buff = (char*) fat_load_full(dir);
 	
+	vga_puts("parse_dir(): formatting .DIR in RAM\n");
 	char* str = prep_str(fat_buff);
 
+	vga_puts("parse_dir(): verifying directory integrity\n");
 	ASSERT(strcmp(str, "DEEPFAT") == 0);
 	str = next_str(str);
 	ASSERT(strcmp(str, "DEEPDIR") == 0);
 	str = next_str(str);
 
-	while(strcmp(str, "ENDDIR") == 0){
-		char* ent = next_str(str);
+	while(strcmp(str, "ENDDIR") != 0){
+		vga_puts("parse_dir(): reading deepFAT entry\n");
+		char* ent = str;
 		str = next_str(ent);
 		
+		vga_puts("parse_dir(): found ent of type '");
+		vga_puts(ent);
+		vga_puts("'\n");
+
 		fs_node_t* sub;
 
 		if(strcmp(ent, "DIR") == 0){
