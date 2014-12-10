@@ -8,10 +8,10 @@
 
 struct fs_node;
 
-typedef uint (*read_type_t)(struct fs_node*, uint, uint, char*);
-typedef uint (*write_type_t)(struct fs_node*, uint, uint, char*);
-typedef void (*open_type_t)(struct fs_node*);
-typedef void (*close_type_t)(struct fs_node*);
+typedef uint (*read_type_t)	(struct fs_node*, uint, uint, char*);
+typedef uint (*write_type_t)	(struct fs_node*, uint, uint, char*);
+typedef void (*open_type_t)	(struct fs_node*, uint);
+typedef void (*close_type_t)	(struct fs_node*);
 
 typedef struct dirent* (*readdir_type_t)(struct fs_node*, uint);
 typedef struct fs_node* (*finddir_type_t)(struct fs_node*, char* name);

@@ -2,6 +2,7 @@
 #include "vfs.h"
 #include "fat.h"
 #include "str-util.h"
+#include "deepfat.h"
 
 fs_node_t* df_root;
 
@@ -11,6 +12,9 @@ fs_node_t* mk_empty_node(){
 	
 	node->permissions = 777;
 	node->uid = node->gid = node->flags = 0;
+	
+	node->open	= df_open;
+	node->close	= df_close;
 
 	return node;
 }
@@ -18,9 +22,9 @@ fs_node_t* mk_empty_node(){
 fs_node_t* mk_empty_fnode(){
 	fs_node_t* node = mk_empty_node();
 	
-	node->flags = FS_FILE;
-	node->read = df_read;
-	node->write = df_write;
+	node->flags	= FS_FILE;
+	node->read	= df_read;
+	node->write	= df_write;
 
 	return node;
 }
@@ -37,7 +41,7 @@ fs_node_t* mk_empty_dnode(){
 
 fs_node_t* parse_dir(char* dir){
 	fs_node_t* node = mk_empty_dnode();
-	void* fat_buff = fat_load_full(dir);
+	char* fat_buff = (char*) fat_load_full(dir);
 	
 	char* str = prep_str(fat_buff);
 
@@ -85,4 +89,26 @@ void init_deepfat(){
 	df_root = parse_dir("DFATROOTDIR");
 }
 
+uint df_read(fs_node_t* node, uint offset, uint size, char* buffer){
+	return 0;
+}
 
+uint df_write(fs_node_t* node, uint offset, uint size, char* buffer){
+	return 0;
+}
+
+void df_open(fs_node_t* node, uint index){
+	return;
+}
+
+void df_close(fs_node_t* node){
+	return;
+}
+
+struct dirent* df_readdir(fs_node_t* node, uint index){
+	return NULL;
+}
+
+fs_node_t* df_finddir(fs_node_t* node, char* name){
+	return NULL;
+}

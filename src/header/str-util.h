@@ -6,7 +6,7 @@
 #include "common.h"
 
 //Turn all spaces and newlines into \o
-void prep_str(char* str);
+char* prep_str(char* str);
 
 //Returns the next word in a prep_str'd string
 char* next_str(char* str);

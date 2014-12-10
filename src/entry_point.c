@@ -13,6 +13,7 @@
 #include "elf.h"
 #include "fat.h"
 #include "ata.h"
+#include "deepfat.h"
 
 void* stack = NULL;
 
@@ -61,8 +62,10 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): starting FAT driver\n");
 	init_fat();
-	disp_bpb();
 	disp_fat_dir();
+
+	vga_puts("main(): starting deepFAT driver\n");
+	init_deepfat();
 
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
 	cli(); hlt();

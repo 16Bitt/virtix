@@ -9,7 +9,7 @@ all: $(SOURCES) link disk
 disk:
 	dd if=/dev/zero of=hdd.img bs=512 count=419328
 	/sbin/mkdosfs hdd.img
-	mcopy -i hdd.img *.c ::/
+	bin/mkdf.sh . hdd.img
 
 link:
 	ld $(LDFLAGS) -o $(TARGET) $(SOURCES)
