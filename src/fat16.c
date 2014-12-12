@@ -104,3 +104,21 @@ void disp_fat_dir(){
 		}
 	}
 }
+
+char* fat_name_conv(char* actual){
+	char* internal = (char*) kmalloc(11); //11 byte file name
+	memset(internal, ' ', 11);
+
+	int i; bool spc; int len = 0;
+	for(i = 0; i < 11; i++, len++){
+		if(actual[len] == 0)
+			break;
+
+		if(actual[i] == '.')
+			i = 7;
+		else
+			internal[i] = actual[len];
+	}
+	
+	return internal;
+}

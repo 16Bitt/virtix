@@ -56,7 +56,6 @@ mkdf_dir () {
 			add_record $tfile DIR $i $count.DIR
 			local hold=$count.DIR
 			mkdf_dir $i $count $hold
-			mcopy -i $image $hold ::/$hold
 		else
 			if [ $i = hdd.img ]; then
 				continue
@@ -78,6 +77,6 @@ for i in *.DIR; do
 	echo ENDDIR >> $i
 done
 
-mcopy -i $image DFATROOT.DIR ::/DFATROOT.DIR
+mcopy -i $image *.DIR ::/
 rm *.DIR
 echo deepFAT loaded.

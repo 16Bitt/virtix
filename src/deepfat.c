@@ -40,56 +40,78 @@ fs_node_t* mk_empty_dnode(){
 }
 
 fs_node_t* parse_dir(char* dir){
-	vga_puts("parse_dir(): making vfs node for '");
-	vga_puts(dir);
-	vga_puts("'\n");
+	//vga_puts("parse_dir(): making vfs node for '");
+	//vga_puts(dir);
+	//vga_puts("'\n");
 
 	fs_node_t* node = mk_empty_dnode();
-	vga_puts("parse_dir(): reading .DIR file\n");
+	//vga_puts("parse_dir(): reading .DIR file\n");
 	char* fat_buff = (char*) fat_load_full(dir);
 	
-	vga_puts("parse_dir(): formatting .DIR in RAM\n");
+	//vga_puts(fat_buff);
+
+	//vga_puts("parse_dir(): formatting .DIR in RAM\n");
 	char* str = prep_str(fat_buff);
 
-	vga_puts("parse_dir(): verifying directory integrity\n");
+	//vga_puts("parse_dir(): verifying directory integrity\n");
 	ASSERT(strcmp(str, "DEEPFAT") == 0);
 	str = next_str(str);
 	ASSERT(strcmp(str, "DEEPDIR") == 0);
 	str = next_str(str);
 
 	while(strcmp(str, "ENDDIR") != 0){
-		vga_puts("parse_dir(): reading deepFAT entry\n");
+		//vga_puts("parse_dir(): reading deepFAT entry\n");
 		char* ent = str;
 		str = next_str(ent);
 		
-		vga_puts("parse_dir(): found ent of type '");
-		vga_puts(ent);
-		vga_puts("'\n");
+		//vga_puts("parse_dir(): found ent of type '");
+		//vga_puts(ent);
+		//vga_puts("'\n");
 
 		fs_node_t* sub;
 
 		if(strcmp(ent, "DIR") == 0){
-			sub = parse_dir(str);
-			fat_dir_t* file = fat_dir_search(str);
+			char* name = str;
+			//vga_puts("parse_dir(): making dir for '");
+			//vga_puts(name);
+			//vga_puts("'\n");
+			str = next_str(str);
+			sub = parse_dir(fat_name_conv(str));
+			
+			strmov(sub->name, name);
+			fat_dir_t* file = fat_dir_search(fat_name_conv(str));
 			sub->inode	= file->cluster_low;
 			sub->length	= file->bytes;
 		}
 
 		else if(strcmp(ent, "FIL") == 0){
+			char* name = str;
+			str = next_str(str);
 			sub = mk_empty_fnode();
-			fat_dir_t* file = fat_dir_search(str);
+			
+			//vga_puts("parse_dir(): searching for file '");
+			//vga_puts(name);
+			//vga_puts("'\n");
+			
+			fat_dir_t* file = fat_dir_search(fat_name_conv(str));
+			
+			strmov(sub->name, name);
 			sub->inode	= file->cluster_low;
 			sub->length	= file->bytes;
 		}
 
-		else PANIC("bad deepFAT directory entry");
-	
+		else{
+			PANIC("bad deepFAT directory entry");
+		}
+
+		str = ent;
 		str = next_str(str);
-		int i;
-		for(i = 0; i < strlen(str); i++)
-			sub->name[i] = str[i];
-		sub->name[strlen(str)] = 0;
-	
+		str = next_str(str);
+		str = next_str(str);
+		//str = next_str(str);
+
+		//vga_puts(str);
+		
 		node->link = sub;
 		node = sub;
 	}

@@ -39,7 +39,7 @@ dimg: all
 	-grub-mkrescue -o grub.iso build
 
 bochs: dimg
-	-bochs -q 2> bochs.log
+	-echo c | bochs -q 2> bochs.log
 
 binaries:
 	cd userland && make
