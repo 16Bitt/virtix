@@ -59,6 +59,19 @@ void* fat_load_full(char* fat_name){
 	return top;
 }
 
+uint calc_cluster(uint offset){
+	return offset / (fat_header->sectors_per_cluster * fat_header->bytes_per_sector);
+}
+
+void fat_read(char* buffer, uint offset, uint length){
+	uint end = calc_cluster(offset);
+	uint ssize = fat_header->sectors_per_cluster * fat_header->bytes_per_sector;
+	char* tmp_buf = (char*) kmalloc(ssize);
+
+	uint i;
+	for(i = 0; i < end; 
+}
+
 void disp_bpb(){
 	vga_puts("init_fat(): read FAT12/16 volume\n");
 	
