@@ -59,19 +59,6 @@ void* fat_load_full(char* fat_name){
 	return top;
 }
 
-uint calc_cluster(uint offset){
-	return offset / (fat_header->sectors_per_cluster * fat_header->bytes_per_sector);
-}
-
-void fat_read(char* buffer, uint offset, uint length){
-	uint end = calc_cluster(offset);
-	uint ssize = fat_header->sectors_per_cluster * fat_header->bytes_per_sector;
-	char* tmp_buf = (char*) kmalloc(ssize);
-
-	uint i;
-	for(i = 0; i < end; 
-}
-
 void disp_bpb(){
 	vga_puts("init_fat(): read FAT12/16 volume\n");
 	
@@ -134,4 +121,130 @@ char* fat_name_conv(char* actual){
 	}
 	
 	return internal;
+}
+
+int fat_strcmp(char* str1, char* str2){
+	int i;
+	for(i = 0; i < 11; i++)
+		if(str1[i] != str2[i])
+			return -1;
+
+	return 0;
+}
+
+fat_dir_t* fat_create(char* name){
+	name = fat_name_conv(name);
+	fat_dir_t* target = NULL;
+
+	int i;
+	for(i = 0; i < fat_header.dir_size; i++)
+		if(fat_strcmp(fat_dir[i].name, name) == 0)
+			return NULL;
+
+	for(i = 0; i < fat_header.dir_size; i++)
+		if(fat_dir[i].name[0] == 0){
+			target = &fat_dir[i];
+			break;
+		}
+
+	if(target == NULL)
+		PANIC("internal search for free FAT entry failed");
+
+	//Create initialized entry
+	memcpy(target->name, name, 11);
+	target->cluster_low = 0xFFFF;
+	target->bytes = 0;
+
+	kfree(name);
+	return target;
+}
+
+ushort fat_next_cluster(){
+	int i;
+	for(i = 2; i < (fat_header.sectors_per_fat * 512); i++)
+		if(cluster_list[i] == 0)
+			return i;
+
+	PANIC("FAT driver could find no free clusters");
+	return 0;
+}
+
+void fat_delete(char* name){
+	name = fat_name_conv(name);
+
+	int i;
+	for(i = 0; i < fat_header.dir_size; i++)
+		if(fat_strcmp(name, fat_dir[i].name) == 0){
+			ushort cluster = fat_dir[i].cluster_low;
+			while(cluster < 0xFFF0){
+				ushort next = cluster_list[cluster];
+				cluster_list[cluster] = 0;
+				cluster = next;
+			}
+
+			memset(&fat_dir[i], 0, sizeof(fat_dir_t));
+			break;
+		}
+
+	kfree(name);
+}
+
+void fat_write(char* name, char* buffer, uint length, bool mode){
+	if(mode == FAT_REPLACE)
+		fat_delete(name);
+	
+	char* fname = fat_name_conv(name);
+
+	int i;
+	fat_dir_t* target = NULL;
+
+	for(i = 0; i < fat_header.dir_size; i++)
+		if(fat_strcmp(fat_dir[i].name, fname) == 0)
+			target = &fat_dir[i];
+
+	if(target == NULL)
+		target = fat_create(name);
+
+	fat_append(name, buffer, length);
+	kfree(fname);
+}
+
+void fat_append(char* name, char* buffer, uint length){
+	char* fname = fat_name_conv(name);
+	uint clength = (length / CLUSTER_BSIZE);
+	if(length % CLUSTER_BSIZE)
+		clength += 1;
+
+	int i;
+	fat_dir_t* target = NULL;
+
+	for(i = 0; i < fat_header.dir_size; i++)
+		if(fat_strcmp(fat_dir[i].name, fname) == 0)
+			target = &fat_dir[i];
+	
+	ushort cluster = target->cluster_low;
+	while(cluster < 0xFFF0)
+		cluster = cluster_list[i];
+
+	ushort start = cluster;
+	for(i = 0; i < clength; i++){
+		cluster_list[cluster] = fat_next_cluster();
+		cluster = cluster_list[cluster];
+	}
+
+	cluster_list[cluster] = 0xFFFF;
+	cluster = start;
+
+	for(i = 0; i < clength; i++){
+		ata_write_blocks((ushort*) buffer, cluster_to_lba(cluster), FAT_SPC);
+		cluster = cluster_list[cluster];
+	}
+	
+	target->bytes += length;
+	kfree(fname);
+}
+
+void fat_sync(){
+	ata_write_blocks((ushort*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, FAT_DIR_SIZE);
+	ata_write_blocks(cluster_list, fat_header.number_reserved, fat_header.sectors_per_fat * 2);
 }
