@@ -240,7 +240,7 @@ void fat_append(char* name, char* buffer, uint length){
 		cluster = cluster_list[cluster];
 	}
 	
-	target->bytes += length;
+	target->bytes += clength * CLUSTER_BSIZE;
 	kfree(fname);
 }
 

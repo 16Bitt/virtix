@@ -62,13 +62,11 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): starting FAT driver\n");
 	init_fat();
-	disp_fat_dir();
 
 	vga_puts("main(): starting deepFAT driver\n");
 	init_deepfat();
-
-	fat_write("test.jpg", (char*) mboot_ptr, sizeof(struct multiboot), FAT_REPLACE);
-	disp_fat_dir();
+	
+	vga_puts("main(): syncing FAT\n");
 	fat_sync();
 
 	vga_puts("main(): reached end of execution, hanging the CPU\n");
