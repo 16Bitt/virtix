@@ -39,6 +39,17 @@ fat_dir_t* fat_dir_search(char* fat_name){
 	PANIC("internal search for file in FAT failed");
 }
 
+fat_dir_t* fat_search(char* fat_name){
+	int i;
+	for(i = 0; i < fat_header.dir_size; i++){
+		fat_dir[i].attributes = 0;
+		if(strcmp(fat_name, fat_dir[i].name) == 0)
+			return &fat_dir[i];
+	}
+
+	return NULL;
+}
+
 void* fat_load_full(char* fat_name){
 	fat_dir_t* head = fat_dir_search(fat_name);
 	
@@ -136,11 +147,12 @@ fat_dir_t* fat_create(char* name){
 	name = fat_name_conv(name);
 	fat_dir_t* target = NULL;
 
+	if(fat_search(name)){
+		kfree(name);
+		return NULL;
+	}
+	
 	int i;
-	for(i = 0; i < fat_header.dir_size; i++)
-		if(fat_strcmp(fat_dir[i].name, name) == 0)
-			return NULL;
-
 	for(i = 0; i < fat_header.dir_size; i++)
 		if(fat_dir[i].name[0] == 0){
 			target = &fat_dir[i];
@@ -189,59 +201,50 @@ void fat_delete(char* name){
 	kfree(name);
 }
 
-void fat_write(char* name, char* buffer, uint length, bool mode){
-	if(mode == FAT_REPLACE)
-		fat_delete(name);
+uint fat_read_block(char* name, uint offset, uchar* buffer){
+	name = fat_name_conv(name);
+	kfree(name);
+	fat_dir_t* entry = fat_search(name);
+
+	ushort cluster = entry->cluster_low;
+	if(cluster >= 0xFFF0)
+		return -1;
 	
-	char* fname = fat_name_conv(name);
+	while(offset != 0){
+		cluster = cluster_list[cluster];
+		if(cluster >= 0xFFF0)
+			return -1;
+		
+		offset--;
+	}
 
-	int i;
-	fat_dir_t* target = NULL;
-
-	for(i = 0; i < fat_header.dir_size; i++)
-		if(fat_strcmp(fat_dir[i].name, fname) == 0)
-			target = &fat_dir[i];
-
-	if(target == NULL)
-		target = fat_create(name);
-
-	fat_append(name, buffer, length);
-	kfree(fname);
+	ata_read_blocks((ushort*) buffer, cluster_to_lba(cluster), FAT_SPC);
+	return 0;
 }
 
-void fat_append(char* name, char* buffer, uint length){
-	char* fname = fat_name_conv(name);
-	uint clength = (length / CLUSTER_BSIZE);
-	if(length % CLUSTER_BSIZE)
-		clength += 1;
+uint fat_write_block(char* name, uint offset, uchar* buffer){
+	name = fat_name_conv(name);
+	kfree(name);
+	fat_dir_t* entry = fat_search(name);
 
-	int i;
-	fat_dir_t* target = NULL;
-
-	for(i = 0; i < fat_header.dir_size; i++)
-		if(fat_strcmp(fat_dir[i].name, fname) == 0)
-			target = &fat_dir[i];
-	
-	ushort cluster = target->cluster_low;
-	while(cluster < 0xFFF0)
-		cluster = cluster_list[i];
-
-	ushort start = cluster;
-	for(i = 0; i < clength; i++){
-		cluster_list[cluster] = fat_next_cluster();
-		cluster = cluster_list[cluster];
+	ushort cluster = entry->cluster_low;
+	if(cluster >= 0xFFF0){	//If the cluster is the end, make a new one
+		cluster = fat_next_cluster();
+		entry->cluster_low = cluster;
+		cluster_list[cluster] = 0xFFFF;
 	}
 
-	cluster_list[cluster] = 0xFFFF;
-	cluster = start;
-
-	for(i = 0; i < clength; i++){
-		ata_write_blocks((ushort*) buffer, cluster_to_lba(cluster), FAT_SPC);
+	while(offset != 0){
+		if(cluster_list[cluster] >= 0xFFF0){ //End? Make a new one and continue
+			cluster_list[cluster] = fat_next_cluster();
+			cluster_list[cluster_list[cluster]] = 0xFFFF;
+		}
+		
 		cluster = cluster_list[cluster];
+		offset--;
 	}
-	
-	target->bytes += clength * CLUSTER_BSIZE;
-	kfree(fname);
+
+	ata_write_blocks((ushort*) buffer, cluster_to_lba(cluster), FAT_SPC);
 }
 
 void fat_sync(){

@@ -51,18 +51,22 @@ uint cluster_to_lba(uint cluster);
 void disp_bpb();
 void disp_fat_dir();
 
+fat_dir_t* fat_search(char* fat_name);
+
 void* fat_load_full(char* fat_name);
 fat_dir_t* fat_dir_search(char* fat_name);
 char* fat_name_conv(char* actual);
 
-void fat_write(char* name, char* buffer, uint length, bool mode);
-void fat_append(char* name, char* buffer, uint length);		
 fat_dir_t* fat_create(char* name);				//Find and create free entry
 void fat_delete(char* name);					//Remove entry and clusters
 
+uint fat_read_block(char* name, uint offset, uchar* buffer);
+uint fat_write_block(char* name, uint offset, uchar* buffer);
 ushort fat_next_cluster();					//First free cluster
 
 void fat_sync();						//Sync between ram and disk tables
+
+
 
 #define FAT_TOTAL_SIZE (fat_header.number_fats * fat_header.sectors_per_fat)
 #define FAT_DIR_SIZE ((32 * fat_header.dir_size) / 512)

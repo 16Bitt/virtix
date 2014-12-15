@@ -62,6 +62,9 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): starting FAT driver\n");
 	init_fat();
+	
+	fat_create("test.jpg");
+	fat_write_block("test.jpg", 20, (uchar*) main);
 
 	vga_puts("main(): starting deepFAT driver\n");
 	init_deepfat();
