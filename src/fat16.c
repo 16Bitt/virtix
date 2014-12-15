@@ -206,14 +206,17 @@ uint fat_read_block(char* name, uint offset, uchar* buffer){
 	kfree(name);
 	fat_dir_t* entry = fat_search(name);
 
+	if(entry == NULL)
+		return (uint) -1;
+
 	ushort cluster = entry->cluster_low;
 	if(cluster >= 0xFFF0)
-		return -1;
+		return (uint) -1;
 	
 	while(offset != 0){
 		cluster = cluster_list[cluster];
 		if(cluster >= 0xFFF0)
-			return -1;
+			return (uint) -1;
 		
 		offset--;
 	}
@@ -226,6 +229,9 @@ uint fat_write_block(char* name, uint offset, uchar* buffer){
 	name = fat_name_conv(name);
 	kfree(name);
 	fat_dir_t* entry = fat_search(name);
+	
+	if(entry == NULL)
+		return (uint) -1;
 
 	ushort cluster = entry->cluster_low;
 	if(cluster >= 0xFFF0){	//If the cluster is the end, make a new one
@@ -245,6 +251,44 @@ uint fat_write_block(char* name, uint offset, uchar* buffer){
 	}
 
 	ata_write_blocks((ushort*) buffer, cluster_to_lba(cluster), FAT_SPC);
+	return 0;
+}
+
+void update_size(fat_dir_t* entry, uint offset, uint length){
+	if(offset > entry->bytes){
+		entry->bytes = offset + length;
+		return;
+	}
+	
+	if(offset + length > entry->bytes){
+		entry->bytes = offset + length;
+	}
+
+	return;
+}
+
+uint offset_to_cluster(uint offset){
+	return offset / CLUSTER_BSIZE;
+}
+
+uint offset_in_cluster(uint offset){
+	return offset - offset_to_cluster(offset);
+}
+
+uint fat_read(char* name, uint offset, uint length, uchar* buffer){
+	char* fname = fat_name_conv(name);
+	fat_dir_t* entry = fat_search(fname);
+	kfree(fname);
+	
+	if(entry == NULL)
+		return (uint) -1;
+	
+	uchar* scratch = (uchar*) kmalloc(CLUSTER_BSIZE);
+	while(length != 0){
+		fat_read_blocks(name, offset_to_cluster(offset), scratch);
+		uint index = offset_in_cluster(offset);
+		memcpy(buffer, &scratch[index], //RESUME HERE`
+	}
 }
 
 void fat_sync(){

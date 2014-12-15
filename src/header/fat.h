@@ -62,11 +62,12 @@ void fat_delete(char* name);					//Remove entry and clusters
 
 uint fat_read_block(char* name, uint offset, uchar* buffer);
 uint fat_write_block(char* name, uint offset, uchar* buffer);
+uint fat_read(char* name, uint offset, uint length, uchar* buffer);
+uint fat_write(char* name, uint offset, uint length, uchar* buffer);
 ushort fat_next_cluster();					//First free cluster
 
 void fat_sync();						//Sync between ram and disk tables
-
-
+void update_size(fat_dir_t* entry, uint offset, uint length);	//Update an entry during write
 
 #define FAT_TOTAL_SIZE (fat_header.number_fats * fat_header.sectors_per_fat)
 #define FAT_DIR_SIZE ((32 * fat_header.dir_size) / 512)
