@@ -267,6 +267,18 @@ void update_size(fat_dir_t* entry, uint offset, uint length){
 	return;
 }
 
+uint fat_cluster_size(fat_dir_t* entry){
+	uint size = 0;
+	uint cluster = entry->cluster_low;
+
+	while(cluster < 0xFFF0){
+		cluster = cluster_list[cluster];
+		size++;
+	}
+
+	return size;
+}
+
 uint offset_to_cluster(uint offset){
 	return offset / CLUSTER_BSIZE;
 }
@@ -285,10 +297,62 @@ uint fat_read(char* name, uint offset, uint length, uchar* buffer){
 	
 	uchar* scratch = (uchar*) kmalloc(CLUSTER_BSIZE);
 	while(length != 0){
-		fat_read_blocks(name, offset_to_cluster(offset), scratch);
+		fat_read_block(name, offset_to_cluster(offset), scratch);
 		uint index = offset_in_cluster(offset);
-		memcpy(buffer, &scratch[index], //RESUME HERE`
+		if(CLUSTER_BSIZE - index < length){
+			memcpy(buffer, &scratch[index], CLUSTER_BSIZE - index);
+			buffer = (uchar*) ((uint) buffer + (CLUSTER_BSIZE - index));
+			length -= CLUSTER_BSIZE - index;
+		}
+
+		else{
+			memcpy(buffer, &scratch[index], length);
+			break;
+		}
 	}
+	
+	kfree(scratch);
+	return 0;
+}
+
+uint fat_write(char* name, uint offset, uint length, uchar* buffer){
+	char* fname = fat_name_conv(name);
+	fat_dir_t* entry = fat_search(fname);
+	kfree(fname);
+	
+	if(entry == NULL)
+		return (uint) -1;
+	
+	update_size(entry, offset, length);
+	
+	if(offset_to_cluster(offset) > fat_cluster_size(entry)){
+		uint extension = offset_to_cluster(offset);
+		while(extension < offset_to_cluster(offset + length)){
+			fat_write_block(name, extension, buffer);
+			extension += CLUSTER_BSIZE;
+		}
+	}
+
+	uchar* scratch = (uchar*) kmalloc(CLUSTER_BSIZE);
+	while(length != 0){
+		fat_read_block(name, offset_to_cluster(offset), scratch);
+		uint index = offset_in_cluster(offset);
+		if(CLUSTER_BSIZE - index < length){
+			memcpy(&scratch[index], buffer, CLUSTER_BSIZE - index);
+			buffer = (uchar*) ((uint) buffer + (CLUSTER_BSIZE - index));
+			length -= CLUSTER_BSIZE - index;
+		}
+
+		else{
+			memcpy(&scratch[index], buffer, length);
+			length = 0;
+		}
+		
+		fat_write_block(name, offset_to_cluster(offset), scratch);
+	}
+	
+	kfree(scratch);
+	return 0;
 }
 
 void fat_sync(){
