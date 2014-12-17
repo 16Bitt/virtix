@@ -8,6 +8,15 @@ fat_header_t	fat_header;
 ushort*		cluster_list;
 fat_dir_t*	fat_dir;
 
+int fat_strcmp(char* str1, char* str2){
+	int i;
+	for(i = 0; i < 11; i++)
+		if(str1[i] != str2[i])
+			return -1;
+
+	return 0;
+}
+
 void init_fat(){
 	ushort* mbr = (ushort*) kmalloc(512);
 	ata_read_block(mbr, 0);
@@ -31,8 +40,7 @@ uint cluster_to_lba(uint cluster){
 fat_dir_t* fat_dir_search(char* fat_name){
 	int i;
 	for(i = 0; i < fat_header.dir_size; i++){
-		fat_dir[i].attributes = 0;
-		if(strcmp(fat_name, fat_dir[i].name) == 0)
+		if(fat_strcmp(fat_dir[i].name, fat_name) == 0)
 			return &fat_dir[i];
 	}
 
@@ -125,22 +133,13 @@ char* fat_name_conv(char* actual){
 		if(actual[len] == 0)
 			break;
 
-		if(actual[i] == '.')
+		if(actual[len] == '.')
 			i = 7;
 		else
 			internal[i] = actual[len];
 	}
 	
 	return internal;
-}
-
-int fat_strcmp(char* str1, char* str2){
-	int i;
-	for(i = 0; i < 11; i++)
-		if(str1[i] != str2[i])
-			return -1;
-
-	return 0;
 }
 
 fat_dir_t* fat_create(char* name){

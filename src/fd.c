@@ -20,7 +20,6 @@ fs_node_t* fd_lookup(uint fd){
 uint fd_create(fs_node_t* node, uint offset){
 	int i;
 	for(i = 0; i < MAX_FD; i++){
-		vga_puts("fd_create(): none\n");
 		if(fd_list[i].present == 0){
 			fd_list[i].offset	= offset;
 			fd_list[i].node		= node;

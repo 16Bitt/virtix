@@ -63,6 +63,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): starting FAT driver\n");
 	init_fat();
+	disp_fat_dir();
 
 	vga_puts("main(): starting deepFAT driver\n");
 	init_deepfat();
@@ -77,6 +78,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfread(f, 20, buffer);
 	vga_puts("main(): read finished\n");
 	vga_puts(buffer);
+	vga_puts("\n");
 
 	vga_puts("main(): syncing FAT\n");
 	fat_sync();

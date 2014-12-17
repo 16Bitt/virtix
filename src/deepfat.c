@@ -123,7 +123,7 @@ fs_node_t* parse_dir(char* dir){
 }
 
 void init_deepfat(){
-	df_root = parse_dir("DFATROOTDIR");
+	df_root = parse_dir(fat_name_conv("DFATROOT.DIR"));
 }
 
 uint df_read(fs_node_t* node, uint offset, uint size, char* buffer){

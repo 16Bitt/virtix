@@ -54,14 +54,14 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 	for(i = 0; i < strlen(name); i++)
 		if(name[i] == '/')
 			name[i] = 0;
-
+	
 	//Iterate down the pathname
 	do{
 		node = node->link;
 
 		while(node != NULL){
 			if(strcmp(node->name, name) == 0)
-				break;
+				goto finish_find;
 
 			node = node->link;
 		}
@@ -72,6 +72,7 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 		name = next_str(name);
 	}while((uint) name < (uint) end);
 	
+finish_find:
 	//Clean up and yield
 	kfree(name);
 	return node;
