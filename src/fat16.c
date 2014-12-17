@@ -287,7 +287,7 @@ uint offset_in_cluster(uint offset){
 	return offset - offset_to_cluster(offset);
 }
 
-uint fat_read(char* name, uint offset, uint length, uchar* buffer){
+uint fat_read(char* name, uint offset, uint length, char* buffer){
 	char* fname = fat_name_conv(name);
 	fat_dir_t* entry = fat_search(fname);
 	kfree(fname);
@@ -315,7 +315,7 @@ uint fat_read(char* name, uint offset, uint length, uchar* buffer){
 	return 0;
 }
 
-uint fat_write(char* name, uint offset, uint length, uchar* buffer){
+uint fat_write(char* name, uint offset, uint length, char* buffer){
 	char* fname = fat_name_conv(name);
 	fat_dir_t* entry = fat_search(fname);
 	kfree(fname);

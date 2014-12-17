@@ -62,8 +62,8 @@ void fat_delete(char* name);					//Remove entry and clusters
 
 uint fat_read_block(char* name, uint offset, uchar* buffer);
 uint fat_write_block(char* name, uint offset, uchar* buffer);
-uint fat_read(char* name, uint offset, uint length, uchar* buffer);
-uint fat_write(char* name, uint offset, uint length, uchar* buffer);
+uint fat_read(char* name, uint offset, uint length, char* buffer);
+uint fat_write(char* name, uint offset, uint length, char* buffer);
 ushort fat_next_cluster();					//First free cluster
 
 void fat_sync();						//Sync between ram and disk tables

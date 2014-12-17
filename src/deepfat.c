@@ -60,21 +60,12 @@ fs_node_t* parse_dir(char* dir){
 	str = next_str(str);
 
 	while(strcmp(str, "ENDDIR") != 0){
-		//vga_puts("parse_dir(): reading deepFAT entry\n");
 		char* ent = str;
 		str = next_str(ent);
-		
-		//vga_puts("parse_dir(): found ent of type '");
-		//vga_puts(ent);
-		//vga_puts("'\n");
-
 		fs_node_t* sub;
 
 		if(strcmp(ent, "DIR") == 0){
 			char* name = str;
-			//vga_puts("parse_dir(): making dir for '");
-			//vga_puts(name);
-			//vga_puts("'\n");
 			str = next_str(str);
 			sub = parse_dir(fat_name_conv(str));
 			
@@ -82,6 +73,12 @@ fs_node_t* parse_dir(char* dir){
 			fat_dir_t* file = fat_dir_search(fat_name_conv(str));
 			sub->inode	= file->cluster_low;
 			sub->length	= file->bytes;
+			
+			//Callbacks for basic VFS manipulation
+			sub->open	= df_open;
+			sub->close	= df_close;
+			sub->readdir	= df_readdir;
+			sub->finddir	= df_finddir;
 		}
 
 		else if(strcmp(ent, "FIL") == 0){
@@ -89,15 +86,17 @@ fs_node_t* parse_dir(char* dir){
 			str = next_str(str);
 			sub = mk_empty_fnode();
 			
-			//vga_puts("parse_dir(): searching for file '");
-			//vga_puts(name);
-			//vga_puts("'\n");
-			
 			fat_dir_t* file = fat_dir_search(fat_name_conv(str));
 			
 			strmov(sub->name, name);
 			sub->inode	= file->cluster_low;
 			sub->length	= file->bytes;
+			
+			//Callbacks for basic file manipulation
+			sub->write	= df_write;
+			sub->read	= df_read;
+			sub->open	= df_open;
+			sub->close	= df_close;
 		}
 
 		else{
@@ -124,18 +123,20 @@ void init_deepfat(){
 }
 
 uint df_read(fs_node_t* node, uint offset, uint size, char* buffer){
-	return 0;
+	return read_fs(node, offset, size, buffer);
 }
 
 uint df_write(fs_node_t* node, uint offset, uint size, char* buffer){
-	return 0;
+	return write_fs(node, offset, size, buffer);
 }
 
 void df_open(fs_node_t* node, uint index){
+	vga_puts("WARN: df_open() is dummy stub\n");
 	return;
 }
 
 void df_close(fs_node_t* node){
+	vga_puts("WARN: df_close() is dummy stub\n");
 	return;
 }
 

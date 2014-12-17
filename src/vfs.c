@@ -2,6 +2,7 @@
 #include "monitor.h"
 #include "kheap.h"
 #include "vfs.h"
+#include "str-util.h"
 
 uint read_fs(fs_node_t* node, uint offset, uint size, uchar* buffer){
 	if(node->read != NULL)
@@ -39,4 +40,33 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name){
 		return node->finddir(node, name);
 	else
 		return (fs_node_t*) NULL;
+}
+
+fs_node_t* fs_path(fs_node_t* node, char* name){
+	//Copy the name for when we modify it
+	char* cpy = (char*) kmalloc(strlen(name) + 1);
+	strmov(cpy, name);
+	name = cpy;
+	char* end = &name[strlen(name)];
+	
+	//Format for parsing (zero-style parsing)
+	int i;
+	for(i = 0; i < strlen(name); i++)
+		if(name[i] == '/')
+			name[i] = 0;
+
+	//Iterate down the pathname
+	do{
+		node = finddir_fs(node, name);
+		if(node == NULL){
+			kfree(cpy);
+			return NULL;
+		}
+
+		name = next_str(name);
+	}while((uint) name < (uint) end);
+	
+	//Clean up and yield
+	kfree(name);
+	return node;
 }
