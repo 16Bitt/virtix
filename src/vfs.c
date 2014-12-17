@@ -18,9 +18,9 @@ uint write_fs(fs_node_t* node, uint offset, uint size, uchar* buffer){
 		return 0;
 }
 
-void open_fs(fs_node_t* node, uint offset){
+uint open_fs(fs_node_t* node, uint offset){
 	if(node->open != NULL)
-		node->open(node, offset);
+		return node->open(node, offset);
 }
 
 void close_fs(fs_node_t* node){
@@ -57,12 +57,18 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 
 	//Iterate down the pathname
 	do{
-		node = finddir_fs(node, name);
-		if(node == NULL){
-			kfree(cpy);
-			return NULL;
+		node = node->link;
+
+		while(node != NULL){
+			if(strcmp(node->name, name) == 0)
+				break;
+
+			node = node->link;
 		}
 
+		if(node == NULL)
+			return NULL;
+		
 		name = next_str(name);
 	}while((uint) name < (uint) end);
 	
@@ -89,4 +95,14 @@ struct dirent* readdir_generic(fs_node_t* node, uint index){
 	strmov(dir->name, link->name);
 	dir->ino = link->inode;
 	return dir;
+}
+
+void vfs_ls(fs_node_t* dir){
+	fs_node_t* link = dir->link;
+
+	while(link != NULL){
+		vga_puts(link->name);
+		vga_puts("\n");
+		link = link->link;
+	}
 }

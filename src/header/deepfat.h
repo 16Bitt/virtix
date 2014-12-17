@@ -12,7 +12,7 @@ void init_deepfat();
 //VFS driver interfaces
 uint df_read	(struct fs_node* node, uint offset, uint size, char* buffer);
 uint df_write	(struct fs_node* node, uint offset, uint size, char* buffer);
-void df_open	(struct fs_node* node, uint index);
+uint df_open	(struct fs_node* node, uint index);
 void df_close	(struct fs_node* node);
 
 struct dirent* df_readdir(struct fs_node* node, uint index);

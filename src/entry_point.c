@@ -14,6 +14,7 @@
 #include "fat.h"
 #include "ata.h"
 #include "deepfat.h"
+#include "file.h"
 
 void* stack = NULL;
 
@@ -68,6 +69,14 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): starting file descriptor interface\n");
 	init_fd();
+
+	vga_puts("main(): testing file interface\n");
+	FILE f = kfopen("makefile", 0);
+	char* buffer = (char*) kmalloc(21);
+	buffer[20] = 0;
+	kfread(f, 20, buffer);
+	vga_puts("main(): read finished\n");
+	vga_puts(buffer);
 
 	vga_puts("main(): syncing FAT\n");
 	fat_sync();

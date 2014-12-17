@@ -10,7 +10,7 @@ struct fs_node;
 
 typedef uint (*read_type_t)	(struct fs_node*, uint, uint, char*);
 typedef uint (*write_type_t)	(struct fs_node*, uint, uint, char*);
-typedef void (*open_type_t)	(struct fs_node*, uint);
+typedef uint (*open_type_t)	(struct fs_node*, uint);
 typedef void (*close_type_t)	(struct fs_node*);
 
 typedef struct dirent* (*readdir_type_t)(struct fs_node*, uint);
@@ -23,7 +23,8 @@ typedef struct fs_node{
 	uint uid;
 	uint gid;
 	uint flags;
-
+		
+	char dos_name[16];
 	uint inode;
 	uint length;
 
@@ -56,11 +57,14 @@ extern fs_node_t* root_node;
 uint read_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
 uint write_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
 
-void open_fs(fs_node_t* node, uint offset);
+uint open_fs(fs_node_t* node, uint offset);
 void close_fs(fs_node_t* node);
 
 struct dirent* readdir_fs(fs_node_t* node, uint index);
 fs_node_t* finddir_fs(fs_node_t* node, char* name);
 fs_node_t* fs_path(fs_node_t* node, char* name);
+struct dirent* readdir_generic(fs_node_t* node, uint index);
+
+void vfs_ls(fs_node_t* dir);
 
 #endif

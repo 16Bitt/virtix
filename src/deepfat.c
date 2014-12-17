@@ -3,6 +3,7 @@
 #include "fat.h"
 #include "str-util.h"
 #include "deepfat.h"
+#include "fd.h"
 
 fs_node_t* df_root;
 
@@ -40,20 +41,12 @@ fs_node_t* mk_empty_dnode(){
 }
 
 fs_node_t* parse_dir(char* dir){
-	//vga_puts("parse_dir(): making vfs node for '");
-	//vga_puts(dir);
-	//vga_puts("'\n");
-
 	fs_node_t* node = mk_empty_dnode();
-	//vga_puts("parse_dir(): reading .DIR file\n");
+	fs_node_t* parent = node;
 	char* fat_buff = (char*) fat_load_full(dir);
-	
-	//vga_puts(fat_buff);
 
-	//vga_puts("parse_dir(): formatting .DIR in RAM\n");
 	char* str = prep_str(fat_buff);
 
-	//vga_puts("parse_dir(): verifying directory integrity\n");
 	ASSERT(strcmp(str, "DEEPFAT") == 0);
 	str = next_str(str);
 	ASSERT(strcmp(str, "DEEPDIR") == 0);
@@ -63,6 +56,12 @@ fs_node_t* parse_dir(char* dir){
 		char* ent = str;
 		str = next_str(ent);
 		fs_node_t* sub;
+		
+		/*
+		vga_puts("\t* creating '");
+		vga_puts(str);
+		vga_puts("'\n");
+		*/
 
 		if(strcmp(ent, "DIR") == 0){
 			char* name = str;
@@ -70,14 +69,16 @@ fs_node_t* parse_dir(char* dir){
 			sub = parse_dir(fat_name_conv(str));
 			
 			strmov(sub->name, name);
+			strmov(sub->dos_name, str);
 			fat_dir_t* file = fat_dir_search(fat_name_conv(str));
 			sub->inode	= file->cluster_low;
 			sub->length	= file->bytes;
-			
+			sub->flags	= FS_DIRECTORY;
+
 			//Callbacks for basic VFS manipulation
 			sub->open	= df_open;
 			sub->close	= df_close;
-			sub->readdir	= df_readdir;
+			sub->readdir	= readdir_generic;
 			sub->finddir	= df_finddir;
 		}
 
@@ -86,12 +87,14 @@ fs_node_t* parse_dir(char* dir){
 			str = next_str(str);
 			sub = mk_empty_fnode();
 			
+			strmov(sub->dos_name, str);
 			fat_dir_t* file = fat_dir_search(fat_name_conv(str));
 			
 			strmov(sub->name, name);
 			sub->inode	= file->cluster_low;
 			sub->length	= file->bytes;
-			
+			sub->flags	= FS_FILE;
+
 			//Callbacks for basic file manipulation
 			sub->write	= df_write;
 			sub->read	= df_read;
@@ -114,8 +117,9 @@ fs_node_t* parse_dir(char* dir){
 		node->link = sub;
 		node = sub;
 	}
-
+	
 	kfree(fat_buff);
+	return parent;
 }
 
 void init_deepfat(){
@@ -123,16 +127,15 @@ void init_deepfat(){
 }
 
 uint df_read(fs_node_t* node, uint offset, uint size, char* buffer){
-	return read_fs(node, offset, size, buffer);
+	return fat_read(node->dos_name, offset, size, buffer);
 }
 
 uint df_write(fs_node_t* node, uint offset, uint size, char* buffer){
-	return write_fs(node, offset, size, buffer);
+	return fat_write(node->dos_name, offset, size, buffer);
 }
 
-void df_open(fs_node_t* node, uint index){
-	vga_puts("WARN: df_open() is dummy stub\n");
-	return;
+uint df_open(fs_node_t* node, uint index){
+	return fd_create(node, index);
 }
 
 void df_close(fs_node_t* node){
