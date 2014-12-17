@@ -4,16 +4,25 @@
 #include "common.h"
 #include "vfs.h"
 
+#define MAX_FD	256
+
 typedef struct{
-	char* name;
-	vfs_node_t* node;
+	char name[128];
+	fs_node_t* node;
 	uint offset;
+	uint mode;
+	uint present;
 } fd_t;
 
-fs_node_t* fd_lookup(int fd);
+void init_fd();
 
-uint fd_write(int fd, uint offset, uint length, char* buffer);
-uint fd_read(int fd, uint offset, uint length, char* buffer);
-struct dirent* fd_readdir(int fd, uint index);
+fs_node_t* fd_lookup(uint fd);
+uint fd_create(fs_node_t* node, uint offset);
+void fd_delete(uint fd);
+
+void fd_seek(uint fd, uint offset);
+uint fd_read(uint fd, uint size, char* buffer);
+uint fd_write(uint fd, uint size, char* buffer);
+struct dirent* fd_readdir(uint fd);
 
 #endif

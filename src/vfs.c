@@ -70,3 +70,23 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 	kfree(name);
 	return node;
 }
+
+struct dirent* readdir_generic(fs_node_t* node, uint index){
+	fs_node_t* link = node->link;
+
+	while(index != 0){
+		if(link == NULL)
+			return NULL;
+
+		link = link->link;
+		index--;
+	}
+
+	if(link == NULL)
+		return NULL;
+
+	struct dirent* dir = (struct dirent*) kmalloc(sizeof(struct dirent));
+	strmov(dir->name, link->name);
+	dir->ino = link->inode;
+	return dir;
+}
