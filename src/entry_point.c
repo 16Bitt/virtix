@@ -72,7 +72,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	init_fd();
 
 	vga_puts("main(): testing file interface\n");
-	fs_node_t* dir = vfs_get_dir(df_root, "header/common.h");
+	fs_node_t* dir = vfs_get_dir(df_root, "header/");
 	if(dir == NULL)
 		PANIC("could not locate directory");
 	
