@@ -6,8 +6,11 @@ TARGET	= hello.x
 
 all: $(SOURCES) link disk
 
-disk:
-	dd if=/dev/zero of=hdd.img bs=512 count=419328
+disk:	
+	if ! [ -a hdd.img ]; \
+	then \
+		dd if=/dev/zero of=hdd.img bs=512 count=419328; \
+	fi
 	/sbin/mkdosfs hdd.img
 	bin/mkdf.sh ./ hdd.img
 

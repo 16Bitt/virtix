@@ -35,7 +35,8 @@ typedef struct fs_node{
 
 	readdir_type_t	readdir;
 	finddir_type_t	finddir;
-
+	
+	struct fs_node* holds;
 	struct fs_node* link;
 } fs_node_t;
 
@@ -64,7 +65,11 @@ struct dirent* readdir_fs(fs_node_t* node, uint index);
 fs_node_t* finddir_fs(fs_node_t* node, char* name);
 fs_node_t* fs_path(fs_node_t* node, char* name);
 fs_node_t* vfs_get_dir(fs_node_t* node, char* name);
+char* basename(char* path);
 struct dirent* readdir_generic(fs_node_t* node, uint index);
+
+fs_node_t* vfs_touch(fs_node_t* node, char* path);
+fs_node_t* vfs_mkdir(fs_node_t* node, char* path);
 
 void vfs_ls(fs_node_t* dir);
 

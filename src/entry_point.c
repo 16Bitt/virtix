@@ -75,7 +75,8 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	fs_node_t* dir = vfs_get_dir(df_root, "header/common.h");
 	if(dir == NULL)
 		PANIC("could not locate directory");
-
+	
+	vfs_touch(df_root, "header/test.file");
 	vfs_ls(dir);
 
 	vga_puts("main(): syncing FAT\n");

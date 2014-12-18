@@ -110,12 +110,16 @@ fs_node_t* parse_dir(char* dir){
 		str = next_str(str);
 		str = next_str(str);
 		str = next_str(str);
-		//str = next_str(str);
+	
+		if(parent->holds == NULL){
+			parent->holds = sub;
+			node = sub;
+		}
 
-		//vga_puts(str);
-		
-		node->link = sub;
-		node = sub;
+		else{
+			node->link = sub;
+			node = sub;
+		}
 	}
 	
 	kfree(fat_buff);

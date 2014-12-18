@@ -3,6 +3,7 @@
 #include "kheap.h"
 #include "vfs.h"
 #include "str-util.h"
+#include "deepfat.h"
 
 uint read_fs(fs_node_t* node, uint offset, uint size, uchar* buffer){
 	if(node->read != NULL)
@@ -59,7 +60,7 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 	
 	//Iterate down the pathname
 	do{
-		node = node->link;
+		node = node->holds;
 
 		while(node != NULL){
 			if(strcmp(node->name, name) == 0)
@@ -80,7 +81,7 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 }
 
 struct dirent* readdir_generic(fs_node_t* node, uint index){
-	fs_node_t* link = node->link;
+	fs_node_t* link = node->holds;
 
 	while(index != 0){
 		if(link == NULL)
@@ -100,7 +101,7 @@ struct dirent* readdir_generic(fs_node_t* node, uint index){
 }
 
 void vfs_ls(fs_node_t* dir){
-	fs_node_t* link = dir->link;
+	fs_node_t* link = dir->holds;
 
 	while(link != NULL){
 		vga_puts(link->name);
@@ -110,45 +111,57 @@ void vfs_ls(fs_node_t* dir){
 }
 
 fs_node_t* vfs_get_dir(fs_node_t* node, char* name){
-	//Copy the name for when we modify it
 	char* cpy = (char*) kmalloc(strlen(name) + 2);
 	strmov(cpy, name);
-	cpy[strlen(name) + 1] = 1;	//Any non-zero character works, solely for next_str
-
+	cpy[strlen(name) + 1] = 1;	//Any nonzero value works here
 	name = cpy;
-	char* end = &name[strlen(name) - 1];
-	
-	//Set string end at last /
+
 	int i;
 	for(i = strlen(name); i > 0; i--)
 		if(name[i] == '/'){
 			name[i] = 0;
 			break;
 		}
-	
 
-	for(i = 0; i < strlen(name); i++)
-		if(name[i] == '/')
-			name[i] = 0;
-	
-	//Iterate down the pathname
-	do{
-		node = node->link;
-
-		while(node != NULL){
-			if(strcmp(node->name, name) == 0)
-				break;
-
-			node = node->link;
-		}
-
-		if(node == NULL)
-			return NULL;
-		
-		name = next_str(name);
-	}while((uint) name < (uint) end);
-	
-	//Clean up and yield
+	fs_node_t* output = fs_path(node, name);
 	kfree(name);
-	return node;
+
+	return output;
+}
+
+char* basename(char* name){
+	int i;
+	for(i = strlen(name); i > 0; i--)
+		if(name[i] == '/')
+			return &name[i + 1];
+
+	return name;
+}
+
+fs_node_t* vfs_touch(fs_node_t* node, char* name){
+	fs_node_t* dir = vfs_get_dir(node, name);
+	if(dir == NULL)
+		return NULL;
+	
+	fs_node_t* file = mk_empty_fnode();
+	strmov(file->name, basename(name));
+
+	file->link = dir->holds;
+	dir->holds = file;
+
+	return file;
+}
+
+fs_node_t* vfs_mkdir(fs_node_t* node, char* name){
+	fs_node_t* dir = vfs_get_dir(node, name);
+	if(dir == NULL)
+		return NULL;
+	
+	fs_node_t* file = mk_empty_dnode();
+	strmov(file->name, basename(name));
+
+	file->link = dir->holds;
+	dir->holds = file;
+
+	return file;
 }
