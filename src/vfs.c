@@ -44,10 +44,12 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name){
 
 fs_node_t* fs_path(fs_node_t* node, char* name){
 	//Copy the name for when we modify it
-	char* cpy = (char*) kmalloc(strlen(name) + 1);
+	char* cpy = (char*) kmalloc(strlen(name) + 2);
 	strmov(cpy, name);
+	cpy[strlen(name) + 1] = 1;	//Any non-zero character works, solely for next_str
+	
 	name = cpy;
-	char* end = &name[strlen(name)];
+	char* end = &name[strlen(name) - 1];
 	
 	//Format for parsing (zero-style parsing)
 	int i;
@@ -61,7 +63,7 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 
 		while(node != NULL){
 			if(strcmp(node->name, name) == 0)
-				goto finish_find;
+				break;
 
 			node = node->link;
 		}
@@ -69,10 +71,11 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 		if(node == NULL)
 			return NULL;
 		
+		vga_puts("nexting...\n");
 		name = next_str(name);
+		vga_puts("done\n");
 	}while((uint) name < (uint) end);
 	
-finish_find:
 	//Clean up and yield
 	kfree(name);
 	return node;
