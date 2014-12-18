@@ -71,9 +71,7 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 		if(node == NULL)
 			return NULL;
 		
-		vga_puts("nexting...\n");
 		name = next_str(name);
-		vga_puts("done\n");
 	}while((uint) name < (uint) end);
 	
 	//Clean up and yield
@@ -109,4 +107,48 @@ void vfs_ls(fs_node_t* dir){
 		vga_puts("\n");
 		link = link->link;
 	}
+}
+
+fs_node_t* vfs_get_dir(fs_node_t* node, char* name){
+	//Copy the name for when we modify it
+	char* cpy = (char*) kmalloc(strlen(name) + 2);
+	strmov(cpy, name);
+	cpy[strlen(name) + 1] = 1;	//Any non-zero character works, solely for next_str
+
+	name = cpy;
+	char* end = &name[strlen(name) - 1];
+	
+	//Set string end at last /
+	int i;
+	for(i = strlen(name); i > 0; i--)
+		if(name[i] == '/'){
+			name[i] = 0;
+			break;
+		}
+	
+
+	for(i = 0; i < strlen(name); i++)
+		if(name[i] == '/')
+			name[i] = 0;
+	
+	//Iterate down the pathname
+	do{
+		node = node->link;
+
+		while(node != NULL){
+			if(strcmp(node->name, name) == 0)
+				break;
+
+			node = node->link;
+		}
+
+		if(node == NULL)
+			return NULL;
+		
+		name = next_str(name);
+	}while((uint) name < (uint) end);
+	
+	//Clean up and yield
+	kfree(name);
+	return node;
 }

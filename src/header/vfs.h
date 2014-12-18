@@ -63,6 +63,7 @@ void close_fs(fs_node_t* node);
 struct dirent* readdir_fs(fs_node_t* node, uint index);
 fs_node_t* finddir_fs(fs_node_t* node, char* name);
 fs_node_t* fs_path(fs_node_t* node, char* name);
+fs_node_t* vfs_get_dir(fs_node_t* node, char* name);
 struct dirent* readdir_generic(fs_node_t* node, uint index);
 
 void vfs_ls(fs_node_t* dir);

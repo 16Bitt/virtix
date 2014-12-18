@@ -72,13 +72,11 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	init_fd();
 
 	vga_puts("main(): testing file interface\n");
-	FILE f = kfopen("makefile", 0);
-	char* buffer = (char*) kmalloc(21);
-	buffer[20] = 0;
-	kfread(f, 20, buffer);
-	vga_puts("main(): read finished\n");
-	vga_puts(buffer);
-	vga_puts("\n");
+	fs_node_t* dir = vfs_get_dir(df_root, "header/common.h");
+	if(dir == NULL)
+		PANIC("could not locate directory");
+
+	vfs_ls(dir);
 
 	vga_puts("main(): syncing FAT\n");
 	fat_sync();
