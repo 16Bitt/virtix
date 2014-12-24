@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "vfs.h"
+#include "fat.h"
 
 //Root of the FS
 extern struct fs_node* df_root;
@@ -25,5 +26,10 @@ char* get_fat_name(uint inode);
 struct fs_node* mk_empty_node();
 struct fs_node* mk_empty_fnode();
 struct fs_node* mk_empty_dnode();
+
+//For saving files at runtime
+char* df_mk_name();
+fat_dir_t* df_new_file();
+void df_sync();
 
 #endif

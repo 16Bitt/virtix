@@ -5,6 +5,8 @@
 #include "userspace.h"
 #include "single.h"
 
+#include "file.h"
+
 uint c_err;
 
 void userspace_handler(registers_t* regs){
@@ -58,24 +60,21 @@ char** get_env(){
 	return (char**) NULL;
 }
 
-uint write(uint fid, char* buffer, size_t length){
-	if(fid == 0){
-		uint i;
-		for(i = 0; i < length; i++)
-			vga_putc(buffer[i]);
-		
-		return 0;
-	}
-
-	return (uint) -1;
+FILE open(char* path, uint offset){
+	return kfopen(path, offset);
 }
 
-uint read(uint fid, char* buffer, size_t length){
-	return (uint) -1;
-}
-
-uint close(uint fid){
+uint close(FILE fid){
+	kfclose(fid);
 	return 0;
+}
+
+uint read(FILE fid, char* buffer, size_t length){
+	return kfread(fid, length, buffer);
+}
+
+uint write(FILE fid, char* buffer, size_t length){
+	return kfwrite(fid, length, buffer);
 }
 
 uint _exit(uint return_code){

@@ -72,12 +72,14 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	init_fd();
 
 	vga_puts("main(): testing file interface\n");
-	fs_node_t* dir = vfs_get_dir(df_root, "header/");
-	if(dir == NULL)
-		PANIC("could not locate directory");
-	
-	vfs_touch(df_root, "header/test.file");
-	vfs_ls(dir);
+	FILE f = kfopen("header/test.txt", 0);
+	char* str = "Hello, World!\n";
+	kfwrite(f, strlen(str), str);
+	kfclose(f);
+
+	f = kfopen("header/test.txt", 0);
+	kfread(f, strlen(str), str);
+	vga_puts(str);
 
 	vga_puts("main(): syncing FAT\n");
 	fat_sync();

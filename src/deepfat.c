@@ -6,6 +6,7 @@
 #include "fd.h"
 
 fs_node_t* df_root;
+uint	current_inode = 0;
 
 fs_node_t* mk_empty_node(){
 	fs_node_t* node = (fs_node_t*) kmalloc(sizeof(fs_node_t));
@@ -153,4 +154,35 @@ struct dirent* df_readdir(fs_node_t* node, uint index){
 
 fs_node_t* df_finddir(fs_node_t* node, char* name){
 	return NULL;
+}
+
+char fat_generated[11];
+char* df_mk_name(){
+	char* name = (char*) current_inode;
+	char* lookup = "0123456789ABCDEF";
+	char* extension = "FIL";
+	
+	fat_generated[8] = 0;
+
+	int i; int offs = 0;
+	for(i = 0; i < 8; i++){
+		char val = name[i];
+		fat_generated[offs++] = lookup[(val & 0xF0) >> 4];
+		fat_generated[offs++] = lookup[val & 0xF];
+	}
+
+	current_inode += 1;
+
+	for(i = 0; i < 3; i++)
+		fat_generated[8 + i] = extension[i];
+
+	return fat_generated;
+}
+
+fat_dir_t* df_new_file(){
+	return fat_create(df_mk_name());
+}
+
+void df_sync(){
+	
 }

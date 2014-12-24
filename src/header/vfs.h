@@ -23,7 +23,7 @@ typedef struct fs_node{
 	uint uid;
 	uint gid;
 	uint flags;
-		
+	
 	char dos_name[16];
 	uint inode;
 	uint length;
@@ -43,6 +43,11 @@ typedef struct fs_node{
 struct dirent{
 	char name[128];
 	uint ino;
+};
+
+struct stat{
+	uint inode;
+	uint length;
 };
 
 #define FS_FILE		1

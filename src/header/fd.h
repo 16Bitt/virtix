@@ -4,7 +4,7 @@
 #include "common.h"
 #include "vfs.h"
 
-#define MAX_FD	256
+#define MAX_FD	16
 
 typedef struct{
 	char name[128];
@@ -20,9 +20,12 @@ fs_node_t* fd_lookup(uint fd);
 uint fd_create(fs_node_t* node, uint offset);
 void fd_delete(uint fd);
 
+uint fd_offset(uint fd);
+
 void fd_seek(uint fd, uint offset);
 uint fd_read(uint fd, uint size, char* buffer);
 uint fd_write(uint fd, uint size, char* buffer);
 struct dirent* fd_readdir(uint fd);
+uint fd_stat(uint fd, struct stat* buffer);
 
 #endif

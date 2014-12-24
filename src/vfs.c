@@ -145,6 +145,15 @@ fs_node_t* vfs_touch(fs_node_t* node, char* name){
 	
 	fs_node_t* file = mk_empty_fnode();
 	strmov(file->name, basename(name));
+	
+	fat_dir_t* entry = df_new_file();
+
+	if(entry == NULL)
+		PANIC("kernel attempted to overwrite file in FAT");
+
+	int i;
+	for(i = 0; i < 11; i++)
+		file->dos_name[i] = entry->name[i];
 
 	file->link = dir->holds;
 	dir->holds = file;

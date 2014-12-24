@@ -3,10 +3,9 @@
 #include "vfs.h"
 #include "fd.h"
 
-fd_t* fd_list;
+fd_t fd_list[MAX_FD];
 
 void init_fd(){
-	fd_list = (fd_t*) kmalloc(sizeof(fd_t) * MAX_FD);
 	memset(fd_list, 0, sizeof(fd_t) * MAX_FD);
 }
 
@@ -29,6 +28,7 @@ uint fd_create(fs_node_t* node, uint offset){
 		}
 	}
 
+	vga_puts("fd_create(): returning\n");
 	return (uint) -1;
 }
 
@@ -72,4 +72,22 @@ uint fd_write(uint fd, uint size, char* buffer){
 	uint hold = fd_list[fd].offset;
 	fd_list[fd].offset += size;
 	return write_fs(node, hold, size, buffer);
+}
+
+uint fd_stat(uint fd, struct stat* buffer){
+	fs_node_t* node = fd_lookup(fd);
+	if(node == NULL)
+		return (uint) -1;
+
+	buffer->length = node->length;
+	buffer->inode = node->inode;
+
+	return 0;
+}
+
+uint fd_offset(uint fd){
+	if(fd >= MAX_FD)
+		return 0;
+
+	return fd_list[fd].offset;
 }

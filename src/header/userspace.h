@@ -11,6 +11,7 @@ typedef unsigned int uint;
 #define SYS_READ	4
 #define SYS_CLOSE	5
 #define SYS_EXIT	6
+#define SYS_OPEN	7
 
 uint fork();
 uint getpid();
@@ -19,6 +20,7 @@ char** get_env();
 uint write(uint fid, char* buffer, size_t length);
 uint read(uint fid, char* buffer, size_t length);
 uint close(uint fid);
+uint open(char* path, uint offset);
 
 uint _exit(uint return_code);
 
