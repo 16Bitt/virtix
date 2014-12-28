@@ -116,7 +116,7 @@ void disp_fat_dir(){
 	
 	int i;
 	for(i = 0; i < fat_header.dir_size; i++){
-		if(fat_dir[i].cluster_low != 0){
+		if(fat_dir[i].name[0] != 0){
 			vga_puts("\t* ");
 			vga_puts(fat_dir[i].name);
 			vga_puts("\n");
