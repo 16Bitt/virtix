@@ -33,14 +33,16 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	vga_puts("main(): attempting to initialize paging\n");
 	virtix_page_init();
-
+	
+	/*
 	vga_puts("main(): relocating modules\n");
 	void* mod_loc = kmalloc_a(1024 * 10);
 	memcpy(mod_loc, (void*) mboot_ptr->mods_addr, 1024 * 6);
 
 	vga_puts("main(): initializing read-only ramdisk\n");
 	mnt_initrd((unsigned int) mod_loc);
-	
+	*/
+
 	vga_puts("main(): registering default handlers\n");
 	register_default_handlers();
 	

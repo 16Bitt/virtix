@@ -4,7 +4,7 @@ LDFLAGS	= -Tlink.ld -melf_i386
 ASFLAGS	= -felf
 CC	= gcc
 
-all: $(SOURCES) link mkinitramfs
+all: $(SOURCES) link binaries dimg
 
 clean:
 	cd userland && make clean
@@ -43,4 +43,3 @@ bochs: dimg
 
 binaries:
 	cd userland && make
-	cp userland/*.x initramfs/

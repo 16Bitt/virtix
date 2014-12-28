@@ -38,6 +38,7 @@ dinit_dir () {
 }
 
 mkdf_dir () {
+	pushd .	
 	init_dir $2
 	local tpath=$(readlink -f $1)
 	local tfile=$(readlink -f $2)
@@ -66,8 +67,9 @@ mkdf_dir () {
 			mcopy -i $image $i ::/$count.FIL
 		fi
 	done
-
-	cd -
+	
+	mv *.DIR $target || true
+	popd
 }
 
 mkdf_dir $target DFATROOT DFATROOT.DIR
