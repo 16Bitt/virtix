@@ -156,7 +156,7 @@ fs_node_t* df_finddir(fs_node_t* node, char* name){
 	return NULL;
 }
 
-char fat_generated[11];
+char fat_generated[13];
 char* df_mk_name(){
 	char* name = (char*) current_inode;
 	char* lookup = "0123456789ABCDEF";
@@ -172,10 +172,14 @@ char* df_mk_name(){
 	}
 
 	current_inode += 1;
+	
+	fat_generated[8] = '.';
 
 	for(i = 0; i < 3; i++)
-		fat_generated[8 + i] = extension[i];
-
+		fat_generated[9 + i] = extension[i];
+	
+	fat_generated[12] = 0;
+	
 	return fat_generated;
 }
 

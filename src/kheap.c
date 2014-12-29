@@ -12,6 +12,7 @@ void init_kheap(){
 void* kmalloc(unsigned int size){
 	ASSERT(placement_address + size < MEM_END);
 	unsigned int hold = placement_address;
+	memset((void*) hold, 0, size);
 	placement_address += size;
 	return (void*) hold;
 }

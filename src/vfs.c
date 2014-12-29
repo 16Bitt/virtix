@@ -45,6 +45,9 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name){
 
 fs_node_t* fs_path(fs_node_t* node, char* name){
 	//Copy the name for when we modify it
+	if(strcmp(name, "/") == 0)
+		return node;
+
 	char* cpy = (char*) kmalloc(strlen(name) + 2);
 	strmov(cpy, name);
 	cpy[strlen(name) + 1] = 1;	//Any non-zero character works, solely for next_str
@@ -58,6 +61,9 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 		if(name[i] == '/')
 			name[i] = 0;
 	
+	if(strlen(name) == 0)
+		name = next_str(name);
+
 	//Iterate down the pathname
 	do{
 		node = node->holds;
@@ -100,11 +106,22 @@ struct dirent* readdir_generic(fs_node_t* node, uint index){
 	return dir;
 }
 
-void vfs_ls(fs_node_t* dir){
-	fs_node_t* link = dir->holds;
+void vfs_ls(char* path){
+	fs_node_t* dir = fs_path(df_root, path);
+	if(dir == NULL){
+		vga_puts("vfs_ls(): invalid path\n");
+		return;
+	}
 
+	fs_node_t* link = dir->holds;
+	
+	vga_puts("directory listing for ");
+	vga_puts(path);
+	vga_puts("\n");
 	while(link != NULL){
 		vga_puts(link->name);
+		if(link->flags == FS_DIRECTORY)
+			vga_puts("/");
 		vga_puts("\n");
 		link = link->link;
 	}
@@ -117,21 +134,25 @@ fs_node_t* vfs_get_dir(fs_node_t* node, char* name){
 	name = cpy;
 
 	int i;
-	for(i = strlen(name); i > 0; i--)
+	for(i = strlen(name); i >= 0; i--)
 		if(name[i] == '/'){
 			name[i] = 0;
 			break;
 		}
-
-	fs_node_t* output = fs_path(node, name);
+	
+	fs_node_t* output;
+	if(strlen(name) == 0)
+		output = df_root;
+	else
+		output = fs_path(node, name);
+	
 	kfree(name);
-
 	return output;
 }
 
 char* basename(char* name){
 	int i;
-	for(i = strlen(name); i > 0; i--)
+	for(i = strlen(name); i >= 0; i--)
 		if(name[i] == '/')
 			return &name[i + 1];
 
@@ -163,8 +184,10 @@ fs_node_t* vfs_touch(fs_node_t* node, char* name){
 
 fs_node_t* vfs_mkdir(fs_node_t* node, char* name){
 	fs_node_t* dir = vfs_get_dir(node, name);
-	if(dir == NULL)
+	if(dir == NULL){
+		vga_puts("vfs_mkdir(): invalid path\n");
 		return NULL;
+	}
 	
 	fs_node_t* file = mk_empty_dnode();
 	strmov(file->name, basename(name));

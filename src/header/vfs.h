@@ -76,6 +76,6 @@ struct dirent* readdir_generic(fs_node_t* node, uint index);
 fs_node_t* vfs_touch(fs_node_t* node, char* path);
 fs_node_t* vfs_mkdir(fs_node_t* node, char* path);
 
-void vfs_ls(fs_node_t* dir);
+void vfs_ls(char* path);
 
 #endif

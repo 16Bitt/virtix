@@ -74,14 +74,14 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	init_fd();
 
 	vga_puts("main(): testing file interface\n");
-	FILE f = kfopen("header/test.txt", 0);
-	char* str = "Hello, World!\n";
+	FILE f = kfopen("/libc/test.txt", 0);
+	char* str = "Hello, world!\n";
 	kfwrite(f, strlen(str), str);
 	kfclose(f);
+	
+	vfs_mkdir(df_root, "/dev");
 
-	f = kfopen("header/test.txt", 0);
-	kfread(f, strlen(str), str);
-	vga_puts(str);
+	vfs_ls("/");
 
 	vga_puts("main(): syncing FAT\n");
 	fat_sync();
