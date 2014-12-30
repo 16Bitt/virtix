@@ -249,9 +249,7 @@ uint fat_write_block(char* name, uint offset, uchar* buffer){
 		offset--;
 	}
 	
-	vga_puts("fat_write_block(): writing to ATA driver\n");
 	ata_write_blocks((ushort*) buffer, cluster_to_lba(cluster), FAT_SPC);
-	vga_puts("fat_write_block(): writing to ATA driver\n");
 	return 0;
 }
 
@@ -349,9 +347,7 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 			length = 0;
 		}
 		
-		vga_puts("fat_write(): calling block write\n");
 		fat_write_block(name, offset_to_cluster(offset), scratch);
-		vga_puts("fat_write(): finished block write\n");
 	}
 	
 	kfree(scratch);

@@ -52,7 +52,7 @@ uchar ident_ata(uchar bus, uchar drive){
 
 		while(!((stat = inb(io + ATA_REG_STATUS)) & ATA_SR_DRQ)) //Poll until DRQ
 			if(stat & ATA_SR_ERR){
-				//vga_puts("WARN: ident_ata() found ERR set\n");
+				////vga_puts("WARN: ident_ata() found ERR set\n");
 				return 0;
 			}
 
@@ -63,7 +63,7 @@ uchar ident_ata(uchar bus, uchar drive){
 		return 1; //Disk is okay
 	}
 
-	//vga_puts("WARN: ident_ata() did not read valid drive\n");
+	////vga_puts("WARN: ident_ata() did not read valid drive\n");
 	return 0;
 }
 
@@ -77,18 +77,15 @@ void ata_poll(ushort io){
 	ata_wait(io);
 	uchar stat;
 	
-	vga_puts("ata_poll(): polling\n");
-
-	while((stat = inb(io + ATA_REG_STATUS)) & ATA_SR_BSY);
+	//vga_puts("ata_poll(): polling\n");
 
 	do{
-		vga_puts("wait for drq");
 		stat = inb(io + ATA_REG_STATUS);
-
+		
 		if(stat & ATA_SR_ERR)
 			PANIC("ATA driver recieved ERR while polling");
 	
-	} while(!(stat & ATA_SR_DRQ));
+	} while(!(stat & ATA_SR_DRQ) && (stat & ATA_SR_BSY));
 }
 
 void ata_read_block(ushort* buffer, uint lba){
@@ -130,17 +127,9 @@ void ata_read_blocks(ushort* buffer, uint lba, uint length){
 
 void ata_write_block(ushort* buffer, uint lba){
 	//TODO: these are hardcoded for the primary master
-
 	uchar cmd = 0xE0;
 	ushort io = ATA_PRIMARY_IO;
 	uchar drive = ATA_MASTER;
-	
-	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH);
-	ata_poll(io);
-	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH_EXT);
-	ata_poll(io);
-
-	vga_puts("ata_write_block(): setup\n");
 
 	//Preliminary disk setup
 	outb(io + ATA_REG_HDDEVSEL, (cmd | (uchar) (lba >> 24 & 0x0F)));	//Select block
@@ -150,20 +139,21 @@ void ata_write_block(ushort* buffer, uint lba){
 	outb(io + ATA_REG_LBA0, (uchar) lba & 0xFF); //Lower 8 bits of lba
 	outb(io + ATA_REG_LBA1, (uchar) ((lba >> 8) & 0xFF)); //Middle 8 bits of lba
 	outb(io + ATA_REG_LBA2, (uchar) ((lba >> 16) & 0xFF)); //Upper 8 bits of lba
-	
-	vga_puts("ata_write_block(): sending commands\n");
 
 	//Send commands
 	outb(io + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 	ata_poll(io);
 
-
-	vga_puts("ata_write_block(): writing data\n");
-
 	int i;
 	for(i = 0; i < 256; i++)
 		outw(io + ATA_REG_DATA, buffer[i]);
 
+	ata_wait(io);
+	
+	//Flush the disk cache (necessary for certain hardware setups)
+	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH);
+	ata_wait(io);
+	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH_EXT);
 	ata_wait(io);
 }
 
