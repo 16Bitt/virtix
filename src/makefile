@@ -41,5 +41,8 @@ dimg: all
 bochs: dimg
 	-echo c | bochs -q 2> bochs.log
 
+vbox: dimg
+	VBoxManage convertfromraw userland/hdd.img userland/hdd.vdi --format vdi
+
 binaries:
 	cd userland && make

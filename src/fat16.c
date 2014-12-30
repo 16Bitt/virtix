@@ -248,8 +248,10 @@ uint fat_write_block(char* name, uint offset, uchar* buffer){
 		cluster = cluster_list[cluster];
 		offset--;
 	}
-
+	
+	vga_puts("fat_write_block(): writing to ATA driver\n");
 	ata_write_blocks((ushort*) buffer, cluster_to_lba(cluster), FAT_SPC);
+	vga_puts("fat_write_block(): writing to ATA driver\n");
 	return 0;
 }
 
@@ -347,7 +349,9 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 			length = 0;
 		}
 		
+		vga_puts("fat_write(): calling block write\n");
 		fat_write_block(name, offset_to_cluster(offset), scratch);
+		vga_puts("fat_write(): finished block write\n");
 	}
 	
 	kfree(scratch);
@@ -355,6 +359,8 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 }
 
 void fat_sync(){
+	vga_puts("Syncing FAT root directory...\n");
 	ata_write_blocks((ushort*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, FAT_DIR_SIZE);
+	vga_puts("Syncing FAT FATs...\n");
 	ata_write_blocks(cluster_list, fat_header.number_reserved, fat_header.sectors_per_fat * 2);
 }

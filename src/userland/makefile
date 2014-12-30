@@ -14,7 +14,7 @@ disk:
 	bin/mkdf.sh ./ hdd.img
 
 clean:
-	-rm *.o *.x *.img
+	-rm *.o *.x *.img *.vdi
 
 libc-build:
 	cd libc && make
