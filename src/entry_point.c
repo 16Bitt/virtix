@@ -86,6 +86,6 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	NOTIFY("syncing FAT")
 	fat_sync();
 	
-	NOTIFY("reached end of execution, hanging the CPU")
+	WARN("reached end of execution, hanging the CPU")
 	cli(); hlt();
 }

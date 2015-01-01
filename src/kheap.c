@@ -18,7 +18,7 @@ void* kmalloc(unsigned int size){
 }
 
 void kfree(void* ptr){
-	WARN("fake stub called")
+	//WARN("fake stub called")
 	return;
 }
 
