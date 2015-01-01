@@ -2,6 +2,7 @@
 #include "isr.h"
 
 int cursor_x = 0, cursor_y = 0;
+uchar vga_color;
 
 unsigned short* vga_buffer = ((unsigned short*) 0xB8000);
 
@@ -30,7 +31,7 @@ static void scroll(){
 }
 
 void vga_putc(char c){
-	unsigned short attribute = 15 << 8;
+	unsigned short attribute = vga_color << 8;
 	unsigned short* location;
 
 	if(c == 0x08 && cursor_x)
@@ -84,4 +85,23 @@ void vga_clear(){
 
 	cursor_x = cursor_y = 0;
 	update_cursor();
+}
+
+void vga_set_fg(uchar color){
+	vga_color &= 0xF0;
+	vga_color |= color;
+}
+
+void vga_set_bg(uchar color){
+	vga_color &= 0xF;
+	vga_color |= (color << 4);
+}
+
+void vga_blink(){
+	vga_color |= 0x80;
+}
+
+void vga_reset(){
+	vga_set_fg(WHITE);
+	vga_set_bg(BLACK);
 }

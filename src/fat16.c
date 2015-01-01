@@ -355,8 +355,8 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 }
 
 void fat_sync(){
-	vga_puts("Syncing FAT root directory...\n");
+	NOTIFY("Syncing FAT root directory")
 	ata_write_blocks((ushort*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, FAT_DIR_SIZE);
-	vga_puts("Syncing FAT FATs...\n");
+	NOTIFY("Syncing FAT cluster tables")
 	ata_write_blocks(cluster_list, fat_header.number_reserved, fat_header.sectors_per_fat * 2);
 }

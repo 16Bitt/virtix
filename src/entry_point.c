@@ -22,16 +22,17 @@ unsigned int stack_hold;
 
 int main(struct multiboot* mboot_ptr, unsigned int esp){
 	stack_hold = esp;
+	vga_reset();
 	vga_clear();
 	
-	vga_puts("main(): loaded Kernel\n");
+	NOTIFY("loaded Kernel")
 	init_descriptor_tables();
-	vga_puts("main(): initialized memory protection map\n");
+	NOTIFY("initialized memory protection map")
 	
-	vga_puts("main(): making kheap\n");
+	NOTIFY("making kheap")
 	init_kheap();
 	
-	vga_puts("main(): attempting to initialize paging\n");
+	NOTIFY("attempting to initialize paging")
 	virtix_page_init();
 	
 	/*
@@ -43,13 +44,13 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	mnt_initrd((unsigned int) mod_loc);
 	*/
 
-	vga_puts("main(): registering default handlers\n");
+	NOTIFY("registering default handlers")
 	register_default_handlers();
 	
-	vga_puts("main(): registering userspace handler\n");
+	NOTIFY("registering userspace handler")
 	init_userspace();
 
-	vga_puts("main(): starting interrupts\n");
+	NOTIFY("starting interrupts")
 	sti();
 	
 	/*
@@ -60,32 +61,31 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	enter_userspace(proc);
 	*/
 
-	vga_puts("main(): starting ATA driver\n");
+	NOTIFY("starting ATA driver")
 	init_ata();
 	
-	vga_puts("main(): starting FAT driver\n");
+	NOTIFY("starting FAT driver")
 	init_fat();
-	disp_fat_dir();
 
-	vga_puts("main(): starting deepFAT driver\n");
+	NOTIFY("starting deepFAT driver")
 	init_deepfat();
 	
-	vga_puts("main(): starting file descriptor interface\n");
+	NOTIFY("starting file descriptor interface")
 	init_fd();
 
-	vga_puts("main(): testing file interface\n");
+	NOTIFY("testing file interface")
 	FILE f = kfopen("/libc/test.txt", 0);
 	char* str = "Hello, world!\n";
 	kfwrite(f, strlen(str), str);
 	kfclose(f);
-	
+
 	vfs_mkdir(df_root, "/dev");
 
-	vfs_ls("/");
+	//vfs_ls("/");
 
-	vga_puts("main(): syncing FAT\n");
+	NOTIFY("syncing FAT")
 	fat_sync();
 
-	vga_puts("main(): reached end of execution, hanging the CPU\n");
+	NOTIFY("reached end of execution, hanging the CPU")
 	cli(); hlt();
 }
