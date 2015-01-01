@@ -68,6 +68,9 @@ int strcmp(char* str1, char* str2){
 }
 
 void panic(char* msg, char* file, unsigned int line){
+	vga_set_fg(RED);
+	vga_set_bg(WHITE);
+	
 	vga_puts("\nPANIC: ");
 	vga_puts(file);
 	vga_puts(" on line ");

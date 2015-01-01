@@ -93,6 +93,8 @@ void vpage_fault(registers_t* regs){
 	if(current_proc != NULL){
 		dump_proc(current_proc);
 	}
+	
+	vga_set_fg(RED);
 
 	unsigned int err_pos;
 	asm volatile ("mov %%cr2, %0" : "=r" (err_pos));
