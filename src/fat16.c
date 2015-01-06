@@ -124,9 +124,11 @@ void disp_fat_dir(){
 	}
 }
 
+char hold_name[12];
+
 char* fat_name_conv(char* actual){
-	char* internal = (char*) kmalloc(11); //11 byte file name
-	memset(internal, ' ', 11);
+	char* internal = (char*) kmalloc(12); //11 byte file name
+	memset(hold_name, ' ', 11);
 
 	int i; bool spc; int len = 0;
 	for(i = 0; i < 11; i++, len++){
@@ -136,10 +138,10 @@ char* fat_name_conv(char* actual){
 		if(actual[len] == '.')
 			i = 7;
 		else
-			internal[i] = actual[len];
+			hold_name[i] = actual[len];
 	}
 	
-	return internal;
+	return hold_name;
 }
 
 fat_dir_t* fat_create(char* name){
@@ -147,7 +149,6 @@ fat_dir_t* fat_create(char* name){
 	fat_dir_t* target = NULL;
 
 	if(fat_search(name)){
-		kfree(name);
 		return NULL;
 	}
 	
@@ -165,8 +166,7 @@ fat_dir_t* fat_create(char* name){
 	memcpy(target->name, name, 11);
 	target->cluster_low = 0xFFFF;
 	target->bytes = 0;
-
-	kfree(name);
+	
 	return target;
 }
 
@@ -197,12 +197,10 @@ void fat_delete(char* name){
 			break;
 		}
 
-	kfree(name);
 }
 
 uint fat_read_block(char* name, uint offset, uchar* buffer){
 	name = fat_name_conv(name);
-	kfree(name);
 	fat_dir_t* entry = fat_search(name);
 
 	if(entry == NULL)
@@ -226,7 +224,6 @@ uint fat_read_block(char* name, uint offset, uchar* buffer){
 
 uint fat_write_block(char* name, uint offset, uchar* buffer){
 	name = fat_name_conv(name);
-	kfree(name);
 	fat_dir_t* entry = fat_search(name);
 	
 	if(entry == NULL)
@@ -289,7 +286,6 @@ uint offset_in_cluster(uint offset){
 uint fat_read(char* name, uint offset, uint length, char* buffer){
 	char* fname = fat_name_conv(name);
 	fat_dir_t* entry = fat_search(fname);
-	kfree(fname);
 	
 	if(entry == NULL)
 		return (uint) -1;
@@ -310,14 +306,15 @@ uint fat_read(char* name, uint offset, uint length, char* buffer){
 		}
 	}
 	
+	vga_puts("blame");
 	kfree(scratch);
+	vga_puts("blames");
 	return 0;
 }
 
 uint fat_write(char* name, uint offset, uint length, char* buffer){
 	char* fname = fat_name_conv(name);
 	fat_dir_t* entry = fat_dir_search(fname);
-	kfree(fname);
 	
 	if(entry == NULL)
 		return (uint) -1;
@@ -350,7 +347,9 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 		fat_write_block(name, offset_to_cluster(offset), scratch);
 	}
 	
+	vga_puts("blames");
 	kfree(scratch);
+	vga_puts("blamed");
 	return 0;
 }
 

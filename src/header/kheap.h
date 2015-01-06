@@ -2,37 +2,43 @@
 #define KHEAP_H
 
 #include "common.h"
-#define KHEAP_MAGIC 0x04206969
+#define KHEAP_MAGIC	0x04206969
+#define KHEAP_MAGIC2	0xDEADBEEF
+
+#define KHEAP_END	0xFFFFDEAD
 
 #define MEM_END 0x8000000
-#undef data
 
 extern unsigned int end;
 
-typedef struct heap_type{
-	unsigned int magic;		//Confirms validity
-	unsigned int size;		//Size of heap
-	
-	void* data;			//Location of data (addr + HEAP_S)
+typedef struct{
+	uint magic;
+	bool free;
+	uint size;
+	uint magic2;
+} heap_header_t;
 
-	struct heap_type* parent;	//Previous heap
-	struct heap_type* child1;	//left branch
-	struct heap_type* child2;	//right branch
+typedef struct{
+	uint magic;
+	uint size;
+	uint magic2;
+} heap_footer_t;
 
-	int free;			//Is this open?
-} heap_t;
+#define HEAP_S		(sizeof(heap_header_t))
+#define HEAP_TOTAL	(sizeof(heap_footer_t) + HEAP_S)
+#define HEAP_MINIMUM	8
+#define HEAP_FIND_SIZE	(HEAP_TOTAL + HEAP_MINIMUM)
 
-#define HEAP_S (sizeof(heap_t))
+void init_kheap();			//Initialize heaps globally
 
-//void init_kheap();			//Initialize heap globally
-
+void* fmalloc(uint size);
 void* kmalloc(unsigned int size);	//straight kmalloc
 void* kmalloc_a(unsigned int size);	//page aligned kmalloc
 void kfree(void* ptr);			//Free unused memory
 
-//heap_t* find_first_free(heap_t* parent, unsigned int size);	//Find first available node
+void init_heap(heap_header_t* heap, size_t size);
 
-//void heap_split(heap_t* parent, unsigned int size);		//Subdivide a parent into two heaps with a data pool of
-//void heap_collapse(heap_t* parent);				//Converge children and parent into one big heap
+#define KHEAP_SIZE 0xFFFFF
+#define UHEAP_SIZE 0xFFFFF
 
 #endif

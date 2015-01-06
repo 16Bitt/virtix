@@ -44,6 +44,8 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name){
 }
 
 fs_node_t* fs_path(fs_node_t* node, char* name){
+	char* ref = name;
+	
 	//Copy the name for when we modify it
 	if(strcmp(name, "/") == 0)
 		return node;
@@ -82,7 +84,7 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 	}while((uint) name < (uint) end);
 	
 	//Clean up and yield
-	kfree(name);
+	kfree(ref);
 	return node;
 }
 
@@ -129,6 +131,7 @@ void vfs_ls(char* path){
 
 fs_node_t* vfs_get_dir(fs_node_t* node, char* name){
 	char* cpy = (char*) kmalloc(strlen(name) + 2);
+	char* ref = cpy;
 	strmov(cpy, name);
 	cpy[strlen(name) + 1] = 1;	//Any nonzero value works here
 	name = cpy;
@@ -146,7 +149,7 @@ fs_node_t* vfs_get_dir(fs_node_t* node, char* name){
 	else
 		output = fs_path(node, name);
 	
-	kfree(name);
+	kfree(ref);
 	return output;
 }
 

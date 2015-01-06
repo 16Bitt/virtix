@@ -3,6 +3,6 @@
 
 #include "kheap.h"
 
-extern heap_t* kheap;
+//extern heap_t* kheap;
 
 #endif
