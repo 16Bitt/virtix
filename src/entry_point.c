@@ -34,7 +34,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	NOTIFY("attempting to initialize paging")
 	virtix_page_init();
-	
+
 	/*
 	vga_puts("main(): relocating modules\n");
 	void* mod_loc = kmalloc_a(1024 * 10);
@@ -75,22 +75,16 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 
 	NOTIFY("testing file interface")
 	FILE f = kfopen("/libc/test.txt", 0);
+	NOTIFY("opened file");
 	char* str = "Hello, world!\n";
+	NOTIFY("writing to test file");
 	kfwrite(f, strlen(str), str);
+	NOTIFY("finished write to test file");
 	kfclose(f);
 
 	vfs_mkdir(df_root, "/dev");
 
 	//vfs_ls("/");
-	
-	int* x = (int*) kmalloc(sizeof(int));
-	vga_puts_hex((uint) x);
-	vga_puts_hex(*x);
-	vga_puts("\n");
-	
-	kfree(x);
-	vga_puts_hex((uint) x);
-	vga_puts("\n");
 
 	NOTIFY("syncing FAT")
 	fat_sync();

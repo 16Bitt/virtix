@@ -70,9 +70,11 @@ void split_heap(heap_header_t* heap, size_t size){
 	heap->magic2 = KHEAP_MAGIC2;
 
 	foot = (heap_footer_t*) ((uint) heap + HEAP_S + heap->size);
-	/*if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2))
+	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2)){
 		WARN("invalid footer in split");
-	*/
+		dump_struct(foot, sizeof(heap_footer_t));
+	}
+	
 
 	foot->magic = KHEAP_MAGIC;
 	foot->magic2 = KHEAP_MAGIC2;
@@ -84,6 +86,7 @@ void free_internal(heap_header_t* heap, void* address){
 	heap_header_t* head = (heap_header_t*) ((uint) address - HEAP_S);
 	if(head == heap){
 		WARN("can't collapse top of heap");
+		head->free = TRUE;
 		return;
 	}
 
@@ -118,6 +121,7 @@ void free_internal(heap_header_t* heap, void* address){
 		PANIC("fatal arithmetic error in free() call");
 
 	foot->size = heap->size;
+	head->free = TRUE;
 }
 
 void* malloc_internal(heap_header_t* heap, size_t size){

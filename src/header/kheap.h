@@ -26,7 +26,7 @@ typedef struct{
 
 #define HEAP_S		(sizeof(heap_header_t))
 #define HEAP_TOTAL	(sizeof(heap_footer_t) + HEAP_S)
-#define HEAP_MINIMUM	8
+#define HEAP_MINIMUM	1
 #define HEAP_FIND_SIZE	(HEAP_TOTAL + HEAP_MINIMUM)
 
 void init_kheap();			//Initialize heaps globally

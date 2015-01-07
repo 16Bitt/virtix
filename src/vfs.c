@@ -149,6 +149,7 @@ fs_node_t* vfs_get_dir(fs_node_t* node, char* name){
 	else
 		output = fs_path(node, name);
 	
+	NOTIFY("freeing reference to allocation")
 	kfree(ref);
 	return output;
 }
@@ -164,6 +165,7 @@ char* basename(char* name){
 
 fs_node_t* vfs_touch(fs_node_t* node, char* name){
 	fs_node_t* dir = vfs_get_dir(node, name);
+
 	if(dir == NULL)
 		return NULL;
 	

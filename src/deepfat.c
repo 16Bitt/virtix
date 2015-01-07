@@ -4,6 +4,7 @@
 #include "str-util.h"
 #include "deepfat.h"
 #include "fd.h"
+#include "monitor.h"
 
 fs_node_t* df_root;
 uint	current_inode = 0;

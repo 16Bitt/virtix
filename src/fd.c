@@ -24,11 +24,11 @@ uint fd_create(fs_node_t* node, uint offset){
 			fd_list[i].node		= node;
 			strmov(fd_list[i].name, node->name);
 			fd_list[i].present	= 1;
+			NOTIFY("found node");
 			return i;
 		}
 	}
 
-	vga_puts("fd_create(): returning\n");
 	return (uint) -1;
 }
 

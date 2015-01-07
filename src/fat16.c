@@ -65,7 +65,7 @@ void* fat_load_full(char* fat_name){
 	if(bytes % (512 * fat_header.sectors_per_cluster))
 		bytes += fat_header.sectors_per_cluster * 512;
 
-	void* file = kmalloc_a(bytes);
+	void* file = kmalloc(bytes);
 	void* top = file;		//Save the top of the file
 	ushort cluster = head->cluster_low;
 	
