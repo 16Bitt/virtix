@@ -82,6 +82,15 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	vfs_mkdir(df_root, "/dev");
 
 	//vfs_ls("/");
+	
+	int* x = (int*) kmalloc(sizeof(int));
+	vga_puts_hex((uint) x);
+	vga_puts_hex(*x);
+	vga_puts("\n");
+	
+	kfree(x);
+	vga_puts_hex((uint) x);
+	vga_puts("\n");
 
 	NOTIFY("syncing FAT")
 	fat_sync();

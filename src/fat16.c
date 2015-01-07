@@ -306,9 +306,7 @@ uint fat_read(char* name, uint offset, uint length, char* buffer){
 		}
 	}
 	
-	vga_puts("blame");
 	kfree(scratch);
-	vga_puts("blames");
 	return 0;
 }
 
@@ -347,9 +345,7 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 		fat_write_block(name, offset_to_cluster(offset), scratch);
 	}
 	
-	vga_puts("blames");
 	kfree(scratch);
-	vga_puts("blamed");
 	return 0;
 }
 

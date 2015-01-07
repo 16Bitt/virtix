@@ -35,7 +35,7 @@ void* kmalloc_a(unsigned int size){
 }
 
 heap_header_t* find_sized_heap(heap_header_t* heap, size_t size){
-	while((heap->free != TRUE) || (heap->size < size + HEAP_FIND_SIZE)){
+	while((heap->size < HEAP_FIND_SIZE + size) || (heap->free != TRUE)){
 		ASSERT(heap->magic == KHEAP_MAGIC);
 		ASSERT(heap->magic2 == KHEAP_MAGIC2);
 		heap_footer_t* foot = (heap_footer_t*) ((uint) heap + HEAP_S + heap->size);
@@ -46,9 +46,8 @@ heap_header_t* find_sized_heap(heap_header_t* heap, size_t size){
 			PANIC("out of heap space");
 		
 		if(foot->size != heap->size)
-			PANIC("corrupted heap footer or header");
+			PANIC("heap footer/header mismatch");
 		
-
 		heap = (heap_header_t*) ((uint) foot + sizeof(heap_footer_t));
 	}
 
@@ -56,8 +55,7 @@ heap_header_t* find_sized_heap(heap_header_t* heap, size_t size){
 }
 
 void split_heap(heap_header_t* heap, size_t size){
-	uint start = (uint) heap + HEAP_S;
-	heap_footer_t* foot = (heap_footer_t*) (start + size);
+	heap_footer_t* foot = (heap_footer_t*) ((uint) heap + HEAP_S + size);
 	foot->magic = KHEAP_MAGIC;
 	foot->magic2 = KHEAP_MAGIC2;
 	foot->size = size;
@@ -71,8 +69,11 @@ void split_heap(heap_header_t* heap, size_t size){
 	heap->magic = KHEAP_MAGIC;
 	heap->magic2 = KHEAP_MAGIC2;
 
-	start = (uint) heap + HEAP_S;
-	foot = (heap_footer_t*) (start + size);
+	foot = (heap_footer_t*) ((uint) heap + HEAP_S + heap->size);
+	/*if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2))
+		WARN("invalid footer in split");
+	*/
+
 	foot->magic = KHEAP_MAGIC;
 	foot->magic2 = KHEAP_MAGIC2;
 	if(foot->size != KHEAP_END)
@@ -85,19 +86,24 @@ void free_internal(heap_header_t* heap, void* address){
 		WARN("can't collapse top of heap");
 		return;
 	}
-	
+
 	if((head->magic != KHEAP_MAGIC) || (head->magic2 != KHEAP_MAGIC2)){
 		WARN("invalid header in heap");
+		dump_struct(head, sizeof(heap_header_t));
 		return;
 	}
 	
-	heap_footer_t* foot = (heap_footer_t*) ((uint) head - sizeof(heap_footer_t*));
+	heap_footer_t* foot = (heap_footer_t*) ((uint) head + HEAP_S + head->size);
+	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2))
+		PANIC("bad heap in free() call");
+	
+	foot = (heap_footer_t*) ((uint) head - sizeof(heap_footer_t));
 	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2)){
 		WARN("invalid footer in heap");
 		return;
 	}
 
-	if(foot->size = KHEAP_END)
+	if(foot->size == KHEAP_END)
 		PANIC("impossible condition for heap");
 	
 	heap = (heap_header_t*) ((uint) foot - foot->size - HEAP_S);
@@ -106,8 +112,8 @@ void free_internal(heap_header_t* heap, void* address){
 		return;
 	}
 	heap->size = heap->size + head->size + HEAP_TOTAL;
-
-	foot = (heap_footer_t*) ((uint) foot + foot->size);
+	
+	foot = (heap_footer_t*) ((uint) heap + heap->size + HEAP_S);
 	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2))
 		PANIC("fatal arithmetic error in free() call");
 

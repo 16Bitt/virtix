@@ -30,6 +30,8 @@ void* memcpy(void* dest, const void* src, size_t n);
 size_t strlen(char* str);
 int strcmp(char* str1, char* str2);
 
+void dump_struct(void* structure, size_t bytes);
+
 void panic(char* msg, char* file, unsigned int line);
 #define PANIC(msg) panic(msg, __FILE__, __LINE__)
 #define ASSERT(e) ((e) ? (void) 0 : PANIC("ASSERTION FAILED"))
