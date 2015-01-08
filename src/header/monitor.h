@@ -7,6 +7,7 @@ void vga_putc(char c);
 void vga_clear();
 void vga_puts(char* s);
 void vga_puts_hex(int n);
+void vga_putc_hex(char n);
 void vga_set_fg(uchar color);
 void vga_set_bg(uchar color);
 void vga_blink();

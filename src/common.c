@@ -85,13 +85,15 @@ void panic(char* msg, char* file, unsigned int line){
 }
 
 void dump_struct(void* structure, size_t bytes){
-	bytes /= sizeof(uint);
-	uint* list = (uint*) structure;
+	char* list = (char*) structure;
+	
+	vga_puts_hex((uint) structure);
+	vga_puts(": ");
 
 	int i;
 	for(i = 0; i < bytes; i++){
-		vga_puts_hex(list[i]);
-		vga_puts(", ");
+		vga_putc_hex(list[i]);
+		vga_puts(" ");
 	}
 
 	vga_puts("\n");

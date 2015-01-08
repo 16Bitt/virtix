@@ -131,6 +131,12 @@ void ata_write_block(ushort* buffer, uint lba){
 	ushort io = ATA_PRIMARY_IO;
 	uchar drive = ATA_MASTER;
 
+	//Flush the disk cache (necessary for certain hardware setups)
+	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH);
+	ata_wait(io);
+	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH_EXT);
+	ata_poll(io);
+
 	//Preliminary disk setup
 	outb(io + ATA_REG_HDDEVSEL, (cmd | (uchar) (lba >> 24 & 0x0F)));	//Select block
 	outb(io + ATA_REG_ERROR, 0);	//Clear error register
@@ -148,12 +154,6 @@ void ata_write_block(ushort* buffer, uint lba){
 	for(i = 0; i < 256; i++)
 		outw(io + ATA_REG_DATA, buffer[i]);
 
-	ata_wait(io);
-	
-	//Flush the disk cache (necessary for certain hardware setups)
-	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH);
-	ata_wait(io);
-	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH_EXT);
 	ata_wait(io);
 }
 

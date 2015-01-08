@@ -149,7 +149,6 @@ fs_node_t* vfs_get_dir(fs_node_t* node, char* name){
 	else
 		output = fs_path(node, name);
 	
-	NOTIFY("freeing reference to allocation")
 	kfree(ref);
 	return output;
 }
@@ -178,9 +177,10 @@ fs_node_t* vfs_touch(fs_node_t* node, char* name){
 		PANIC("kernel attempted to overwrite file in FAT");
 
 	int i;
-	for(i = 0; i < 11; i++)
+	for(i = 0; i < 11; i++){
 		file->dos_name[i] = entry->name[i];
-
+	}
+	
 	file->link = dir->holds;
 	dir->holds = file;
 

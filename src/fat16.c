@@ -290,7 +290,7 @@ uint fat_read(char* name, uint offset, uint length, char* buffer){
 	if(entry == NULL)
 		return (uint) -1;
 	
-	uchar* scratch = (uchar*) kmalloc(CLUSTER_BSIZE);
+	uchar* scratch = (uchar*) kmalloc(CLUSTER_BSIZE * 2);
 	while(length != 0){
 		fat_read_block(name, offset_to_cluster(offset), scratch);
 		uint index = offset_in_cluster(offset);
@@ -326,8 +326,8 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 			extension += CLUSTER_BSIZE;
 		}
 	}
-	
-	uchar* scratch = (uchar*) kmalloc(CLUSTER_BSIZE);
+
+	uchar* scratch = (uchar*) kmalloc(CLUSTER_BSIZE * 2);
 	while(length != 0){
 		fat_read_block(name, offset_to_cluster(offset), scratch);
 		uint index = offset_in_cluster(offset);

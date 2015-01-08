@@ -75,9 +75,6 @@ void split_heap(heap_header_t* heap, size_t size){
 		dump_struct(foot, sizeof(heap_footer_t));
 	}
 	
-
-	foot->magic = KHEAP_MAGIC;
-	foot->magic2 = KHEAP_MAGIC2;
 	if(foot->size != KHEAP_END)
 		foot->size = new_size;
 }
@@ -114,14 +111,21 @@ void free_internal(heap_header_t* heap, void* address){
 		WARN("invalid parent in heap");
 		return;
 	}
-	heap->size = heap->size + head->size + HEAP_TOTAL;
 	
-	foot = (heap_footer_t*) ((uint) heap + heap->size + HEAP_S);
-	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2))
-		PANIC("fatal arithmetic error in free() call");
+	foot = (heap_footer_t*) ((uint) heap + (heap->size + head->size + HEAP_TOTAL) + HEAP_S);
+	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2)){
+		vga_puts("Footer with size of ");
+		vga_puts_hex(foot->size);
+		vga_puts(" / head size of ");
+		vga_puts_hex(heap->size);
+		vga_puts("\n");
+		dump_struct(foot, sizeof(heap_footer_t));
+		WARN("fatal arithmetic error in free() call");
+		return;		
+	}
 
+	heap->size += head->size + HEAP_TOTAL;
 	foot->size = heap->size;
-	head->free = TRUE;
 }
 
 void* malloc_internal(heap_header_t* heap, size_t size){
@@ -151,5 +155,8 @@ void* kmalloc(uint size){
 }
 
 void kfree(void* address){
+	if(kheap == NULL)
+		return;
+	
 	free_internal(kheap, address);
 }

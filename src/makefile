@@ -22,7 +22,7 @@ mkinitramfs: binaries
 	cd initramfs && make
 
 run: all
-	qemu-system-i386 -kernel build/kernel -cdrom grub.iso -hda userland/hdd.img
+	qemu-system-i386 -kernel build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
 
 debug: all
 	objcopy --only-keep-debug build/kernel build/ksym

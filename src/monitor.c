@@ -76,6 +76,14 @@ void vga_puts_hex(int n){
 		vga_putc(reference[(n >> i) & 0xF]);
 }
 
+void vga_putc_hex(char n){
+	char* reference = "0123456789ABCDEF";
+	
+	int i;
+	for(i = 4; i > -1; i -= 4)
+		vga_putc(reference[(n >> i) & 0xF]);
+}
+
 void vga_clear(){
 	unsigned short empty = 0x20 | (15 << 8);
 
