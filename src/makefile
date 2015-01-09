@@ -4,45 +4,17 @@ LDFLAGS	= -Tlink.ld -melf_i386
 ASFLAGS	= -felf
 CC	= gcc
 
-all: $(SOURCES) link binaries dimg
+all: $(SOURCES) link
 
 clean:
-	cd userland && make clean
-	-rm *.o grub.iso
+	-rm *.o
 	-rm -rf build/*
-	-rm *.log
 
 link:
 	ld $(LDFLAGS) -obuild/kernel $(SOURCES) 
 
 .s.o:
 	nasm $(ASFLAGS) $<
-
-mkinitramfs: binaries
-	cd initramfs && make
-
-run: all
-	qemu-system-i386 -kernel build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
-
-debug: all
-	objcopy --only-keep-debug build/kernel build/ksym
-	qemu-system-x86_64 -nographic -no-reboot -kernel build/kernel -initrd initramfs/initrd -s -S & sleep 3
-	(echo target remote 127.0.0.1:1234; cat) | gdb -s build/ksym build/kernel
-	-pkill "qemu*"
-
-dimg: all
-	mkdir -p build/boot
-	mkdir -p build/boot/grub
-	cp grub.cfg build/boot/grub/
-	cp build/kernel build/boot/kernel
-	cp initramfs/initrd build/boot/initrd
-	-grub-mkrescue -o grub.iso build
-
-bochs: dimg
-	-echo c | bochs -q 2> bochs.log
-
-vbox: dimg
-	VBoxManage convertfromraw userland/hdd.img userland/hdd.vdi --format vdi
 
 binaries:
 	cd userland && make
