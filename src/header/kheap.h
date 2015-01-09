@@ -36,6 +36,9 @@ void* kmalloc(unsigned int size);	//straight kmalloc
 void* kmalloc_a(unsigned int size);	//page aligned kmalloc
 void kfree(void* ptr);			//Free unused memory
 
+void* umalloc(size_t size);		//Allocate in userspace
+void ufree(void* address);		//Free in userspace
+
 void init_heap(heap_header_t* heap, size_t size);
 
 #define KHEAP_SIZE 0xFFFFF

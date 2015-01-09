@@ -1,6 +1,7 @@
 #include "common.h"
 #include "kheap.h"
 #include "monitor.h"
+#include "virtix_page.h"
 
 unsigned int placement_address;
 
@@ -13,6 +14,11 @@ void init_kheap(){
 
 	kheap = (heap_header_t*) fmalloc(KHEAP_SIZE);
 	init_heap(kheap, KHEAP_SIZE);
+	
+	//Make user heap, then map to its
+	uheap = (heap_header_t*) kmalloc_a(UHEAP_SIZE);
+	init_heap(uheap, UHEAP_SIZE);
+	vpage_map_user(root_vpage_dir, (uint) &uheap, (uint) &uheap);
 }
 
 void* fmalloc(unsigned int size){
@@ -159,4 +165,12 @@ void kfree(void* address){
 		return;
 	
 	free_internal(kheap, address);
+}
+
+void* umalloc(size_t size){
+	return malloc_internal(uheap, size);
+}
+
+void ufree(void* address){
+	free_internal(uheap, address);
 }
