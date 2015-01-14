@@ -14,6 +14,7 @@ typedef unsigned int uint;
 #define SYS_OPEN	7
 #define SYS_MALLOC	8
 #define SYS_FREE	9
+#define SYS_GET_ARGS	10
 
 uint fork();
 uint getpid();
