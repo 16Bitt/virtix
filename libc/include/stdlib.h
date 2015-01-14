@@ -26,7 +26,7 @@ int unlink(char* path);
 
 //Process manipulation
 int fork();
-int 
+int exit(int err_code);
 
 __HEADER_END
 
