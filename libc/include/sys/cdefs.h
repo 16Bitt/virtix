@@ -11,4 +11,6 @@
 	#define __HEADER_END
 #endif
 
+#include "sys/types.h"
+
 #endif

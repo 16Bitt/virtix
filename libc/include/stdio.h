@@ -1,11 +1,11 @@
 #ifndef __STDIO_H
 #define __STDIO_H
 
-#include "sys/cdef.h"
+#include "sys/cdefs.h"
 
 __HEADER_START
 
-typedef FILE unsigned int;
+typedef unsigned int FILE;
 
 extern FILE* stdin;
 extern FILE* stdout;
@@ -18,6 +18,7 @@ int fclose(FILE* f);
 //File output
 int fprintf(FILE* f, char* fmt, ...);
 int fputs(FILE* f, char* str);
+int fputchar(FILE* f, char c);
 
 //Terminal Output
 int putchar(char c);

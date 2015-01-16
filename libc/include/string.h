@@ -17,7 +17,7 @@ int strncmp(char* str1, char* str2, size_t length);
 int strcasecmp(char* str1, char* str2);
 int strncasecmp(char* str1, char* str2, size_t length);
 char* index(char* s, int c);
-char* strchr(char* s, int s);
+char* strchr(char* s, int c);
 char* rindex(char* s, int c);
 char* strrchr(char* s, int c);
 char* strcat(char* dest, char* src);
