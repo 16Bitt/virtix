@@ -1,14 +1,17 @@
-SOURCES	= crt0.o
+SOURCES = $(patsubst %.c,%.o,$(wildcard *.c))
+CFLAGS	= -fno-builtin -nostdinc -nostdlib -m32 -Iinclude
 TARGETS	= stdio string stdlib
 
 all: $(SOURCES) makesubs
 
-makesubs:
-	$(foreach target,$(TARGETS),cd $(target) && make && cd ..;)
-
 clean: cleansubs
-	rm $(SOURCES)
-	-rm *.o
+	-rm $(SOURCES)
+
+makesubs:
+	$(foreach t,$(TARGETS),cd $(t) && make && cd ..;)
 
 cleansubs:
-	$(foreach target,$(TARGETS),cd $(target) && make clean && cd -;)
+	$(foreach t,$(TARGETS),cd $(t) && make clean && cd ..;)
+
+nop:
+	@@echo Nop
