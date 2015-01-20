@@ -45,11 +45,11 @@ void userspace_handler(registers_t* regs){
 }
 
 void init_userspace(){
-	register_interrupt_handler(31, userspace_handler);
+	register_interrupt_handler(0x80, userspace_handler);
 }
 
 uint fork(){
-	return 0;
+	return -1;
 }
 
 uint getpid(){

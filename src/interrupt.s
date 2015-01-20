@@ -68,6 +68,8 @@ ISR_BLANK 46
 ISR_BLANK 47
 ISR_BLANK 48
 
+ISR_BLANK 0x80
+
 	[EXTERN isr_handler]
 	[EXTERN stack_hold]
 

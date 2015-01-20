@@ -1,4 +1,7 @@
 #include "sys/cdefs.h"
 
-static void _start(){
+extern int main(char** argc, int argv);
+
+void _start(){
+	main(NULL, NULL);
 }

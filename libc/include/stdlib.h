@@ -5,6 +5,9 @@
 
 __HEADER_START
 
+#include "sys/stat.h"
+#include "sys/dirent.h"
+
 //Basic file IO
 int open(char* name, uint offset);
 int close(int file);
@@ -20,7 +23,8 @@ int unlink(char* path);
 
 //Process manipulation
 int fork();
-int exit(int err_code);
+void exit(int status);
+void _exit(int status);
 
 __HEADER_END
 

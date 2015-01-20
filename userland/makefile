@@ -1,9 +1,18 @@
-CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -Iheader/ 
+CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -I../libc/include
 LDFLAGS	= -Tlink.ld -melf_i386
 CC	= gcc
-TARGET	= hello.x
+SOURCES	= $(wildcard *.c)
+OUTPUTS	= $(SOURCES:.c=.o)
+EXECS	= $(OUTPUTS:.o=)
+LIBC	= ../libc/libc.a
 
-all: disk
+all: disk $(EXECS)
+
+$(OUTPUTS): $(SOURCES)
+	$(CC) $(CFLAGS) $< -c -o $@
+
+$(EXECS): $(OUTPUTS)
+	$(LD) $(LDFLAGS) $< $(LIBC) -o $@
 
 disk:	
 	if ! [ -a hdd.img ]; \
@@ -14,7 +23,5 @@ disk:
 	bin/mkdf.sh ./ hdd.img
 
 clean:
-	-rm *.o *.x *.img *.vdi
+	-rm *.o *.img *.vdi
 
-libc-build:
-	cd libc && make

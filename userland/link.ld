@@ -1,4 +1,4 @@
-ENTRY(main)
+ENTRY(_start)
 SECTIONS
 {
 	/*This is the text section, note start position*/

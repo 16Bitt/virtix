@@ -3,10 +3,11 @@ CFLAGS	= -fno-builtin -nostdinc -nostdlib -m32 -Iinclude
 TARGETS	= stdio string stdlib
 
 all: $(SOURCES) makesubs
+	ar rcs libc.a *.o
 
 clean: cleansubs
 	-rm $(SOURCES)
-	-rm *.o
+	-rm *.o *.a
 
 makesubs:
 	$(foreach t,$(TARGETS),cd $(t) && make && cd ..;)
