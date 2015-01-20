@@ -1,13 +1,15 @@
 all:
 	cd src && make
+	cd libc && make
 	cd userland && make
 
 clean:
 	cd src && make clean
+	cd libc && make clean
 	cd userland && make clean
 	-rm *.iso *.log
 
-run: all
+run: all dimg
 	qemu-system-i386 -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
 
 debug: all

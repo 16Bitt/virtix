@@ -1,4 +1,13 @@
-all:
-	@@echo Nothing.
+SOURCES = $(patsubst %.c,%.o,$(wildcard *.c))
+CFLAGS	= -fno-builtin -nostdinc -nostdlib -m32 -I../include
 
-clean: all
+all: copyup
+
+clean:
+	-rm $(SOURCES)
+
+copyup: $(SOURCES)
+	cp $(SOURCES) ../
+
+nop:
+	@@echo Nop

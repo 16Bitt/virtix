@@ -5,12 +5,6 @@
 
 __HEADER_START
 
-//Used to query the kernel
-int virtix_syscall(uint call_no);
-int virtix_syscall0(uint call_no, uint val0);
-int virtix_syscall1(uint call_no, uint val0, uint val1);
-int virtix_syscall2(uint call_no, uint val0, uint val2, uint val3);
-
 //Basic file IO
 int open(char* name, uint offset);
 int close(int file);

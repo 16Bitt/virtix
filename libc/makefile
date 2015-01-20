@@ -6,6 +6,7 @@ all: $(SOURCES) makesubs
 
 clean: cleansubs
 	-rm $(SOURCES)
+	-rm *.o
 
 makesubs:
 	$(foreach t,$(TARGETS),cd $(t) && make && cd ..;)
