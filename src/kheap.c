@@ -94,8 +94,8 @@ void free_internal(heap_header_t* heap, void* address){
 	}
 
 	if((head->magic != KHEAP_MAGIC) || (head->magic2 != KHEAP_MAGIC2)){
-		WARN("invalid header in heap");
-		dump_struct(head, sizeof(heap_header_t));
+		//WARN("invalid header in heap");
+		//dump_struct(head, sizeof(heap_header_t));
 		return;
 	}
 	
@@ -105,7 +105,7 @@ void free_internal(heap_header_t* heap, void* address){
 	
 	foot = (heap_footer_t*) ((uint) head - sizeof(heap_footer_t));
 	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2)){
-		WARN("invalid footer in heap");
+		//WARN("invalid footer in heap");
 		return;
 	}
 
@@ -120,13 +120,14 @@ void free_internal(heap_header_t* heap, void* address){
 	
 	foot = (heap_footer_t*) ((uint) heap + (heap->size + head->size + HEAP_TOTAL) + HEAP_S);
 	if((foot->magic != KHEAP_MAGIC) || (foot->magic2 != KHEAP_MAGIC2)){
-		vga_puts("Footer with size of ");
+		/*vga_puts("Footer with size of ");
 		vga_puts_hex(foot->size);
 		vga_puts(" / head size of ");
 		vga_puts_hex(heap->size);
 		vga_puts("\n");
 		dump_struct(foot, sizeof(heap_footer_t));
 		WARN("fatal arithmetic error in free() call");
+		*/
 		return;		
 	}
 
@@ -135,7 +136,7 @@ void free_internal(heap_header_t* heap, void* address){
 }
 
 void* malloc_internal(heap_header_t* heap, size_t size){
-	heap = find_sized_heap(heap, size);
+	heap = find_sized_heap(heap, size + 8);
 	heap->free = FALSE;
 	split_heap(heap, size);
 	return (void*) ((uint) heap + HEAP_S);

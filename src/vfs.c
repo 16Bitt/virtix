@@ -55,7 +55,7 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 	cpy[strlen(name) + 1] = 1;	//Any non-zero character works, solely for next_str
 	
 	name = cpy;
-	char* end = &name[strlen(name) - 1];
+	char* end = &name[strlen(name)];
 	
 	//Format for parsing (zero-style parsing)
 	int i;
@@ -84,7 +84,11 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 	}while((uint) name < (uint) end);
 	
 	//Clean up and yield
-	kfree(ref);
+	vga_puts_hex((uint) node);
+	vga_puts("\n");
+
+	kfree(cpy);
+	
 	return node;
 }
 
@@ -170,7 +174,7 @@ fs_node_t* vfs_touch(fs_node_t* node, char* name){
 	
 	fs_node_t* file = mk_empty_fnode();
 	strmov(file->name, basename(name));
-	
+
 	fat_dir_t* entry = df_new_file();
 
 	if(entry == NULL)

@@ -15,6 +15,7 @@
 #include "ata.h"
 #include "deepfat.h"
 #include "file.h"
+#include "init.h"
 
 void* stack = NULL;
 
@@ -73,18 +74,14 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	NOTIFY("starting file descriptor interface")
 	init_fd();
 
-	NOTIFY("testing file interface")
-	FILE f = kfopen("/libc/test.txt", 0);
-	NOTIFY("opened file");
-	char* str = "Hello, world!\n";
-	NOTIFY("writing to test file");
-	kfwrite(f, strlen(str), str);
-	NOTIFY("finished write to test file");
-	kfclose(f);
+	NOTIFY("starting VFS drivers");
+	driver_init();
+	
+	FILE f = kfopen("/dev/stdout", 0);
+	char* msg = "Test write to /dev/stdout\n";
+	kfwrite(f, strlen(msg), msg);
 
-	vfs_mkdir(df_root, "/dev");
-
-	//vfs_ls("/");
+	vfs_ls("/dev");
 
 	NOTIFY("syncing FAT")
 	fat_sync();
