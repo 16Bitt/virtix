@@ -7,8 +7,6 @@
 
 FILE kfopen(char* path, uint offset){
 	fs_node_t* node = fs_path(df_root, path);
-	vga_puts_hex((uint) node);
-	NOTIFY(path)
 	
 	if(node == NULL){
 		node = vfs_touch(df_root, path);

@@ -7,5 +7,5 @@ void driver_init(){
 	vfs_mkdir(df_root, "/dev");
 	DEVLOAD(dev_null)
 	DEVLOAD(dev_stdout)
-	vfs_ls("/dev");
+	DEVLOAD(dev_stderr)
 }

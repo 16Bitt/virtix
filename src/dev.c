@@ -10,6 +10,8 @@ void mkdev(char* name, read_type_t read, write_type_t write){
 		return;
 	}
 	
+	NOTIFY(name)
+
 	char* path = (char*) kmalloc(strlen(name) + strlen("/dev/") + 2);
 	strmov(path, "/dev/");
 	strmov(&path[strlen("/dev/")], name);

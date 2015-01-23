@@ -44,8 +44,6 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name){
 }
 
 fs_node_t* fs_path(fs_node_t* node, char* name){
-	char* ref = name;
-	
 	//Copy the name for when we modify it
 	if(strcmp(name, "/") == 0)
 		return node;
@@ -58,11 +56,11 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 	char* end = &name[strlen(name)];
 	
 	//Format for parsing (zero-style parsing)
-	int i;
-	for(i = 0; i < strlen(name); i++)
+	int i, len = strlen(name);
+	for(i = 0; i < len; i++)
 		if(name[i] == '/')
 			name[i] = 0;
-	
+
 	if(strlen(name) == 0)
 		name = next_str(name);
 
@@ -77,18 +75,14 @@ fs_node_t* fs_path(fs_node_t* node, char* name){
 			node = node->link;
 		}
 
-		if(node == NULL)
+		if(node == NULL){
 			return NULL;
+		}
 		
 		name = next_str(name);
 	}while((uint) name < (uint) end);
-	
-	//Clean up and yield
-	vga_puts_hex((uint) node);
-	vga_puts("\n");
 
 	kfree(cpy);
-	
 	return node;
 }
 

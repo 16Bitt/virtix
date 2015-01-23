@@ -80,8 +80,11 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	FILE f = kfopen("/dev/stdout", 0);
 	char* msg = "Test write to /dev/stdout\n";
 	kfwrite(f, strlen(msg), msg);
-
-	vfs_ls("/dev");
+	kfclose(f);
+	msg = "Test write to /dev/stderr\n";
+	f = kfopen("/dev/stderr", 0);
+	kfwrite(f, strlen(msg), msg);
+	kfclose(f);
 
 	NOTIFY("syncing FAT")
 	fat_sync();
