@@ -8,6 +8,10 @@ __HEADER_START
 #include "sys/stat.h"
 #include "sys/dirent.h"
 
+#define SEEK_SET	0
+#define SEEK_CUR	1
+#define SEEK_END	2
+
 //Basic file IO
 int open(char* name, uint offset);
 int close(int file);

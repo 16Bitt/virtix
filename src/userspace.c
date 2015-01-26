@@ -33,6 +33,9 @@ void userspace_handler(registers_t* regs){
 		case SYS_CLOSE:
 			regs->eax = close(regs->ebx);
 			return;
+		case SYS_LSEEK:
+			regs->eax = klseek(regs->ebx, regs->ecx, regs->edx);
+			return;
 
 		//Modifies the process
 		case SYS_EXIT:

@@ -7,12 +7,14 @@ EXECS	= $(OUTPUTS:.o=)
 LIBC	= ../libc/libc.a
 
 all: disk $(EXECS)
+	cp $(EXECS) bin/
 
 $(OUTPUTS): $(SOURCES)
 	$(CC) $(CFLAGS) $< -c -o $@
 
 $(EXECS): $(OUTPUTS)
-	$(LD) $(LDFLAGS) $< $(LIBC) -o $@
+	$(LD) $(LDFLAGS) $(LIBC) $< -o $@
+	strip --strip-unneeded $<
 
 disk:	
 	if ! [ -a hdd.img ]; \
@@ -23,5 +25,4 @@ disk:
 	bin/mkdf.sh ./ hdd.img
 
 clean:
-	-rm *.o *.img *.vdi
-
+	-rm *.o *.img *.vdi bin/*

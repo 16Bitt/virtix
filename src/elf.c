@@ -34,9 +34,11 @@ virtix_proc_t* elf_load(void* elf_data){
 	virtix_proc_t* proc = mk_empty_proc();
 	proc->name = "ELF_PROGRAM";
 	proc->registers.eip = header->e_entry;
-	proc->registers.esp = header->e_entry + PAGE_S - 1;
 
 	switch_vpage_dir(proc->cr3);
+	uint stk = (uint) kmalloc_a(PAGE_S);
+	proc->registers.esp = header->e_entry - (PAGE_S / 2);
+	vpage_map_user(proc->cr3, stk, header->e_entry - PAGE_S);
 
 	elf32_phdr* phdr = (elf32_phdr*) (((unsigned int) elf_data) + header->e_phoff);
 
@@ -54,7 +56,11 @@ virtix_proc_t* elf_load(void* elf_data){
 					PANIC("ELF binary section too large");
 				break;
 			default:
-				vga_puts("WARN: skipping unknown file header in elf\n");
+				vga_set_fg(RED);
+				vga_puts("type=");
+				vga_puts_hex(phdr->p_type);
+				vga_puts("\n");
+				WARN("unknown header type");
 		}
 	}
 

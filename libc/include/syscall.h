@@ -16,6 +16,7 @@ __HEADER_START
 #define SYS_MALLOC	8
 #define SYS_FREE	9
 #define SYS_GET_ARGS	10
+#define SYS_LSEEK	11
 
 int syscall_0arg(uint call_no);
 int syscall_1arg(uint call_no, uint arg1);

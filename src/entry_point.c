@@ -86,6 +86,9 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 
+	NOTIFY("spawning subprocess");
+	kexec("/bin/hello");
+
 	NOTIFY("syncing FAT")
 	fat_sync();
 	
