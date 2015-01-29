@@ -77,6 +77,9 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	NOTIFY("starting VFS drivers");
 	driver_init();
 	
+	vga_puts_hex((uint) root_vpage_dir);
+	vga_puts("\n");
+
 	FILE f = kfopen("/dev/stdout", 0);
 	char* msg = "Test write to /dev/stdout\n";
 	kfwrite(f, strlen(msg), msg);

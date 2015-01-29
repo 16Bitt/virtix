@@ -3,6 +3,7 @@
 #include "exec.h"
 #include "virtix_proc.h"
 #include "elf.h"
+#include "monitor.h"
 
 uint kexec(char* path){
 	FILE f = kfopen(path, 0);
@@ -14,6 +15,9 @@ uint kexec(char* path){
 	kfstat(f, st);
 	size_t size = st->length;
 	kfree(st);
+	
+	vga_puts_hex(size);
+	NOTIFY("size");
 
 	char* buffer = (char*) kmalloc(size);
 	kfread(f, size, buffer);
@@ -22,6 +26,7 @@ uint kexec(char* path){
 	kfree(buffer);
 	if(proc == NULL)
 		return (uint) -1;
-
-	return enter_userspace(proc);
+	
+	enter_userspace(proc);
+	return single_yield(proc
 }

@@ -13,9 +13,9 @@ run: all dimg
 	qemu-system-i386 -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
 
 debug: all
-	objcopy --only-keep-debug src/build/kernel build/ksym
-	qemu-system-x86_64 -nographic -no-reboot -kernel src/build/kernel -initrd initramfs/initrd -s -S & sleep 3
-	(echo target remote 127.0.0.1:1234; cat) | gdb -s build/ksym src/build/kernel
+	objcopy --only-keep-debug src/build/kernel src/build/ksym
+	-qemu-system-i386 -kernel src/build/kernel -drive file=userland/hdd.img,if=ide -S -s & sleep 3
+	(echo target remote 127.0.0.1:1234; cat) | gdb -s src/build/ksym src/build/kernel
 	-pkill "qemu*"
 
 dimg: all
@@ -27,7 +27,7 @@ dimg: all
 	-grub-mkrescue -o grub.iso src/build
 
 bochs: dimg
-	-echo c | bochs -q 2> bochs.log
+	bochs -q 2> bochs.log
 
 vbox: dimg
 	VBoxManage convertfromraw userland/hdd.img userland/hdd.vdi --format vdi

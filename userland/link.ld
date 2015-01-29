@@ -2,7 +2,7 @@ ENTRY(_start)
 SECTIONS
 {
 	/*This is the text section, note start position*/
-	.text 0xF0000000:
+	.text 0x40000000:
 	{
 		code = .; _code = .; __code = .;
 		*(.text)

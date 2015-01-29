@@ -37,8 +37,10 @@ virtix_proc_t* elf_load(void* elf_data){
 
 	switch_vpage_dir(proc->cr3);
 	uint stk = (uint) kmalloc_a(PAGE_S);
-	proc->registers.esp = header->e_entry - (PAGE_S / 2);
-	vpage_map_user(proc->cr3, stk, header->e_entry - PAGE_S);
+	proc->registers.esp = 0x4000000 - (PAGE_S / 2);
+	proc->registers.ebp = proc->registers.esp;
+	proc->registers.useresp = proc->registers.esp;
+	vpage_map_user(proc->cr3, stk, 0x4000000 - PAGE_S);
 
 	elf32_phdr* phdr = (elf32_phdr*) (((unsigned int) elf_data) + header->e_phoff);
 

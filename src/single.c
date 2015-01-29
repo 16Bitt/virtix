@@ -21,13 +21,20 @@ void enter_userspace(virtix_proc_t* proc){
 	hl_esp = proc->registers.esp;
 	switch_vpage_dir(proc->cr3);
 	
+	current_proc = proc;
+
+	/*
 	sti();
 	hard_usermode();
+	*/
 }
 
 void single_yield(virtix_proc_t* proc, registers_t* regs){
 	memcpy(&proc_bottom->registers, regs, sizeof(registers_t));
 	
+	if(proc == proc_bottom)
+		PANIC("Can't return from parent process");
+
 	proc->next = proc_bottom;
 	proc_bottom = proc;
 	
