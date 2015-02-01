@@ -1,6 +1,7 @@
 #include "common.h"
 #include "monitor.h"
 #include "ata.h"
+#include "dev.h"
 
 ushort* ata_info;
 
@@ -169,9 +170,93 @@ void ata_write_blocks(ushort* buffer, uint lba, uint length){
 void init_ata(){
 	ata_info = (ushort*) kmalloc(sizeof(ushort) * 256); //256 word buffer for ident()
 	
+	dev_t* dev = (dev_t*) kmalloc(sizeof(dev_t));
+	dev->drive = ATA_MASTER;
+	dev->bus = ATA_PRIMARY;
+	strmov(dev->name, "hdd");
+
 	//TODO: don't hardcode root disk
 	ASSERT(ident_ata(ATA_PRIMARY, ATA_MASTER));
-	
+	ASSERT(ident_ata(dev->bus, dev->drive));
+
 	disk_channel = ATA_PRIMARY;
 	disk_type = ATA_MASTER;
+}
+
+void ata_read_drv(dev_t* dev, ushort* buffer, uint lba){
+	select_ata(dev->bus, dev->drive);
+	
+	uchar cmd;
+	if(dev->drive == ATA_MASTER)
+		cmd = 0xE0;
+	else
+		cmd = 0xF0;
+	
+	ushort io;
+	if(dev->drive == ATA_PRIMARY)
+		io = ATA_PRIMARY_IO;
+	else
+		io = ATA_SECONDARY_IO;
+
+	//Preliminary disk setup
+	outb(io + ATA_REG_HDDEVSEL, (cmd | (uchar) (lba >> 24 & 0x0F)));	//Select block
+	outb(io + ATA_REG_ERROR, 0);	//Clear error register
+	outb(io + ATA_REG_SECCOUNT0, 1);	//Read one sector
+	
+	outb(io + ATA_REG_LBA0, (uchar) lba & 0xFF); //Lower 8 bits of lba
+	outb(io + ATA_REG_LBA1, (uchar) ((lba >> 8) & 0xFF)); //Middle 8 bits of lba
+	outb(io + ATA_REG_LBA2, (uchar) ((lba >> 16) & 0xFF)); //Upper 8 bits of lba
+	
+	//Send commands
+	outb(io + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
+	ata_poll(io);
+
+	int i;
+	for(i = 0; i < 256; i++){
+		ushort data = inw(io + ATA_REG_DATA);
+		buffer[i] = data;
+	}
+
+	ata_wait(io);
+}
+
+void ata_write_drv(dev_t* dev, ushort* buffer, uint lba){
+	select_ata(dev->bus, dev->drive);
+	
+	uchar cmd;
+	if(dev->drive == ATA_MASTER)
+		cmd = 0xE0;
+	else
+		cmd = 0xF0;
+	
+	ushort io;
+	if(dev->drive == ATA_PRIMARY)
+		io = ATA_PRIMARY_IO;
+	else
+		io = ATA_SECONDARY_IO;
+	
+	//Flush the disk cache (necessary for certain hardware setups)
+	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH);
+	ata_wait(io);
+	outb(io + ATA_REG_COMMAND, ATA_CMD_CACHE_FLUSH_EXT);
+	ata_poll(io);
+
+	//Preliminary disk setup
+	outb(io + ATA_REG_HDDEVSEL, (cmd | (uchar) (lba >> 24 & 0x0F)));	//Select block
+	outb(io + ATA_REG_ERROR, 0);	//Clear error register
+	outb(io + ATA_REG_SECCOUNT0, 1);	//Read one sector
+	
+	outb(io + ATA_REG_LBA0, (uchar) lba & 0xFF); //Lower 8 bits of lba
+	outb(io + ATA_REG_LBA1, (uchar) ((lba >> 8) & 0xFF)); //Middle 8 bits of lba
+	outb(io + ATA_REG_LBA2, (uchar) ((lba >> 16) & 0xFF)); //Upper 8 bits of lba
+
+	//Send commands
+	outb(io + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
+	ata_poll(io);
+
+	int i;
+	for(i = 0; i < 256; i++)
+		outw(io + ATA_REG_DATA, buffer[i]);
+
+	ata_wait(io);
 }

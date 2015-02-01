@@ -28,5 +28,4 @@ uint kexec(char* path){
 		return (uint) -1;
 	
 	enter_userspace(proc);
-	return single_yield(proc
 }

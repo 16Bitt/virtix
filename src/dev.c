@@ -26,3 +26,22 @@ void mkdev(char* name, read_type_t read, write_type_t write){
 	node->read = read;
 	node->write = write;
 }
+
+uint dev_read(dev_t* dev, uint offset, char* buffer){
+	if(dev->read == NULL){
+		WARN("can't read from device");
+		return (uint) -1;
+	}
+
+	return dev->read(dev, offset, buffer);
+}
+
+
+uint dev_write(dev_t* dev, uint offset, char* buffer){
+	if(dev->write == NULL){
+		WARN("can't write to device");
+		return (uint) -1;
+	}
+
+	return dev->write(dev, offset, buffer);
+}

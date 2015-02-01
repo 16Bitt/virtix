@@ -3,10 +3,12 @@
 #include "fat.h"
 #include "ata.h"
 #include "kheap.h"
+#include "dev.h"
 
 fat_header_t	fat_header;
 ushort*		cluster_list;
 fat_dir_t*	fat_dir;
+dev_t*		fat_dev;
 
 int fat_strcmp(char* str1, char* str2){
 	int i;

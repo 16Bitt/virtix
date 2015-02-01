@@ -23,10 +23,8 @@ void enter_userspace(virtix_proc_t* proc){
 	
 	current_proc = proc;
 
-	/*
 	sti();
 	hard_usermode();
-	*/
 }
 
 void single_yield(virtix_proc_t* proc, registers_t* regs){
