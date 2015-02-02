@@ -4,7 +4,7 @@
 #include "dev.h"
 #include "deepfat.h"
 
-void mkdev(char* name, read_type_t read, write_type_t write){
+void mkdev(char* name, read_block_t read, write_block_t write){
 	if(fs_path(df_root, "/dev") == NULL){
 		WARN("Can't make device, no path for /dev")
 		return;
@@ -23,8 +23,8 @@ void mkdev(char* name, read_type_t read, write_type_t write){
 		return;
 	}
 
-	node->read = read;
-	node->write = write;
+	node->read_blk = read;
+	node->write_blk = write;
 }
 
 uint dev_read(dev_t* dev, uint offset, char* buffer){

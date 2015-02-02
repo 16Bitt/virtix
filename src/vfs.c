@@ -5,16 +5,16 @@
 #include "str-util.h"
 #include "deepfat.h"
 
-uint read_fs(fs_node_t* node, uint offset, uint size, uchar* buffer){
-	if(node->read != NULL)
-		return node->read(node, offset, size, buffer);
+uint read_fs(fs_node_t* node, uint offset, uchar* buffer){
+	if(node->read_blk != NULL)
+		return node->read_blk(node, offset, buffer);
 	else
 		return 0;
 }
 
-uint write_fs(fs_node_t* node, uint offset, uint size, uchar* buffer){
-	if(node->write != NULL)
-		return node->write(node, offset, size, buffer);
+uint write_fs(fs_node_t* node, uint offset, uchar* buffer){
+	if(node->write_blk != NULL)
+		return node->write_blk(node, offset, buffer);
 	else
 		return 0;
 }

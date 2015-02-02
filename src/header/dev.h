@@ -2,7 +2,6 @@
 #define DEV_H
 
 #include "common.h"
-#include "vfs.h"
 
 struct dev;
 
@@ -19,7 +18,7 @@ typedef struct dev{
 	uchar drive;
 } dev_t;
 
-void mkdev(char* name, read_type_t read, write_type_t write);
+//void mkdev(char* name, read_type_t read, write_type_t write);
 
 uint dev_read(dev_t* dev, uint offset, char* buffer);
 uint dev_write(dev_t* dev, uint offset, char* buffer);

@@ -26,8 +26,8 @@ fs_node_t* mk_empty_fnode(){
 	fs_node_t* node = mk_empty_node();
 	
 	node->flags	= FS_FILE;
-	node->read	= df_read;
-	node->write	= df_write;
+	//node->read	= df_read;
+	//node->write	= df_write;
 
 	return node;
 }
@@ -95,13 +95,6 @@ fs_node_t* parse_dir(char* dir){
 			strmov(sub->name, name);
 			sub->inode	= file->cluster_low;
 			sub->length	= file->bytes;
-			sub->flags	= FS_FILE;
-
-			//Callbacks for basic file manipulation
-			sub->write	= df_write;
-			sub->read	= df_read;
-			sub->open	= df_open;
-			sub->close	= df_close;
 		}
 
 		else{

@@ -5,6 +5,7 @@
 //POSIX VFS style operation for the OS
 
 #include "common.h"
+#include "dev.h"
 
 struct fs_node;
 
@@ -28,10 +29,13 @@ typedef struct fs_node{
 	uint inode;
 	uint length;
 
-	read_type_t	read;
-	write_type_t	write;
+	dev_t* dev;
+
 	open_type_t	open;
 	close_type_t	close;
+	
+	read_block_t	read_blk;
+	write_block_t	write_blk;
 
 	readdir_type_t	readdir;
 	finddir_type_t	finddir;

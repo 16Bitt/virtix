@@ -1,9 +1,10 @@
 #include "common.h"
 #include "dev.h"
+#include "vfs.h"
 
-uint stdout_write(fs_node_t* node, uint offset, uint size, char* buffer){
+uint stdout_write(fs_node_t* node, uint offset, char* buffer){
 	int i;
-	for(i = 0; i < size; i++)
+	for(i = 0; i < node->dev->block_size; i++)
 		vga_putc(buffer[i]);
 
 	return 0;
