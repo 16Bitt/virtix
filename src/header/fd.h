@@ -9,7 +9,13 @@
 typedef struct{
 	char name[128];
 	fs_node_t* node;
+	
 	uint offset;
+	uint block;
+	size_t block_size;
+	
+	char* buffer;
+
 	uint mode;
 	uint present;
 } fd_t;
@@ -25,6 +31,7 @@ uint fd_offset(uint fd);
 void fd_seek(uint fd, uint offset);
 uint fd_read(uint fd, uint size, char* buffer);
 uint fd_write(uint fd, uint size, char* buffer);
+uint fd_flush(uint fd);
 struct dirent* fd_readdir(uint fd);
 uint fd_stat(uint fd, struct stat* buffer);
 

@@ -11,10 +11,10 @@ extern struct fs_node* df_root;
 void init_deepfat();
 
 //VFS driver interfaces
-uint df_read	(struct fs_node* node, uint offset, uint size, char* buffer);
-uint df_write	(struct fs_node* node, uint offset, uint size, char* buffer);
-uint df_open	(struct fs_node* node, uint index);
-void df_close	(struct fs_node* node);
+uint df_read_blk	(struct fs_node* node, uint offset, char* buffer);
+uint df_write_blk	(struct fs_node* node, uint offset, char* buffer);
+uint df_open		(struct fs_node* node, uint index);
+void df_close		(struct fs_node* node);
 
 struct dirent* df_readdir(struct fs_node* node, uint index);
 struct fs_node* df_finddir(struct fs_node* node, char* name);

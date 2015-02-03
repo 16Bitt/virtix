@@ -64,8 +64,8 @@ struct stat{
 
 extern fs_node_t* root_node;
 
-uint read_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
-uint write_fs(fs_node_t* node, uint offset, uint size, uchar* buffer);
+uint read_fs(fs_node_t* node, uint offset, uchar* buffer);
+uint write_fs(fs_node_t* node, uint offset, uchar* buffer);
 
 uint open_fs(fs_node_t* node, uint offset);
 void close_fs(fs_node_t* node);

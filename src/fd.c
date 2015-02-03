@@ -16,13 +16,29 @@ fs_node_t* fd_lookup(uint fd){
 	return fd_list[fd].node;
 }
 
+uint calc_blk_offset(uint bs, uint offs){
+	uint index = 0;
+
+	while(bs < offs){
+		index++;
+		offs--;
+	}
+
+	return index;
+}
+
+uint calc_buf_offset(uint bs, uint offs){
+	return bs * calc_blk_offset(bs, offs) - offs;
+}
+
 uint fd_create(fs_node_t* node, uint offset){
 	int i;
 	for(i = 0; i < MAX_FD; i++){
 		if(fd_list[i].present == 0){
-			fd_list[i].offset	= offset;
 			fd_list[i].node		= node;
 			strmov(fd_list[i].name, node->name);
+			fd_list[i].block_size	= node->dev->block_size;
+			fd_list[i].buffer	= (char*) kmalloc(node->dev->block_size);
 			fd_list[i].present	= 1;
 			return i;
 		}
@@ -34,7 +50,8 @@ uint fd_create(fs_node_t* node, uint offset){
 void fd_delete(uint fd){
 	if(fd >= MAX_FD)
 		return;
-
+	
+	kfree(fd_list[fd].buffer);
 	memset(&fd_list[fd], 0, sizeof(fd_t));
 }
 
@@ -58,9 +75,7 @@ uint fd_read(uint fd, uint size, char* buffer){
 	if(node == NULL)
 		return NULL;
 
-	uint hold = fd_list[fd].offset;
-	fd_list[fd].offset += size;
-	return read_fs(node, hold, size, buffer);
+	
 }
 
 uint fd_write(uint fd, uint size, char* buffer){
@@ -68,9 +83,8 @@ uint fd_write(uint fd, uint size, char* buffer){
 	if(node == NULL)
 		return NULL;
 	
-	uint hold = fd_list[fd].offset;
-	fd_list[fd].offset += size;
-	return write_fs(node, hold, size, buffer);
+
+
 }
 
 uint fd_stat(uint fd, struct stat* buffer){

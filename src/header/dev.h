@@ -4,9 +4,10 @@
 #include "common.h"
 
 struct dev;
+typedef struct fs_node fs_node_t;
 
-typedef uint (*read_block_t)	(struct dev*, uint, char*);
-typedef uint (*write_block_t)	(struct dev*, uint, char*);
+typedef uint (*read_block_t)	(fs_node_t*, uint, char*);
+typedef uint (*write_block_t)	(fs_node_t*, uint, char*);
 
 typedef struct dev{
 	char	name[128];

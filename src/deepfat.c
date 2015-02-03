@@ -26,8 +26,8 @@ fs_node_t* mk_empty_fnode(){
 	fs_node_t* node = mk_empty_node();
 	
 	node->flags	= FS_FILE;
-	//node->read	= df_read;
-	//node->write	= df_write;
+	node->read_blk	= df_read_blk;
+	node->write_blk	= df_write_blk;
 
 	return node;
 }
@@ -125,12 +125,12 @@ void init_deepfat(){
 	df_root = parse_dir(fat_name_conv("DFATROOT.DIR"));
 }
 
-uint df_read(fs_node_t* node, uint offset, uint size, char* buffer){
-	return fat_read(node->dos_name, offset, size, buffer);
+uint df_read_blk(fs_node_t* node, uint offset, char* buffer){
+	return fat_read_block(node->dos_name, offset, buffer);
 }
 
-uint df_write(fs_node_t* node, uint offset, uint size, char* buffer){
-	return fat_write(node->dos_name, offset, size, buffer);
+uint df_write_blk(fs_node_t* node, uint offset, char* buffer){
+	return fat_write_block(node->dos_name, offset, buffer);
 }
 
 uint df_open(fs_node_t* node, uint index){
