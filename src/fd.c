@@ -40,6 +40,10 @@ uint fd_create(fs_node_t* node, uint offset){
 			fd_list[i].block_size	= node->dev->block_size;
 			fd_list[i].buffer	= (char*) kmalloc(node->dev->block_size);
 			fd_list[i].present	= 1;
+
+			node->read_blk(node, calc_blk_offset(node->dev->block_size, offset), fd_list[i].buffer);
+			fd_list[i].offset	= calc_buf_offset(node->dev->block_size, offset);
+
 			return i;
 		}
 	}
@@ -86,6 +90,9 @@ uint fd_write(uint fd, uint size, char* buffer){
 
 
 }
+
+uint fd_readch(uint fd, char c);
+uint fd_writech(uint fd);
 
 uint fd_stat(uint fd, struct stat* buffer){
 	fs_node_t* node = fd_lookup(fd);

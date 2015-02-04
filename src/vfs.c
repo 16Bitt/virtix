@@ -7,14 +7,14 @@
 
 uint read_fs(fs_node_t* node, uint offset, uchar* buffer){
 	if(node->read_blk != NULL)
-		return node->read_blk(node->dev, offset, buffer);
+		return node->read_blk(node, offset, buffer);
 	else
 		return 0;
 }
 
 uint write_fs(fs_node_t* node, uint offset, uchar* buffer){
 	if(node->write_blk != NULL)
-		return node->write_blk(node->dev, offset, buffer);
+		return node->write_blk(node, offset, buffer);
 	else
 		return 0;
 }

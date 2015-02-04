@@ -27,21 +27,21 @@ void mkdev(char* name, read_block_t read, write_block_t write){
 	node->write_blk = write;
 }
 
-uint dev_read(dev_t* dev, uint offset, char* buffer){
-	if(dev->read == NULL){
+uint dev_read(fs_node_t* dev, uint offset, char* buffer){
+	if(dev->read_blk == NULL){
 		WARN("can't read from device");
 		return (uint) -1;
 	}
 
-	return dev->read(dev, offset, buffer);
+	return dev->read_blk(dev, offset, buffer);
 }
 
 
-uint dev_write(dev_t* dev, uint offset, char* buffer){
-	if(dev->write == NULL){
+uint dev_write(fs_node_t* dev, uint offset, char* buffer){
+	if(dev->write_blk == NULL){
 		WARN("can't write to device");
 		return (uint) -1;
 	}
 
-	return dev->write(dev, offset, buffer);
+	return dev->write_blk(dev, offset, buffer);
 }

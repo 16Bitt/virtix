@@ -21,7 +21,7 @@ typedef struct dev{
 
 //void mkdev(char* name, read_type_t read, write_type_t write);
 
-uint dev_read(dev_t* dev, uint offset, char* buffer);
-uint dev_write(dev_t* dev, uint offset, char* buffer);
+uint dev_read(fs_node_t* dev, uint offset, char* buffer);
+uint dev_write(fs_node_t* dev, uint offset, char* buffer);
 
 #endif
