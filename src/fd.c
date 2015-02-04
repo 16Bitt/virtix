@@ -43,6 +43,7 @@ uint fd_create(fs_node_t* node, uint offset){
 
 			node->read_blk(node, calc_blk_offset(node->dev->block_size, offset), fd_list[i].buffer);
 			fd_list[i].offset	= calc_buf_offset(node->dev->block_size, offset);
+			fd_list[i].fs_size	= node->length;
 
 			return i;
 		}
@@ -79,7 +80,15 @@ uint fd_read(uint fd, uint size, char* buffer){
 	if(node == NULL)
 		return NULL;
 
-	
+	int i, status;
+	char read;
+
+	for(i = 0; i < size; i++){
+		status = fd_readch(fd, &read);
+		buffer[i] = read;
+	}
+
+	return status;
 }
 
 uint fd_write(uint fd, uint size, char* buffer){
@@ -87,12 +96,62 @@ uint fd_write(uint fd, uint size, char* buffer){
 	if(node == NULL)
 		return NULL;
 	
+	int i, status;
+	
+	for(i = 0; i < size; i++)
+		status = fd_writech(fd, &buffer[i]);
 
+	return status;
 
 }
 
-uint fd_readch(uint fd, char c);
-uint fd_writech(uint fd);
+size_t calc_total_size(uint fd){
+	return (fd_list[fd].block * fd_list[fd].block_size) + fd_list[fd].offset;
+}
+
+uint fd_readch(uint fd, char* c){
+	if(fd >= MAX_FD)
+		return (uint) -1;
+
+	fd_t* desc = &fd_list[fd];
+	*c = desc->buffer[desc->offset++];
+	
+	if(calc_blk_offset(desc->block_size, desc->fs_size) == desc->block)
+		if(calc_buf_offset(desc->block_size, desc->fs_size) <= desc->offset)
+			return (uint) -1;
+
+	if(desc->offset >= desc->block_size){
+		desc->offset = 0;
+		desc->block++;
+		desc->node->read_blk(desc->node, desc->block, desc->buffer);
+	}
+
+	return 0;
+}
+
+uint fd_writech(uint fd, char* c){
+	if(fd >= MAX_FD)
+		return (uint) -1;
+
+	fd_t* desc = &fd_list[fd];
+	desc->buffer[desc->offset++] = *c;
+	
+	if(desc->offset >= desc->block_size){
+		desc->offset = 0;
+		desc->node->write_blk(desc->node, desc->block, desc->buffer);
+		desc->block++;
+	}
+
+	return 0;
+}
+
+uint fd_flush(uint fd){
+	if(fd >= MAX_FD)
+		return (uint) -1;
+
+	fd_t* desc = &fd_list[fd];
+	return desc->node->write_blk(desc->node, desc->block, desc->buffer);
+}
 
 uint fd_stat(uint fd, struct stat* buffer){
 	fs_node_t* node = fd_lookup(fd);

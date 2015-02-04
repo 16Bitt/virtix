@@ -13,7 +13,8 @@ typedef struct{
 	uint offset;
 	uint block;
 	size_t block_size;
-	
+	size_t fs_size;
+
 	char* buffer;
 
 	uint mode;
@@ -32,6 +33,8 @@ void fd_seek(uint fd, uint offset);
 uint fd_read(uint fd, uint size, char* buffer);
 uint fd_write(uint fd, uint size, char* buffer);
 uint fd_flush(uint fd);
+uint fd_readch(uint fd, char* c);
+uint fd_writech(uint fd, char* c);
 struct dirent* fd_readdir(uint fd);
 uint fd_stat(uint fd, struct stat* buffer);
 
