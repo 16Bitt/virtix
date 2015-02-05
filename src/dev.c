@@ -25,6 +25,11 @@ void mkdev(char* name, read_block_t read, write_block_t write){
 
 	node->read_blk = read;
 	node->write_blk = write;
+	
+	node->dev = (dev_t*) kmalloc(sizeof(dev_t));
+	node->dev->read = read;
+	node->dev->write = write;
+	node->dev->block_size = 512;
 }
 
 uint dev_read(fs_node_t* dev, uint offset, char* buffer){

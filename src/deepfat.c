@@ -5,9 +5,11 @@
 #include "deepfat.h"
 #include "fd.h"
 #include "monitor.h"
+#include "dev.h"
 
 fs_node_t* df_root;
 uint	current_inode = 0;
+dev_t*  df_dev;
 
 fs_node_t* mk_empty_node(){
 	fs_node_t* node = (fs_node_t*) kmalloc(sizeof(fs_node_t));
@@ -18,6 +20,8 @@ fs_node_t* mk_empty_node(){
 	
 	node->open	= df_open;
 	node->close	= df_close;
+	
+	node->dev	= df_dev;
 
 	return node;
 }
@@ -122,6 +126,10 @@ fs_node_t* parse_dir(char* dir){
 }
 
 void init_deepfat(){
+	df_dev	= (dev_t*) kmalloc(sizeof(dev_t));
+	df_dev->read = NULL;
+	df_dev->write = NULL;
+	df_dev->block_size = CLUSTER_BSIZE;
 	df_root = parse_dir(fat_name_conv("DFATROOT.DIR"));
 }
 

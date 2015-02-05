@@ -16,6 +16,7 @@ FILE kfopen(char* path, uint offset){
 }
 
 void kfclose(FILE file){
+	fd_flush(file);
 	fd_delete(file);
 }
 

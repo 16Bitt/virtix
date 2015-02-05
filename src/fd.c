@@ -33,6 +33,7 @@ uint calc_buf_offset(uint bs, uint offs){
 
 uint fd_create(fs_node_t* node, uint offset){
 	int i;
+
 	for(i = 0; i < MAX_FD; i++){
 		if(fd_list[i].present == 0){
 			fd_list[i].node		= node;
@@ -40,11 +41,11 @@ uint fd_create(fs_node_t* node, uint offset){
 			fd_list[i].block_size	= node->dev->block_size;
 			fd_list[i].buffer	= (char*) kmalloc(node->dev->block_size);
 			fd_list[i].present	= 1;
-
-			node->read_blk(node, calc_blk_offset(node->dev->block_size, offset), fd_list[i].buffer);
+			
+			read_fs(node, calc_blk_offset(node->dev->block_size, offset), fd_list[i].buffer);
 			fd_list[i].offset	= calc_buf_offset(node->dev->block_size, offset);
 			fd_list[i].fs_size	= node->length;
-
+			
 			return i;
 		}
 	}

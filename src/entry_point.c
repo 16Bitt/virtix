@@ -74,11 +74,11 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	NOTIFY("starting file descriptor interface")
 	init_fd();
 
+	NOTIFY("making /dev")
+	vfs_mkdir(df_root, "/dev");
+
 	NOTIFY("starting VFS drivers");
 	driver_init();
-	
-	vga_puts_hex((uint) root_vpage_dir);
-	vga_puts("\n");
 
 	FILE f = kfopen("/dev/stdout", 0);
 	char* msg = "Test write to /dev/stdout\n";
@@ -89,8 +89,8 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 
-	NOTIFY("spawning subprocess");
-	kexec("/bin/hello");
+	//NOTIFY("spawning subprocess");
+	//kexec("/bin/hello");
 
 	NOTIFY("syncing FAT")
 	fat_sync();
