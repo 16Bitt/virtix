@@ -138,7 +138,11 @@ uint df_read_blk(fs_node_t* node, uint offset, char* buffer){
 }
 
 uint df_write_blk(fs_node_t* node, uint offset, char* buffer){
-	return fat_write_block(node->dos_name, offset, buffer);
+	uint status = fat_write_block(node->dos_name, offset, buffer);
+	fat_dir_t* dir = fat_search(node->dos_name);
+	if(dir != NULL)
+		dir->bytes = node->length;
+	return status;
 }
 
 uint df_open(fs_node_t* node, uint index){

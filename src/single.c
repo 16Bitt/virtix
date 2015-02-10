@@ -20,7 +20,7 @@ void enter_userspace(virtix_proc_t* proc){
 	hl_eip = proc->registers.eip;
 	hl_esp = proc->registers.esp;
 	switch_vpage_dir(proc->cr3);
-	
+
 	current_proc = proc;
 
 	sti();

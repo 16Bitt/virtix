@@ -2,6 +2,7 @@ all:
 	cd src && make
 	cd libc && make
 	cd userland && make
+	cd userland && make disk
 
 clean:
 	cd src && make clean
@@ -9,8 +10,8 @@ clean:
 	cd userland && make clean
 	-rm *.iso *.log
 
-run: all dimg
-	qemu-system-i386 -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
+run: dimg
+	qemu-system-i386 -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide -monitor stdio
 
 debug: all
 	objcopy --only-keep-debug src/build/kernel src/build/ksym

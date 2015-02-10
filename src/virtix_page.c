@@ -97,6 +97,7 @@ void vpage_map_user(vpage_dir_t* dir, unsigned int phys, unsigned int virt){
 void vpage_fault(registers_t* regs){
 	cli();
 	if(current_proc != NULL){
+		memcpy(&current_proc->registers, regs, sizeof(registers_t));
 		dump_proc(current_proc);
 	}
 	

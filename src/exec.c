@@ -16,9 +16,6 @@ uint kexec(char* path){
 	size_t size = st->length;
 	kfree(st);
 	
-	vga_puts_hex(size);
-	NOTIFY("size");
-
 	char* buffer = (char*) kmalloc(size);
 	kfread(f, size, buffer);
 

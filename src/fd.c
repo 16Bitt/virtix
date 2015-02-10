@@ -64,8 +64,11 @@ void fd_delete(uint fd){
 void fd_seek(uint fd, uint offset){
 	if(fd >= MAX_FD)
 		return;
+	
+	fd_flush(fd);
 
-	fd_list[fd].offset = offset;
+	fd_list[fd].block = calc_blk_offset(fd_list[fd].node->dev->block_size, offset);
+	fd_list[fd].offset = calc_buf_offset(fd_list[fd].node->dev->block_size, offset);
 }
 
 struct dirent* fd_readdir(uint fd){
@@ -151,6 +154,7 @@ uint fd_flush(uint fd){
 		return (uint) -1;
 
 	fd_t* desc = &fd_list[fd];
+	desc->node->length = calc_total_size(fd);
 	return desc->node->write_blk(desc->node, desc->block, desc->buffer);
 }
 

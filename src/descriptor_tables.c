@@ -102,6 +102,7 @@ static void init_idt(){
 	idt_set_gate(29, (unsigned int) isr29, 0x08, 0x8E);
 	idt_set_gate(30, (unsigned int) isr30, 0x08, 0x8E);
 	idt_set_gate(31, (unsigned int) isr31, 0x08, 0x8E);
+	idt_set_gate(0x80, (unsigned int) isr0x80, 0x08, 0x8E);
 	idt_set_gate(32, (unsigned int) irq0, 0x08, 0x8E);
 	idt_set_gate(33, (unsigned int) irq1, 0x08, 0x8E);
 	idt_set_gate(34, (unsigned int) irq2, 0x08, 0x8E);

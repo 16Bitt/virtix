@@ -6,7 +6,7 @@ OUTPUTS	= $(SOURCES:.c=.o)
 EXECS	= $(OUTPUTS:.o=)
 LIBC	= ../libc/libc.a
 
-all: disk $(EXECS)
+all: binclean $(EXECS)
 	cp $(EXECS) bin/
 	
 $(OUTPUTS): $(SOURCES)
@@ -24,6 +24,9 @@ disk:
 	/sbin/mkdosfs hdd.img
 	bin/mkdf.sh ./ hdd.img
 
-clean:
+binclean:
+	-rm $(EXECS)
+	-cd bin && rm $(EXECS)
+
+clean: binclean
 	-rm *.o *.img *.vdi
-	cd bin && rm $(EXECS)

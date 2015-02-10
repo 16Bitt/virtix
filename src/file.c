@@ -20,6 +20,14 @@ void kfclose(FILE file){
 	fd_delete(file);
 }
 
+uint kfreadchar(FILE file, char* c){
+	return fd_readch(file, c);
+}
+
+uint kfwritechar(FILE file, char* c){
+	return fd_writech(file, c);
+}
+
 uint kfread(FILE file, uint size, char* buffer){
 	return fd_read(file, size, buffer);
 }

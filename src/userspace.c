@@ -11,7 +11,6 @@ uint c_err;
 
 void userspace_handler(registers_t* regs){
 	switch(regs->eax){
-
 		//One liners
 		case SYS_FORK:
 			regs->eax = fork();
@@ -36,6 +35,9 @@ void userspace_handler(registers_t* regs){
 		case SYS_LSEEK:
 			regs->eax = klseek(regs->ebx, regs->ecx, regs->edx);
 			return;
+		case SYS_OPEN:
+			regs->eax = open((char*) regs->ebx, regs->ecx);
+			return;
 
 		//Modifies the process
 		case SYS_EXIT:
@@ -43,12 +45,14 @@ void userspace_handler(registers_t* regs){
 			return;
 
 		default:
+			memcpy(&current_proc->registers, regs, sizeof(registers_t));
+			dump_proc(current_proc);
 			PANIC("bad userspace call");
 	}
 }
 
 void init_userspace(){
-	register_interrupt_handler(0x80, userspace_handler);
+	register_interrupt_handler(31, userspace_handler);
 }
 
 uint fork(){
