@@ -86,7 +86,7 @@ uint fd_read(uint fd, uint size, char* buffer){
 
 	int i, status;
 	char read;
-
+	
 	for(i = 0; i < size; i++){
 		status = fd_readch(fd, &read);
 		buffer[i] = read;

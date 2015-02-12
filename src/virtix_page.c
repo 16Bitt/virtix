@@ -86,12 +86,6 @@ void vpage_map_user(vpage_dir_t* dir, unsigned int phys, unsigned int virt){
 		tab->pages[i].user = 1;
 		phys += 4096;
 	}
-
-	NOTIFY("mapping virtual address space");
-	vga_puts_hex(phys);
-	vga_puts(" to ");
-	vga_puts_hex(virt);
-	vga_puts("\n");
 }
 
 void vpage_fault(registers_t* regs){

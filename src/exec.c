@@ -7,7 +7,6 @@
 
 uint kexec(char* path){
 	FILE f = kfopen(path, 0);
-	
 	if(f == (uint) -1)
 		return (uint) -1;
 
@@ -15,10 +14,8 @@ uint kexec(char* path){
 	kfstat(f, st);
 	size_t size = st->length;
 	kfree(st);
-	
 	char* buffer = (char*) kmalloc(size);
 	kfread(f, size, buffer);
-
 	virtix_proc_t* proc = elf_load((void*) buffer);
 	kfree(buffer);
 	if(proc == NULL)

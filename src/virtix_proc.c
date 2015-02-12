@@ -43,7 +43,7 @@ void init_procs(virtix_proc_t* proc){
 	current_proc = root;
 	
 	cli();
-	start_timer(1000);
+	//start_timer(1000);
 	cli();
 	
 	register_interrupt_handler(32, scheduler);

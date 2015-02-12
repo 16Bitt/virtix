@@ -113,3 +113,27 @@ void vga_reset(){
 	vga_set_fg(WHITE);
 	vga_set_bg(BLACK);
 }
+
+void vga_puts_dec(int n){
+	if(n == 0){
+		vga_putc('0');
+		return;
+	}
+	
+	if(n < 0){
+		vga_putc('-');
+		n *= -1;
+	}
+
+	char output[20];	
+
+	int end = 0;
+	while(n != 0){
+		char digit = n % 10;
+		output[end++] = '0' + digit;
+		n /= 10;
+	}
+
+	while(end >= 0)
+		vga_putc(output[--end]);
+}

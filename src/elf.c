@@ -30,16 +30,16 @@ virtix_proc_t* elf_load(void* elf_data){
 		vga_puts("elf_load(): wrong executable type\n");
 		return (virtix_proc_t*) NULL;
 	}
-
+	
 	virtix_proc_t* proc = mk_empty_proc();
 	proc->name = "ELF_PROGRAM";
 	proc->registers.eip = header->e_entry;
 
 	switch_vpage_dir(proc->cr3);
 	uint stk = (uint) kmalloc_a(PAGE_S);
-	proc->registers.esp = 0x40000000 - (PAGE_S / 2);
-	proc->registers.ebp = proc->registers.esp;
-	proc->registers.useresp = proc->registers.esp;
+	proc->registers.useresp = 0x40000000 - (PAGE_S / 2);
+	proc->registers.ebp = proc->registers.useresp;
+	proc->registers.esp = proc->registers.useresp;
 	vpage_map_user(proc->cr3, stk, 0x40000000 - PAGE_S);
 
 	elf32_phdr* phdr = (elf32_phdr*) (((unsigned int) elf_data) + header->e_phoff);
@@ -50,7 +50,7 @@ virtix_proc_t* elf_load(void* elf_data){
 			case 0:
 				break;
 			case 1:
-				vga_puts("Allocating space for ELF binary section...\n");
+				NOTIFY("Allocating space for ELF binary section...")
 				unsigned int loc = (unsigned int) kmalloc_a(PAGE_S);
 				vpage_map_user(proc->cr3, loc, phdr->p_vaddr);
 				memcpy((void*) phdr->p_vaddr, ((void*) ((unsigned int) elf_data) + phdr->p_offset), phdr->p_filesz);
@@ -58,10 +58,10 @@ virtix_proc_t* elf_load(void* elf_data){
 					PANIC("ELF binary section too large");
 				break;
 			default:
-				vga_set_fg(RED);
+				/*vga_set_fg(RED);
 				vga_puts("type=");
 				vga_puts_hex(phdr->p_type);
-				vga_puts("\n");
+				vga_puts("\n");*/
 				WARN("unknown header type");
 		}
 	}

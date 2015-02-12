@@ -2,11 +2,13 @@
 #define MONITOR_H
 
 #include "common.h"
+#include "clock.h"
 
 void vga_putc(char c);
 void vga_clear();
 void vga_puts(char* s);
 void vga_puts_hex(int n);
+void vga_puts_dec(int n);
 void vga_putc_hex(char n);
 void vga_set_fg(uchar color);
 void vga_set_bg(uchar color);
@@ -19,6 +21,9 @@ void vga_reset();
 			vga_puts("\n");
 
 #define NOTIFY(str)	vga_set_fg(CYAN);\
+			vga_puts("At ");\
+			vga_puts_dec(get_seconds());\
+			vga_puts("s ");\
 			vga_puts((char*) __FUNCTION__);\
 			vga_puts("(): ");\
 			vga_reset();\
@@ -26,6 +31,9 @@ void vga_reset();
 			vga_puts("\n");
 
 #define WARN(str)	vga_set_fg(RED);\
+			vga_puts("At ");\
+			vga_puts_dec(get_seconds());\
+			vga_puts("s ");\
 			vga_puts((char*) __FUNCTION__);\
 			vga_puts("(): ");\
 			vga_reset();\

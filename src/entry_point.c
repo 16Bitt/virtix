@@ -16,6 +16,7 @@
 #include "deepfat.h"
 #include "file.h"
 #include "init.h"
+#include "keyboard.h"
 
 void* stack = NULL;
 
@@ -54,6 +55,9 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	NOTIFY("starting interrupts")
 	sti();
 	
+	NOTIFY("starting clock");
+	init_virtix_clock();
+
 	/*
 	vga_puts("main(): loading a binary...\n");
 	virtix_proc_t* proc = elf_load(get_file_data("hello.x"));
@@ -79,6 +83,9 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 
 	NOTIFY("starting VFS drivers");
 	driver_init();
+	
+	NOTIFY("enabling keyboard");
+	init_keyboard();
 
 	FILE f = kfopen("/dev/stdout", 0);
 	char* msg = "Test write to /dev/stdout\n";
@@ -89,12 +96,13 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
-	NOTIFY("spawning subprocess");
+	/*NOTIFY("spawning subprocess");
 	kexec("/bin/hello");
+	*/
 
 	NOTIFY("syncing FAT")
 	fat_sync();
 	
 	WARN("reached end of execution, hanging the CPU")
-	cli(); hlt();
+	for(;;);
 }

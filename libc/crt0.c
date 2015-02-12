@@ -5,6 +5,5 @@ extern void _exit(int);
 
 void _start(){
 	main(NULL, NULL);
-	for(;;);
 	_exit(0);
 }
