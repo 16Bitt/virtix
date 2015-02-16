@@ -1,5 +1,6 @@
 #include "monitor.h"
 #include "isr.h"
+#include "stdarg.h"
 
 int cursor_x = 0, cursor_y = 0;
 uchar vga_color;
@@ -136,4 +137,38 @@ void vga_puts_dec(int n){
 
 	while(end >= 0)
 		vga_putc(output[--end]);
+}
+
+void vga_fmt(const char* fmt, ...){
+	va_list params;
+	va_start(params, fmt);
+
+	int arg = 0;
+	while(*fmt != '\0'){
+		if(*fmt == '%'){
+			char op = *(++fmt);
+			switch(op){
+				case 'd':
+				case 'i':
+					vga_puts_dec(va_arg(params, int));
+					break;
+				case 'x':
+				case 'X':
+					vga_puts_hex(va_arg(params, uint));
+					break;
+				case 's':
+					vga_puts(va_arg(params, char*));
+					break;
+
+				default:
+					WARN("bad specifier");
+					return;
+			}
+		}
+
+		else
+			vga_putc(*fmt);
+
+		fmt++;
+	}
 }

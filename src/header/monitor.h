@@ -10,6 +10,7 @@ void vga_puts(char* s);
 void vga_puts_hex(int n);
 void vga_puts_dec(int n);
 void vga_putc_hex(char n);
+void vga_fmt(const char* format, ...);
 void vga_set_fg(uchar color);
 void vga_set_bg(uchar color);
 void vga_blink();
@@ -20,20 +21,18 @@ void vga_reset();
 			vga_puts_hex((val));\
 			vga_puts("\n");
 
-#define NOTIFY(str)	vga_set_fg(CYAN);\
-			vga_puts("At ");\
-			vga_puts_dec(get_seconds());\
-			vga_puts("s ");\
+#define NOTIFY(str)	vga_set_fg(GREEN);\
+			vga_fmt("[%d:%d:%d] ", get_hour(), get_minute(), get_seconds());\
+			vga_set_fg(CYAN);\
 			vga_puts((char*) __FUNCTION__);\
 			vga_puts("(): ");\
 			vga_reset();\
 			vga_puts((str));\
 			vga_puts("\n");
 
-#define WARN(str)	vga_set_fg(RED);\
-			vga_puts("At ");\
-			vga_puts_dec(get_seconds());\
-			vga_puts("s ");\
+#define WARN(str)	vga_set_fg(GREEN);\
+			vga_fmt("[%d:%d:%d] ", get_hour(), get_minute(), get_seconds());\
+			vga_set_fg(RED);\
 			vga_puts((char*) __FUNCTION__);\
 			vga_puts("(): ");\
 			vga_reset();\
