@@ -18,6 +18,9 @@ fs_node_t* fd_lookup(uint fd){
 
 uint calc_blk_offset(uint bs, uint offs){
 	uint index = 0;
+	
+	if(bs == 1)
+		return offs;
 
 	while(bs < offs){
 		index++;

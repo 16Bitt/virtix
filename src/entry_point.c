@@ -99,6 +99,13 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	/*NOTIFY("spawning subprocess");
 	kexec("/bin/hello");
 	*/
+	
+	f = kfopen("/dev/stdin", 0);
+	while(true){
+		uchar key;
+		kfreadchar(f, &key);
+		vga_putc((int) key);
+	}
 
 	NOTIFY("syncing FAT")
 	fat_sync();

@@ -11,11 +11,11 @@ clean:
 	-rm *.iso *.log
 
 run: dimg
-	qemu-system-i386 -localtime -display curses -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
+	qemu-system-i386 -localtime -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
 
 debug: all
 	objcopy --only-keep-debug src/build/kernel src/build/ksym
-	-qemu-system-i386 -localtime -display curses -kernel src/build/kernel -drive file=userland/hdd.img,if=ide -S -s & sleep 3
+	-qemu-system-i386 -localtime -kernel src/build/kernel -drive file=userland/hdd.img,if=ide -S -s & sleep 3
 	(echo target remote 127.0.0.1:1234; cat) | gdb -s src/build/ksym src/build/kernel
 	-pkill "qemu*"
 

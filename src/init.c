@@ -8,4 +8,5 @@ void driver_init(){
 	//DEVLOAD(dev_null)
 	DEVLOAD(dev_stdout)
 	DEVLOAD(dev_stderr)
+	DEVLOAD(dev_stdin)
 }
