@@ -21,7 +21,7 @@ uint kexec(char* path){
 	if(proc == NULL)
 		return (uint) -1;
 	
-	enter_userspace(proc);
+	init_procs(proc);
 }
 
 uint kexec_pipes(char* path, char* stdin, char* stdout, char* stderr){
@@ -44,5 +44,5 @@ uint kexec_pipes(char* path, char* stdin, char* stdout, char* stderr){
 	proc->stdout = kfopen("/dev/stdout", 0);
 	proc->stderr = kfopen("/dev/stderr", 0);
 	
-	enter_userspace(proc);
+	init_procs(proc);
 }

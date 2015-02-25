@@ -50,7 +50,7 @@ void userspace_handler(registers_t* regs){
 
 		//Modifies the process
 		case SYS_EXIT:
-			regs->eax = single_exit(regs);	//leave return code for parent	
+			regs->eax = _exit(regs);	//leave return code for parent	
 			return;
 
 		default:
@@ -93,7 +93,8 @@ uint write(FILE fid, char* buffer, size_t length){
 	return kfwrite(fid, length, buffer);
 }
 
-uint _exit(uint return_code){
-	current_proc->pid = 1;
+uint _exit(registers_t* regs){
+	kill_proc(getpid());
+	scheduler(regs);
 	return 0;
 }

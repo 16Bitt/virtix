@@ -1,6 +1,9 @@
 #ifndef USERSPACE_H
 #define USERSPACE_H
 
+#include "common.h"
+#include "virtix_proc.h"
+
 extern unsigned int c_err;
 typedef unsigned int uint;
 
@@ -30,7 +33,7 @@ uint read(uint fid, char* buffer, size_t length);
 uint close(uint fid);
 uint open(char* path, uint offset);
 
-uint _exit(uint return_code);
+uint _exit(registers_t* regs);
 
 void init_userspace();	//Maps userspace call handler
 

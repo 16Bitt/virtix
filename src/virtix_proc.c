@@ -24,7 +24,7 @@ void scheduler(registers_t* regs){
 
 	while(current_proc->state == PROC_ASLEEP){
 		current_proc = current_proc->next;
-		vga_puts("scheduler(): skipping sleeping process\n");
+		NOTIFY("scheduler(): skipping sleeping process");
 		if(current_proc == NULL)
 			current_proc = root;
 	}
@@ -42,16 +42,11 @@ void init_procs(virtix_proc_t* proc){
 	
 	current_proc = root;
 	
-	cli();
-	//start_timer(1000);
-	cli();
-	
-	register_interrupt_handler(32, scheduler);
 	enter_userspace(proc);
 }
 
 void kill_proc(unsigned int pid){
-	vga_puts("WARN: kill_proc() is dummy stub\n");
+	WARN("dummy stub");
 	virtix_proc_t* proc = pid_to_proc(pid);
 
 	if(proc == PID_NOT_FOUND)
@@ -61,7 +56,7 @@ void kill_proc(unsigned int pid){
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){
-	vga_puts("swawn_proc(): creating new process\n");
+	NOTIFY("creating new process");
 	process->pid = pid++;
 	
 	process->next = root->next;
@@ -75,7 +70,7 @@ void susp_proc(unsigned int pid){
 	virtix_proc_t* proc = pid_to_proc(pid);
 	
 	if(proc == PID_NOT_FOUND){
-		vga_puts("WARN: couldn't find PID for suspension\n");
+		WARN("couldn't find PID for suspension");
 		return;
 	}
 
@@ -106,14 +101,14 @@ unsigned int child_proc(virtix_proc_t* child, unsigned int pid){
 }
 
 unsigned int fork_proc(unsigned int pid){
-	vga_puts("WARN: fork_proc() is dummy stub\n");
+	WARN("dummy stub");
 	return pid++;
 }
 
 virtix_proc_t* pid_to_proc(unsigned int pid){
-	virtix_proc_t* proc = root->next;
+	virtix_proc_t* proc = root;
 
-	while(proc != root){
+	while(proc != NULL){
 		if(proc->pid == pid)
 			return proc;
 
