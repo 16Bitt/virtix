@@ -10,6 +10,7 @@ void start_timer(unsigned int frequency, clock_handler_t handler);
 void init_virtix_clock();
 uint get_time();
 void sleep(uint seconds);
+void msleep(uint mseconds);
 void init_unix_time();
 
 uint get_year();

@@ -16,14 +16,16 @@ FILE* fopen(char* name, char* mode);
 int fclose(FILE* f);
 
 //File output
-int fprintf(FILE* f, char* fmt, ...);
+int fprintf(FILE* f, const char* fmt, ...);
+int fprint(FILE* f, char* s);
 int fputs(FILE* f, char* str);
 int fputchar(FILE* f, char c);
 
 //Terminal Output
 int putchar(char c);
 int puts(char* str);
-int printf(char* fmt, ...);
+int printf(const char* fmt, ...);
+int print(char* s);
 
 __HEADER_END
 

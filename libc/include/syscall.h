@@ -17,6 +17,9 @@ __HEADER_START
 #define SYS_FREE	9
 #define SYS_GET_ARGS	10
 #define SYS_LSEEK	11
+#define SYS_GETSTDIN	12
+#define SYS_GETSTDOUT	13
+#define SYS_GETSTDERR	14
 
 int syscall_0arg(uint call_no);
 int syscall_1arg(uint call_no, uint arg1);

@@ -17,6 +17,10 @@ typedef unsigned int uint;
 #define SYS_GET_ARGS	10
 #define SYS_LSEEK	11
 
+#define SYS_GETSTDIN	12
+#define SYS_GETSTDOUT	13
+#define SYS_GETSTDERR	14
+
 uint fork();
 uint getpid();
 char** get_env();

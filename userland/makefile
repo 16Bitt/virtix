@@ -1,4 +1,4 @@
-CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -I../libc/include
+CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -I../libc/include -g
 LDFLAGS	= -Tlink.ld -melf_i386
 CC	= gcc
 SOURCES	= $(wildcard *.c)

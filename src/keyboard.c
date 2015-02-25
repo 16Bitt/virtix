@@ -2,6 +2,7 @@
 #include "keyboard.h"
 #include "isr.h"
 #include "monitor.h"
+#include "clock.h"
 
 uchar last_key = 0;
 bool shift_on = FALSE;

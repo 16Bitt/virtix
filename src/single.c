@@ -41,6 +41,9 @@ void single_yield(virtix_proc_t* proc, registers_t* regs){
 }
 
 unsigned int single_exit(registers_t* regs){
+	kfclose(current_proc->stdout);
+	kfclose(current_proc->stderr);
+	
 	unsigned int hold = regs->ebx;
 	proc_bottom = proc_bottom->next;
 

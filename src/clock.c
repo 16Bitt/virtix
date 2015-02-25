@@ -6,6 +6,7 @@
 uint unix_time = 0;
 uint virtix_time = 0;
 uint time_div = 0;
+uint virtix_mseconds = 0;
 
 void virtix_clock(registers_t* regs){
 	time_div++;

@@ -1,12 +1,9 @@
 #include "stdlib.h"
-extern int close(int f);
-
+#include "stdio.h"
 void break_program();
 
 int main(char** argc, int argv){
-	int f = open("/dev/stdout", 0);
-	write(f, "Hello, World!\n", 14);
-	close(f);
+	printf("Hello, world! I am PID %d.\n", getpid());
 	return 0;
 }
 

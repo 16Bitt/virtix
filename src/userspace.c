@@ -21,7 +21,16 @@ void userspace_handler(registers_t* regs){
 		case SYS_GETENV:
 			regs->eax = (uint) get_env();
 			return;
-		
+		case SYS_GETSTDIN:
+			regs->eax = current_proc->stdin;
+			return;
+		case SYS_GETSTDOUT:
+			regs->eax = current_proc->stdout;
+			return;
+		case SYS_GETSTDERR:
+			regs->eax = current_proc->stderr;
+			return;
+
 		//Need arguments
 		case SYS_WRITE:
 			regs->eax = write(regs->ebx, (char*) regs->ecx, (size_t) regs->edx);
