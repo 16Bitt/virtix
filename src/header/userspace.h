@@ -24,6 +24,8 @@ typedef unsigned int uint;
 #define SYS_GETSTDOUT	13
 #define SYS_GETSTDERR	14
 
+#define SYS_EXEC	15
+
 uint fork();
 uint getpid();
 char** get_env();

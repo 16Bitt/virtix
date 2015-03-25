@@ -47,6 +47,11 @@ void userspace_handler(registers_t* regs){
 		case SYS_OPEN:
 			regs->eax = open((char*) regs->ebx, regs->ecx);
 			return;
+		case SYS_EXEC:
+			if(uexec((char*) regs->ebx) != 0)
+				regs->eax = (uint) -1;
+			scheduler(regs);
+			return;
 
 		//Modifies the process
 		case SYS_EXIT:
@@ -94,6 +99,7 @@ uint write(FILE fid, char* buffer, size_t length){
 }
 
 uint _exit(registers_t* regs){
+	NOTIFY("Exit trapped");
 	kill_proc(getpid());
 	scheduler(regs);
 	return 0;

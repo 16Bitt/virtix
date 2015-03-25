@@ -45,7 +45,7 @@ mkdf_dir () {
 	local parent=$(readlink -f $3)
 	cd $tpath
 	
-	for i in *; do
+	for i in $(ls); do
 		echo Packaging $i...
 		
 		if [ -d $i ]; then

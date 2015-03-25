@@ -96,7 +96,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
-	kexec_pipes("/bin/hello", "/dev/stdin", "/dev/stdout", "/dev/stderr");
+	kexec("/bin/spawner");
 
 	NOTIFY("syncing FAT")
 	fat_sync();

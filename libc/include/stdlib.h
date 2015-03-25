@@ -27,6 +27,7 @@ int unlink(char* path);
 
 //Process manipulation
 int fork();
+int exec(char* file);
 void exit(int status);
 void _exit(int status);
 

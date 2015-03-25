@@ -17,6 +17,10 @@ extern unsigned int stack_hold;
 void scheduler(registers_t* regs){
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
 	
+	NOTIFY("task switch");
+
+	virtix_clock(regs);
+
 	current_proc = current_proc->next;
 	if(current_proc == NULL){
 		current_proc = root;
@@ -24,7 +28,6 @@ void scheduler(registers_t* regs){
 
 	while(current_proc->state == PROC_ASLEEP){
 		current_proc = current_proc->next;
-		NOTIFY("scheduler(): skipping sleeping process");
 		if(current_proc == NULL)
 			current_proc = root;
 	}
@@ -41,18 +44,24 @@ void init_procs(virtix_proc_t* proc){
 	root->state	= PROC_RUNNING;
 	
 	current_proc = root;
-	
+	register_interrupt_handler(32, scheduler);
 	enter_userspace(proc);
 }
 
 void kill_proc(unsigned int pid){
-	WARN("dummy stub");
 	virtix_proc_t* proc = pid_to_proc(pid);
 
 	if(proc == PID_NOT_FOUND)
 		PANIC("can't kill unknown PID");
-
+	
+	kfflush(proc->stdout);
+	kfflush(proc->stderr);
 	proc->state = PROC_ASLEEP;
+
+	if(proc->parent != NULL){
+		NOTIFY("Child had parent (!!!)");
+		wake_proc(proc->parent->pid);
+	}
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){

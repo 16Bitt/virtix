@@ -135,7 +135,7 @@ void vga_puts_dec(int n){
 		n /= 10;
 	}
 
-	while(end >= 0)
+	while(end > 0)
 		vga_putc(output[--end]);
 }
 
