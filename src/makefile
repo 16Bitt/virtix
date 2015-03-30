@@ -17,4 +17,4 @@ link:
 	nasm $(ASFLAGS) $<
 
 binaries:
-	cd userland && make
+	cd userlaand && make

@@ -1,0 +1,5 @@
+	[BITS 32]
+
+	MOV AX, 0x69
+	CLI
+	HLT

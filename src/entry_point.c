@@ -17,6 +17,7 @@
 #include "file.h"
 #include "init.h"
 #include "keyboard.h"
+#include "real.h"
 
 void* stack = NULL;
 
@@ -96,6 +97,8 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
+	run_stub16("/gfx.x16");
+
 	kexec("/bin/spawner");
 
 	NOTIFY("syncing FAT")

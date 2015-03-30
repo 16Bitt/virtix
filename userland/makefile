@@ -6,7 +6,7 @@ OUTPUTS	= $(SOURCES:.c=.o)
 EXECS	= $(OUTPUTS:.o=)
 LIBC	= ../libc/libc.a
 
-all: binclean $(EXECS)
+all: binclean $(EXECS) gfx.x16
 	
 $(OUTPUTS): $(SOURCES)
 	$(CC) $(CFLAGS) $(@:.o=.c) -c -o $@
@@ -26,6 +26,10 @@ disk:
 binclean:
 	-rm $(OUTPUTS)
 	-rm $(EXECS)
+	-rm *.x16
 
 clean: binclean
 	-rm *.img *.vdi
+
+gfx.x16:
+	nasm -fbin gfx.asm -o gfx.x16

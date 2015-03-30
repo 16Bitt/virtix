@@ -126,7 +126,7 @@ void virtix_page_init(){
 	root_vpage_dir = current_vpage_dir;
 
 	unsigned int i;
-	for(i = 0; i < 0x8000000; i += PAGE_S)
+	for(i = 0; i < 0xF0000000; i += PAGE_S)
 		vpage_map(root_vpage_dir, i, i);
 	
 	register_interrupt_handler(14, vpage_fault);
