@@ -23,7 +23,7 @@ uint kexec(char* path){
 	
 	proc->stdout = kfopen("/dev/stdout", 0);
 	proc->stderr = kfopen("/dev/stderr", 0);
-
+	
 	NOTIFY(path);
 	init_procs(proc);
 }

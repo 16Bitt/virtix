@@ -97,13 +97,12 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
-	run_stub16("/gfx.x16");
-
-	kexec("/bin/spawner");
+	kexec("/bin/forker");
 
 	NOTIFY("syncing FAT")
 	fat_sync();
 	
 	WARN("reached end of execution, hanging the CPU")
-	for(;;);
+	cli();
+	hlt();
 }

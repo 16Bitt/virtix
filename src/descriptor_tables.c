@@ -12,7 +12,7 @@ static void idt_set_gate(unsigned char index, unsigned int base, unsigned short 
 static void write_tss(int, unsigned short, unsigned int);
 extern void flush_tss();
 
-gdt_entry_t gdt_entries[6];
+gdt_entry_t gdt_entries[8];
 gdt_ptr_t gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t idt_ptr;
@@ -27,7 +27,7 @@ void init_descriptor_tables(){
 }
 
 static void init_gdt(){
-	gdt_ptr.limit = (sizeof(gdt_entry_t) * 6) - 1;
+	gdt_ptr.limit = (sizeof(gdt_entry_t) * 7) - 1;
 	gdt_ptr.base = (unsigned int) &gdt_entries;
 
 	gdt_set_gate(0, 0, 0, 0, 0);
@@ -36,6 +36,8 @@ static void init_gdt(){
 	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
 	write_tss(5, 0x10, stack_hold);
+	gdt_set_gate(6, 0, 0xFFFFF, 0x92, 0x0);
+	gdt_set_gate(7, 0, 0xFFFFF, 0x9A, 0x0);
 
 	gdt_flush((unsigned int) &gdt_ptr);
 	flush_tss();
@@ -43,8 +45,8 @@ static void init_gdt(){
 
 static void gdt_set_gate(int index, unsigned int base, unsigned int limit, unsigned char access, unsigned char granularity){
 	gdt_entries[index].base_low = (base & 0xFFFF);
-	gdt_entries[index].base_middle = (base >> 16) & 0xFF;
-	gdt_entries[index].base_high = (base >> 24) & 0xFF;
+	gdt_entries[index].base_middle = (base >> 16) & 0xFF;	//Base low is actually 24 bits
+	gdt_entries[index].base_high = (base >> 24) & 0xFF;	//
 	gdt_entries[index].limit_low = (limit & 0xFFFF);
 	
 	gdt_entries[index].granularity = (limit >> 16) & 0x0F;

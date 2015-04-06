@@ -151,3 +151,25 @@ void dump_page(vpage_dir_t* dir, unsigned int address){
 	unsigned short id = address >> 22;
 	DISP("Index salt =", (unsigned int) dir->tables[id]);
 }
+
+vpage_dir_t* copy_user_dir(vpage_dir_t* dir){
+	uint i;
+
+	vpage_dir_t* copy = mk_vpage_dir();
+	memcpy(copy, root_vpage_dir, sizeof(vpage_dir_t));
+
+	for(i = 0; i < 1024; i++){
+		if(((uint) dir->tables[i]) & 4){
+			vga_fmt("Found a user page at index %d\n", i);
+			page_table_t* tab = (page_table_t*) ((uint) dir->tables[i] & 0xFFFFF000);
+			vga_fmt("Table at address %X maps to %X\n", (uint) tab, i << 22);
+			vga_fmt("Virtually mapped from %X\n", tab->pages[0].frame << 12);
+
+			void* buffer = kmalloc_a(PAGE_S);
+			memcpy(buffer, (void*) (tab->pages[0].frame << 12), PAGE_S);
+			vpage_map_user(copy, (uint) buffer, (uint) i << 22);
+		}
+	}
+
+	return copy;
+}

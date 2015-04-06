@@ -11,7 +11,7 @@ clean:
 	-rm *.iso *.log
 
 run: dimg
-	qemu-system-i386 -net none -vga std -localtime -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide
+	qemu-system-i386 -net none -vga std -localtime -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide -monitor stdio
 
 debug: all
 	objcopy --only-keep-debug src/build/kernel src/build/ksym
@@ -24,11 +24,14 @@ dimg: all
 	mkdir -p src/build/boot/grub
 	cp grub.cfg src/build/boot/grub/
 	cp src/build/kernel src/build/boot/kernel
-	cp src/initramfs/initrd src/build/boot/initrd
 	-grub-mkrescue -o grub.iso src/build
 
 bochs: dimg
 	bochs
+
+test-image: all dimg
+	cp /usr/lib/grub/x86_64-pc/stage2 src/build/boot/grub
+	grub-mkimage -O x86_64-pc -p src/build -o grub.img multiboot sh fat
 
 vbox: dimg
 	VBoxManage convertfromraw userland/hdd.img userland/hdd.vdi --format vdi

@@ -1,5 +1,36 @@
-	[BITS 32]
+  [BITS 32]
+  [ORG 0x7C00]
+  
+%define DATASEL (6<<3)
 
-	MOV AX, 0x69
-	CLI
-	HLT
+  CLI
+  JMP 0x38:ENTRY_POINT
+
+  [BITS 16]
+  
+ENTRY_POINT:
+  MOV EAX, DATASEL
+  MOV SS, EAX
+  MOV DS, EAX
+  MOV GS, EAX
+  MOV FS, EAX
+  MOV ES, EAX
+  MOV EAX, CR0
+  AND EAX, 0x7FFFFFFE
+  MOV CR0, EAX
+  JMP 0:REAL_ENTRY
+  
+REAL_ENTRY:
+    XOR AX, AX
+    MOV SS, AX
+    MOV DS, AX
+    MOV GS, AX
+    MOV FS, AX
+    MOV ES, AX
+    MOV SP, 0x7C00
+    LIDT [NEW_IDT]
+    HLT
+	
+NEW_IDT:
+  DW 0x3FF
+  DD 0x0

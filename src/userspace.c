@@ -13,7 +13,7 @@ void userspace_handler(registers_t* regs){
 	switch(regs->eax){
 		//One liners
 		case SYS_FORK:
-			regs->eax = fork();
+			regs->eax = fork(regs);
 			return;
 		case SYS_GETPID:
 			regs->eax = getpid();
@@ -69,8 +69,16 @@ void init_userspace(){
 	register_interrupt_handler(31, userspace_handler);
 }
 
-uint fork(){
-	return -1;
+uint fork(registers_t* regs){
+	vpage_dir_t* dir = copy_user_dir(current_proc->cr3);
+	virtix_proc_t* proc = mk_empty_proc();
+	proc->cr3 = dir;
+	memcpy(&proc->registers, regs, sizeof(registers_t));
+	proc->registers.eax = 1;
+
+	spawn_proc(proc);
+
+	return 0;
 }
 
 uint getpid(){

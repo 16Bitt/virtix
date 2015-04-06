@@ -2,6 +2,7 @@
 #include "monitor.h"
 #include "virtix_proc.h"
 #include "isr.h"
+#include "file.h"
 
 virtix_proc_t* proc_bottom = NULL;
 

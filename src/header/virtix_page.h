@@ -32,4 +32,6 @@ void convert_vpage(vpage_dir_t* kdir);		//Change page to usermode
 
 void dump_page(vpage_dir_t* dir, unsigned int address);
 
+vpage_dir_t* copy_user_dir(vpage_dir_t* dir);
+
 #endif
