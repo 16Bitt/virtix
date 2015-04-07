@@ -165,7 +165,7 @@ fs_node_t* vfs_touch(fs_node_t* node, char* name){
 
 	if(dir == NULL)
 		return NULL;
-	
+
 	fs_node_t* file = mk_empty_fnode();
 	strmov(file->name, basename(name));
 

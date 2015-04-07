@@ -10,6 +10,9 @@ FILE kfopen(char* path, uint offset){
 	
 	if(node == NULL){
 		node = vfs_touch(df_root, path);
+		
+		if(node == NULL)
+			return (FILE) -1;
 	}
 	
 	return fd_create(node, offset);

@@ -22,6 +22,7 @@ fs_node_t* mk_empty_node(){
 	node->close	= df_close;
 	
 	node->dev	= df_dev;
+	node->link	= NULL;
 
 	return node;
 }

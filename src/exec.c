@@ -7,7 +7,7 @@
 
 uint kexec(char* path){
 	FILE f = kfopen(path, 0);
-	if(f == (uint) -1)
+	if(f == (FILE) -1)
 		return (uint) -1;
 
 	struct stat* st = (struct stat*) kmalloc(sizeof(struct stat));
@@ -30,7 +30,7 @@ uint kexec(char* path){
 
 uint kexec_pipes(char* path, char* stdin, char* stdout, char* stderr){
 	FILE f = kfopen(path, 0);
-	if(f == (uint) -1)
+	if(f == (FILE) -1)
 		return (uint) -1;
 
 	struct stat* st = (struct stat*) kmalloc(sizeof(struct stat));
