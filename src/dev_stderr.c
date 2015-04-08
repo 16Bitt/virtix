@@ -4,7 +4,7 @@
 
 extern uchar vga_color;
 
-uint dev_stderr_write(fs_node_t* node, uint offset, char* buffer){
+uint dev_stderr_write(fs_node_t* node, uint offset, uchar* buffer){
 	uchar hold = vga_color;
 	vga_set_fg(RED);
 	

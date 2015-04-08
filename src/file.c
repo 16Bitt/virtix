@@ -80,6 +80,6 @@ uint klseek(FILE file, uint offset, uint direction){
 	return 0;
 }
 
-kfflush(FILE file){
+void kfflush(FILE file){
 	fd_flush(file);
 }

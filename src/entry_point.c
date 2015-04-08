@@ -18,6 +18,9 @@
 #include "init.h"
 #include "keyboard.h"
 #include "real.h"
+#include "userspace.h"
+#include "fd.h"
+#include "exec.h"
 
 void* stack = NULL;
 
@@ -97,7 +100,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
-	kexec("/bin/etc/forker");
+	kexec("/bin/forker");
 
 	NOTIFY("syncing FAT")
 	fat_sync();

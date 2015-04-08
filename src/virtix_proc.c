@@ -5,6 +5,8 @@
 #include "isr.h"
 #include "virtix_page.h"
 #include "single.h"
+#include "kheap.h"
+#include "file.h"
 
 unsigned int pid = 0;
 virtix_proc_t* root;
@@ -133,6 +135,8 @@ virtix_proc_t* mk_empty_proc(){
 	proc->registers.ds = 0x23;
 	proc->registers.ss = 0x23;
 	proc->cr3 = mk_vpage_dir();
+	
+	proc->brk	= 0x50000000;
 
 	int i;
 	for(i = 0; i < 1024; i++)

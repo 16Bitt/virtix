@@ -4,6 +4,7 @@
 #include "virtix_proc.h"
 #include "elf.h"
 #include "monitor.h"
+#include "kheap.h"
 
 uint kexec(char* path){
 	FILE f = kfopen(path, 0);

@@ -6,8 +6,8 @@
 struct dev;
 typedef struct fs_node fs_node_t;
 
-typedef uint (*read_block_t)	(fs_node_t*, uint, char*);
-typedef uint (*write_block_t)	(fs_node_t*, uint, char*);
+typedef uint (*read_block_t)	(fs_node_t*, uint, uchar*);
+typedef uint (*write_block_t)	(fs_node_t*, uint, uchar*);
 
 typedef struct dev{
 	char	name[128];
@@ -19,7 +19,7 @@ typedef struct dev{
 	uchar drive;
 } dev_t;
 
-//void mkdev(char* name, read_type_t read, write_type_t write);
+void mkdev(char* name, read_block_t read, write_block_t write);
 
 uint dev_read(fs_node_t* dev, uint offset, char* buffer);
 uint dev_write(fs_node_t* dev, uint offset, char* buffer);

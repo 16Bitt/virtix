@@ -15,6 +15,8 @@ unsigned int sp_child(){
 	return (unsigned int) -1;
 }
 
+extern void hard_usermode();
+
 void enter_userspace(virtix_proc_t* proc){
 	proc_bottom = proc;
 	proc->next = NULL;

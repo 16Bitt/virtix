@@ -20,5 +20,6 @@ uint kstat(char* path, struct stat* buffer);
 uint klseek(FILE file, uint offset, uint direction);
 uint kfreadchar(FILE file, char* c);
 uint kfwritechar(FILE file, char* c);
+void kfflush(FILE file);
 
 #endif

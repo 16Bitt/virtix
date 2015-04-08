@@ -3,6 +3,8 @@
 #include "vfs.h"
 #include "dev.h"
 #include "deepfat.h"
+#include "kheap.h"
+#include "str-util.h"
 
 void mkdev(char* name, read_block_t read, write_block_t write){
 	if(fs_path(df_root, "/dev") == NULL){

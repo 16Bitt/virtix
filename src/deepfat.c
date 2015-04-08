@@ -6,6 +6,7 @@
 #include "fd.h"
 #include "monitor.h"
 #include "dev.h"
+#include "kheap.h"
 
 fs_node_t* df_root;
 uint	current_inode = 0;
@@ -134,11 +135,11 @@ void init_deepfat(){
 	df_root = parse_dir(fat_name_conv("DFATROOT.DIR"));
 }
 
-uint df_read_blk(fs_node_t* node, uint offset, char* buffer){
+uint df_read_blk(fs_node_t* node, uint offset, uchar* buffer){
 	return fat_read_block(node->dos_name, offset, buffer);
 }
 
-uint df_write_blk(fs_node_t* node, uint offset, char* buffer){
+uint df_write_blk(fs_node_t* node, uint offset, uchar* buffer){
 	uint status = fat_write_block(node->dos_name, offset, buffer);
 	fat_dir_t* dir = fat_search(node->dos_name);
 	if(dir != NULL)

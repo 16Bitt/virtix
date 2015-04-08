@@ -3,6 +3,7 @@
 #include "monitor.h"
 #include "isr.h"
 #include "virtix_page.h"
+#include "kheap.h"
 
 void mk_kthread(char* name, void* addr){
 	cli();

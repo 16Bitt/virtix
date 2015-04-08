@@ -7,7 +7,7 @@
 
 extern uchar last_key;
 
-uint dev_stdin_read(fs_node_t* node, uint offset, char* buffer){
+uint dev_stdin_read(fs_node_t* node, uint offset, uchar* buffer){
 	wait_for_update:
 		*buffer = last_key;
 	

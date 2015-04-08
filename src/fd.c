@@ -2,6 +2,9 @@
 #include "monitor.h"
 #include "vfs.h"
 #include "fd.h"
+#include "deepfat.h"
+#include "kheap.h"
+#include "str-util.h"
 
 fd_t fd_list[MAX_FD];
 
@@ -104,7 +107,7 @@ uint fd_write(uint fd, uint size, char* buffer){
 		return NULL;
 	
 	int i, status;
-	
+
 	for(i = 0; i < size; i++)
 		status = fd_writech(fd, &buffer[i]);
 
@@ -158,6 +161,7 @@ uint fd_flush(uint fd){
 
 	fd_t* desc = &fd_list[fd];
 	desc->node->length = calc_total_size(fd);
+	
 	return desc->node->write_blk(desc->node, desc->block, desc->buffer);
 }
 

@@ -2,6 +2,8 @@
 #include "monitor.h"
 #include "ata.h"
 #include "dev.h"
+#include "kheap.h"
+#include "str-util.h"
 
 ushort* ata_info;
 

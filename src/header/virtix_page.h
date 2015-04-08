@@ -16,7 +16,7 @@ page_table_t* get_cr3();			//contents of cr3 register
 unsigned int get_cr0();				//contents of cr0 register
 
 void set_cr3(vpage_dir_t* dir);			//set cr3 register
-inline void set_cr0(unsigned int new_cr0);	//set cr0 register
+void set_cr0(unsigned int new_cr0);	//set cr0 register
 
 void switch_vpage_dir(vpage_dir_t* dir);	//Change address space
 

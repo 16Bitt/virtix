@@ -93,6 +93,11 @@ void vpage_fault(registers_t* regs){
 	if(current_proc != NULL){
 		memcpy(&current_proc->registers, regs, sizeof(registers_t));
 		dump_proc(current_proc);
+		susp_proc(current_proc->pid);
+
+		vga_fmt("In process %d:\n", current_proc->pid);
+		WARN("segfault, halting process");
+		scheduler(regs);
 	}
 	
 	vga_set_fg(RED);
@@ -117,8 +122,11 @@ void vpage_fault(registers_t* regs){
 	if(rw)		vga_puts(" (Write permissions) ");
 	if(re)		vga_puts(" (RE) ");
 	
+	vga_puts("\n");
 
-	PANIC("vpage fault");
+	if(current_proc == NULL){
+		PANIC("vpage fault in before multitasking started");
+	}
 }
 
 void virtix_page_init(){

@@ -13,6 +13,8 @@ void sleep(uint seconds);
 void msleep(uint mseconds);
 void init_unix_time();
 
+void virtix_clock(registers_t* regs);
+
 uint get_year();
 uint get_month();
 uint get_day();

@@ -11,8 +11,8 @@ extern struct fs_node* df_root;
 void init_deepfat();
 
 //VFS driver interfaces
-uint df_read_blk	(struct fs_node* node, uint offset, char* buffer);
-uint df_write_blk	(struct fs_node* node, uint offset, char* buffer);
+uint df_read_blk	(struct fs_node* node, uint offset, uchar* buffer);
+uint df_write_blk	(struct fs_node* node, uint offset, uchar* buffer);
 uint df_open		(struct fs_node* node, uint index);
 void df_close		(struct fs_node* node);
 

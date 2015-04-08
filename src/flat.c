@@ -1,6 +1,7 @@
 #include "common.h"
 #include "virtix_page.h"
 #include "virtix_proc.h"
+#include "kheap.h"
 
 #define HANG()	cli(); \
 		hlt();

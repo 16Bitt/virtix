@@ -4,8 +4,10 @@
 #include "virtix_proc.h"
 #include "userspace.h"
 #include "single.h"
-
+#include "kheap.h"
 #include "file.h"
+#include "exec.h"
+
 
 uint c_err;
 
@@ -51,6 +53,13 @@ void userspace_handler(registers_t* regs){
 			if(uexec((char*) regs->ebx) != 0)
 				regs->eax = (uint) -1;
 			scheduler(regs);
+			return;
+		case SYS_SBRK:
+			WARN("very bad sbrk implementation");
+			uint ptr = (uint) kmalloc_a(PAGE_S);
+			vpage_map_user(current_proc->cr3, current_proc->brk, ptr);
+			regs->eax = current_proc->brk;
+			current_proc->brk += PAGE_S;
 			return;
 
 		//Modifies the process

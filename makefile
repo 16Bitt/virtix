@@ -1,3 +1,6 @@
+CC	= i686-elf-gcc
+LD	= i686-elf-ld
+
 all:
 	cd src && make
 	cd libc && make

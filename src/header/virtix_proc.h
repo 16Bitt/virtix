@@ -25,10 +25,14 @@ typedef struct virtix_proc {
 	uint stdin;			//Current streams
 	uint stdout;
 	uint stderr;
+	
+	uint brk;
 
 	struct virtix_proc* parent;	//If child, this will be set
 	struct virtix_proc* next;	//Next process
 } virtix_proc_t;
+
+void scheduler(registers_t* regs);
 
 void kill_proc(unsigned int pid);							//End a process
 unsigned int spawn_proc(virtix_proc_t* process);			//Start a process

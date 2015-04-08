@@ -26,6 +26,8 @@ typedef unsigned int uint;
 
 #define SYS_EXEC	15
 
+#define SYS_SBRK	16
+
 uint fork();
 uint getpid();
 char** get_env();

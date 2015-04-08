@@ -1,6 +1,7 @@
 CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -I../libc/include -g
 LDFLAGS	= -Tlink.ld -melf_i386
-CC	= gcc
+CC	= i686-elf-gcc
+LD	= i686-elf-ld
 SOURCES	= $(wildcard bin/*.c)
 OUTPUTS	= $(SOURCES:.c=.o)
 EXECS	= $(OUTPUTS:.o=)
