@@ -34,6 +34,6 @@ void dump_struct(void* structure, size_t bytes);
 
 void panic(char* msg, char* file, unsigned int line);
 #define PANIC(msg) panic(msg, __FILE__, __LINE__)
-#define ASSERT(e) ((e) ? (void) 0 : PANIC("ASSERTION FAILED"))
+#define ASSERT(e) ((e) ? (void) 0 : PANIC("ASSERTION FAILED:\n\n" #e))
 
 #endif

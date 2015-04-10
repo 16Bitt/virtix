@@ -21,6 +21,7 @@
 #include "userspace.h"
 #include "fd.h"
 #include "exec.h"
+#include "cpu.h"
 
 void* stack = NULL;
 
@@ -90,6 +91,12 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	NOTIFY("enabling keyboard");
 	init_keyboard();
+	
+	NOTIFY("getting CPUID string");
+	NOTIFY(cpu_name());
+	
+	NOTIFY("checking for an FPU");
+	cpu_check_fpu();
 
 	FILE f = kfopen("/dev/stdout", 0);
 	char* msg = "Test write to /dev/stdout\n";
@@ -100,7 +107,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
-	kexec("/bin/forker");
+	kexec("/bin/asserter");
 
 	NOTIFY("syncing FAT")
 	fat_sync();

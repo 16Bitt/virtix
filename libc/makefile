@@ -1,6 +1,6 @@
 SOURCES = $(patsubst %.c,%.o,$(wildcard *.c))
 CFLAGS	= -fno-builtin -nostdinc -nostdlib -m32 -Iinclude
-TARGETS	= stdio string stdlib
+TARGETS	= stdio string stdlib errno
 CC	= i686-elf-gcc
 AR	= i686-elf-ar
 

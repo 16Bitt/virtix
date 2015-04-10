@@ -7,7 +7,7 @@
 #include "kheap.h"
 #include "file.h"
 #include "exec.h"
-
+#include "signal.h"
 
 uint c_err;
 
@@ -60,6 +60,12 @@ void userspace_handler(registers_t* regs){
 			vpage_map_user(current_proc->cr3, current_proc->brk, ptr);
 			regs->eax = current_proc->brk;
 			current_proc->brk += PAGE_S;
+			return;
+		case SYS_RAISE:
+			raise(current_proc, regs->ebx);
+			return;
+		case SYS_SIGNAL:
+			signal(current_proc, regs->ebx, regs->ecx);
 			return;
 
 		//Modifies the process

@@ -26,7 +26,9 @@ typedef struct virtix_proc {
 	uint stdout;
 	uint stderr;
 	
-	uint brk;
+	uint brk;			//Program break location
+	
+	uint handlers[6];		//Signal handling table
 
 	struct virtix_proc* parent;	//If child, this will be set
 	struct virtix_proc* next;	//Next process

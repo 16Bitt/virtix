@@ -25,8 +25,9 @@ typedef unsigned int uint;
 #define SYS_GETSTDERR	14
 
 #define SYS_EXEC	15
-
 #define SYS_SBRK	16
+#define SYS_RAISE	17
+#define SYS_SIGNAL	18
 
 uint fork();
 uint getpid();
