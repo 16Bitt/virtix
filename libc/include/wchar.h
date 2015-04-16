@@ -1,0 +1,1 @@
+#error "No wchar support"

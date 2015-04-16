@@ -9,6 +9,8 @@
 #include "file.h"
 
 unsigned int pid = 0;
+unsigned int gid = 0;
+
 virtix_proc_t* root;
 virtix_proc_t* current_proc = NULL;
 
@@ -19,7 +21,7 @@ extern unsigned int stack_hold;
 void scheduler(registers_t* regs){
 	memcpy(&current_proc->registers, regs, sizeof(registers_t));
 	
-	NOTIFY("task switch");
+	//NOTIFY("task switch");
 
 	virtix_clock(regs);
 
@@ -67,14 +69,51 @@ void kill_proc(unsigned int pid){
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){
-	NOTIFY("creating new process");
 	process->pid = pid++;
 	
 	process->next = root->next;
 	root->next = process;
 	process->state = PROC_RUNNING;
+	
+	process->gid = process->parent->pid + 1;
 
 	return process->pid;
+}
+
+//Find out if a child process has died
+int wait_gid(uint gid, int* status){
+	virtix_proc_t* i = current_proc->next;
+
+	while(i != NULL){
+		if(i->gid == gid)
+			if(i->state == PROC_ASLEEP){
+				i->gid = 0;		//Set gid to 0 so we don't rescan
+				*status = i->registers.eax;
+				return WAIT_KILLED;
+			}
+			
+		i = i->next;
+	}
+
+	return WAIT_OKAY;
+}
+
+//Find out if a process has died
+int wait_pid(uint pid, int* status){
+	virtix_proc_t* i = current_proc->next;
+
+	while(i != NULL){
+		if(i->pid == pid)
+			if(i->state == PROC_ASLEEP){
+				*status = i->registers.eax;
+				return WAIT_KILLED;
+			}
+			else
+				return WAIT_OKAY;
+		i = i->next;
+	}
+
+	return WAIT_ERROR;
 }
 
 void susp_proc(unsigned int pid){

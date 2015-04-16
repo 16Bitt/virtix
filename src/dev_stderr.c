@@ -9,8 +9,10 @@ uint dev_stderr_write(fs_node_t* node, uint offset, uchar* buffer){
 	vga_set_fg(RED);
 	
 	int i;
-	for(i = 0; i < node->dev->block_size; i++)
+	for(i = 0; i < node->dev->block_size; i++){
 		vga_putc(buffer[i]);
+		buffer[i] = 0;
+	}
 
 	vga_color = hold;
 	return 0;

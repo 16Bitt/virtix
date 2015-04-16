@@ -67,6 +67,8 @@ void userspace_handler(registers_t* regs){
 		case SYS_SIGNAL:
 			signal(current_proc, regs->ebx, regs->ecx);
 			return;
+		case SYS_WAIT:
+			
 
 		//Modifies the process
 		case SYS_EXIT:
@@ -78,6 +80,28 @@ void userspace_handler(registers_t* regs){
 			dump_proc(current_proc);
 			PANIC("bad userspace call");
 	}
+}
+
+int sys_wait(int pid, int* status, int options){
+	int ret;
+
+	if(pid == -1){	//Wait for any child to be killed
+		ret = wait_gid(current_proc->pid + 1, status);	
+	}
+
+	if(pid < 0){	//Wait for any process in |gid| to die
+		ret = wait_gid(pid * -1, status);
+	}
+
+	if(pid == 0){	//Wait for siblings of this process to die
+		ret = wait_gid(current_proc->gid, status);
+	}
+
+	if(pid > 0){	//Wait for pid to die
+		ret = wait_pid(pid, status);
+	}
+
+	return ret;
 }
 
 void init_userspace(){

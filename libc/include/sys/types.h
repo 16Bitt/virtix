@@ -16,8 +16,15 @@ typedef unsigned short	ushort;
 #define FALSE 0
 #define TRUE (!FALSE)
 
-typedef int bool;
-#define false 0
-#define true (!false)
+#define dev_t		uint
+#define ino_t		uint
+#define mode_t		uint
+#define nlink_t		uint
+#define uid_t		uint
+#define gid_t		uint
+#define off_t		uint
+#define time_t		uint
+#define blksize_t	uint
+#define blkcnt_t	uint
 
 #endif

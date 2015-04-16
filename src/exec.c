@@ -22,6 +22,7 @@ uint kexec(char* path){
 	if(proc == NULL)
 		return (uint) -1;
 	
+	proc->stdin = kfopen("/dev/stdin", 0);
 	proc->stdout = kfopen("/dev/stdout", 0);
 	proc->stderr = kfopen("/dev/stderr", 0);
 	
@@ -45,7 +46,7 @@ uint kexec_pipes(char* path, char* stdin, char* stdout, char* stderr){
 	if(proc == NULL)
 		return (uint) -1;
 	
-	//proc->stdin = kfopen(stdout, 0);
+	proc->stdin = kfopen("/dev/stdin", 0);
 	proc->stdout = kfopen("/dev/stderr", 0);
 	proc->stderr = kfopen("/dev/stderr", 0);
 	
@@ -53,7 +54,7 @@ uint kexec_pipes(char* path, char* stdin, char* stdout, char* stderr){
 }
 
 uint uexec(char* path){
-	NOTIFY("trapped exec() call")
+	//NOTIFY("trapped exec() call")
 	susp_proc(current_proc->pid);
 	
 	FILE f = kfopen(path, 0);
@@ -70,7 +71,8 @@ uint uexec(char* path){
 	kfree(buffer);
 	if(proc == NULL)
 		return (uint) -1;
-
+	
+	proc->stdin = kfopen("/dev/stdin", 0);
 	proc->stdout = kfopen("/dev/stdout", 0);
 	proc->stderr = kfopen("/dev/stderr", 0);
 	proc->parent = current_proc;

@@ -28,6 +28,8 @@ typedef unsigned int uint;
 #define SYS_SBRK	16
 #define SYS_RAISE	17
 #define SYS_SIGNAL	18
+#define SYS_SIGEXIT	19
+#define SYS_WAIT	20
 
 uint fork();
 uint getpid();

@@ -36,7 +36,8 @@ uint kfread(FILE file, uint size, char* buffer){
 }
 
 uint kfwrite(FILE file, uint size, char* buffer){
-	return fd_write(file, size, buffer);
+	int err = fd_write(file, size, buffer);
+	return err;
 }
 
 uint kfstat(FILE file, struct stat* buffer){

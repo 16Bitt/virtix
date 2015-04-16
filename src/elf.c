@@ -50,7 +50,8 @@ virtix_proc_t* elf_load(void* elf_data){
 			case 0:
 				break;
 			case 1:
-				NOTIFY("Allocating space for ELF binary section...")
+				i += 0;
+				//NOTIFY("Allocating space for ELF binary section...")
 				unsigned int loc = (unsigned int) kmalloc_a(PAGE_S);
 				vpage_map_user(proc->cr3, loc, phdr->p_vaddr);
 				memcpy((void*) phdr->p_vaddr, ((void*) ((unsigned int) elf_data) + phdr->p_offset), phdr->p_filesz);

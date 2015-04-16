@@ -17,6 +17,7 @@ typedef struct virtix_proc {
 	registers_t registers;		//Process state
 
 	unsigned int pid;		//Process integer ID
+	unsigned int gid;		//Process group ID
 	char* name;			//Process/program name
 		
 	int state;			//Sleeping | running
@@ -43,6 +44,9 @@ void wake_proc(unsigned int pid);							//Wake a process back up
 unsigned int child_proc(virtix_proc_t* process, unsigned int pid);	//Sleep the process
 unsigned int fork_proc(unsigned int pid);					//Fork the process
 
+int wait_gid(uint gid, int* status);		//Tries to see if the process has died yet
+int wait_pid(uint pid, int* status);
+
 virtix_proc_t* pid_to_proc(unsigned int pid);				//Get a process from a PID
 
 void init_procs(virtix_proc_t* proc);							//maps a process handler to the PIT
@@ -63,5 +67,9 @@ extern unsigned int stack_hold;
 #define PROC_THREAD	0
 #define PROC_PROC	1
 #define PROC_ROOT	2
+
+#define WAIT_KILLED	0
+#define WAIT_ERROR	(-1)
+#define WAIT_OKAY	1
 
 #endif

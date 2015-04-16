@@ -4,10 +4,13 @@
 #include "monitor.h"
 #include "deepfat.h"
 #include "isr.h"
+#include "keyboard.h"
 
 extern uchar last_key;
 
 uint dev_stdin_read(fs_node_t* node, uint offset, uchar* buffer){
+	sti();	//Reenable-- this is a safe place to allow interrupts in ring 0
+	
 	wait_for_update:
 		*buffer = last_key;
 	
@@ -16,13 +19,16 @@ uint dev_stdin_read(fs_node_t* node, uint offset, uchar* buffer){
 		goto wait_for_update;
 	}
 	
+	last_key = 0;
+	
+	cli();	//Disable them again just in case
 	return 0;
 }
 
 void dev_stdin(){
 	mkdev("stdin", dev_stdin_read, NULL);
 	fs_node_t* node = fs_path(df_root, "/dev/stdin");
-	node->dev->block_size = 1;
+	node->dev->block_size = 0;
 	last_key = 0;
 	node->length = 0xFFFFFFFF;
 }

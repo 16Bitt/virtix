@@ -27,6 +27,9 @@ int puts(char* str);
 int printf(const char* fmt, ...);
 int print(char* s);
 
+//File input
+int fgetc(FILE* f);
+
 __HEADER_END
 
 #endif

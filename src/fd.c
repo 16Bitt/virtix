@@ -48,10 +48,14 @@ uint fd_create(fs_node_t* node, uint offset){
 			fd_list[i].buffer	= (char*) kmalloc(node->dev->block_size);
 			fd_list[i].present	= 1;
 			
-			read_fs(node, calc_blk_offset(node->dev->block_size, offset), fd_list[i].buffer);
+			if(node->dev->block_size != 0)
+				read_fs(node, calc_blk_offset(node->dev->block_size, offset), fd_list[i].buffer);
+			
 			fd_list[i].offset	= calc_buf_offset(node->dev->block_size, offset);
 			fd_list[i].fs_size	= node->length;
 			
+			//vga_fmt("FD for %s created with %d byte blocks, %d byte length\n", node->name, fd_list[i].block_size, node->length);
+
 			return i;
 		}
 	}
@@ -93,11 +97,17 @@ uint fd_read(uint fd, uint size, char* buffer){
 	int i, status;
 	char read;
 	
-	for(i = 0; i < size; i++){
-		status = fd_readch(fd, &read);
-		buffer[i] = read;
+	if(node->dev->block_size == 0){		//Instant update device (stdout etc.)
+		for(i = 0; i < size; i++)
+			status = node->read_blk(node, 0, &buffer[i]);
 	}
-
+	
+	else
+		for(i = 0; i < size; i++){
+			status = fd_readch(fd, &read);
+			buffer[i] = read;
+		}
+	
 	return status;
 }
 
@@ -108,8 +118,14 @@ uint fd_write(uint fd, uint size, char* buffer){
 	
 	int i, status;
 
-	for(i = 0; i < size; i++)
-		status = fd_writech(fd, &buffer[i]);
+	if(node->dev->block_size == 0){		//Instant update device (stdout etc.)
+		for(i = 0; i < size; i++)
+			status = node->write_blk(node, 0, &buffer[i]);
+	}
+	
+	else
+		for(i = 0; i < size; i++)
+			status = fd_writech(fd, &buffer[i]);
 
 	return status;
 
@@ -120,22 +136,26 @@ size_t calc_total_size(uint fd){
 }
 
 uint fd_readch(uint fd, char* c){
-	if(fd >= MAX_FD)
+	if(fd >= MAX_FD){
+		WARN("bad file descriptor")
 		return (uint) -1;
+	}
 
 	fd_t* desc = &fd_list[fd];
 	*c = desc->buffer[desc->offset++];
-	
+
 	if(calc_blk_offset(desc->block_size, desc->fs_size) == desc->block)
-		if(calc_buf_offset(desc->block_size, desc->fs_size) <= desc->offset)
+		if(calc_buf_offset(desc->block_size, desc->fs_size) <= desc->offset){
+			WARN("hit buffer end")
 			return (uint) -1;
+		}
 
 	if(desc->offset >= desc->block_size){
 		desc->offset = 0;
 		desc->block++;
 		desc->node->read_blk(desc->node, desc->block, desc->buffer);
 	}
-
+	
 	return 0;
 }
 
@@ -162,6 +182,9 @@ uint fd_flush(uint fd){
 	fd_t* desc = &fd_list[fd];
 	desc->node->length = calc_total_size(fd);
 	
+	if(desc->block_size == 0)
+		return 0;
+
 	return desc->node->write_blk(desc->node, desc->block, desc->buffer);
 }
 
