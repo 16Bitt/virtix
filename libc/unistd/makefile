@@ -8,7 +8,7 @@ clean:
 	-rm $(SOURCES)
 
 copyup: $(SOURCES)
-	-cp $(SOURCES) ../
+	cp $(SOURCES) ../
 
 nop:
 	@@echo Nop

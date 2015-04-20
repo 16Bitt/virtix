@@ -32,6 +32,9 @@ void userspace_handler(registers_t* regs){
 		case SYS_GETSTDERR:
 			regs->eax = current_proc->stderr;
 			return;
+		case SYS_GETGID:
+			regs->eax = current_proc->gid;
+			return;
 
 		//Need arguments
 		case SYS_WRITE:
@@ -68,11 +71,13 @@ void userspace_handler(registers_t* regs){
 			signal(current_proc, regs->ebx, regs->ecx);
 			return;
 		case SYS_WAIT:
-			
+			regs->eax = sys_wait((int) regs->ebx, (int*) regs->ecx, regs->edx);
+			return;
 
 		//Modifies the process
 		case SYS_EXIT:
 			regs->eax = _exit(regs);	//leave return code for parent	
+			scheduler(regs);
 			return;
 
 		default:
@@ -85,12 +90,12 @@ void userspace_handler(registers_t* regs){
 int sys_wait(int pid, int* status, int options){
 	int ret;
 
-	if(pid == -1){	//Wait for any child to be killed
-		ret = wait_gid(current_proc->pid + 1, status);	
-	}
-
 	if(pid < 0){	//Wait for any process in |gid| to die
 		ret = wait_gid(pid * -1, status);
+	}
+
+	if(pid == -1){	//Wait for any child to be killed
+		ret = wait_gid(current_proc->pid, status);	
 	}
 
 	if(pid == 0){	//Wait for siblings of this process to die
@@ -100,7 +105,7 @@ int sys_wait(int pid, int* status, int options){
 	if(pid > 0){	//Wait for pid to die
 		ret = wait_pid(pid, status);
 	}
-
+	
 	return ret;
 }
 
@@ -113,7 +118,7 @@ uint fork(registers_t* regs){
 	virtix_proc_t* proc = mk_empty_proc();
 	proc->cr3 = dir;
 	memcpy(&proc->registers, regs, sizeof(registers_t));
-	proc->registers.eax = 1;
+	proc->registers.eax = proc->pid;
 
 	spawn_proc(proc);
 
@@ -146,8 +151,6 @@ uint write(FILE fid, char* buffer, size_t length){
 }
 
 uint _exit(registers_t* regs){
-	NOTIFY("Exit trapped");
 	kill_proc(getpid());
-	scheduler(regs);
-	return 0;
+	return regs->eax;
 }

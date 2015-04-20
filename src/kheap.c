@@ -30,7 +30,7 @@ void* fmalloc(unsigned int size){
 }
 
 void* kmalloc_a(unsigned int size){
-	ASSERT(((placement_address & 0xFFFFF000) + 0x1000) + size < MEM_END);
+	//ASSERT(((placement_address & 0xFFFFF000) + 0x1000) + size < MEM_END);
 	placement_address &= 0xFFFFF000;
 	placement_address += 0x1000;
 

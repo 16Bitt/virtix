@@ -21,7 +21,7 @@ struct stat{
 	time_t	st_ctime;
 	blksize_t	st_blksize;
 	blkcnt_t	st_blocks;
-};
+} stat_t;
 
 __HEADER_END
 

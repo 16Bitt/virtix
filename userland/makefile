@@ -2,7 +2,7 @@ CFLAGS	= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -I../libc/in
 LDFLAGS	= -Tlink.ld -melf_i386
 CC	= i686-elf-gcc
 LD	= i686-elf-ld
-SOURCES	= $(wildcard bin/*.c)
+SOURCES	= $(wildcard src/*.c)
 OUTPUTS	= $(SOURCES:.c=.o)
 EXECS	= $(OUTPUTS:.o=)
 LIBC	= ../libc/libc.a
@@ -15,8 +15,10 @@ $(OUTPUTS): $(SOURCES)
 $(EXECS): $(OUTPUTS)
 	$(LD) $(LDFLAGS) $@.o $(LIBC) -o $@
 	strip --strip-unneeded $@
+	mv $@ bin/
 
-disk:	
+disk:
+	cp mkdf.sh bin
 	if ! [ -a hdd.img ]; \
 	then \
 		dd if=/dev/zero of=hdd.img bs=512 count=419328; \
@@ -26,7 +28,7 @@ disk:
 
 binclean:
 	-rm $(OUTPUTS)
-	-rm $(EXECS)
+	-rm bin/*
 	-rm *.x16
 
 clean: binclean

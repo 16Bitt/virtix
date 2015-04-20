@@ -9,7 +9,6 @@
 #include "file.h"
 
 unsigned int pid = 0;
-unsigned int gid = 0;
 
 virtix_proc_t* root;
 virtix_proc_t* current_proc = NULL;
@@ -63,38 +62,38 @@ void kill_proc(unsigned int pid){
 	proc->state = PROC_ASLEEP;
 
 	if(proc->parent != NULL){
-		NOTIFY("Child had parent (!!!)");
-		wake_proc(proc->parent->pid);
+		//NOTIFY("Child had parent (!!!)");
+		//wake_proc(proc->parent->pid);
 	}
 }
 
 unsigned int spawn_proc(virtix_proc_t* process){
-	process->pid = pid++;
-	
 	process->next = root->next;
 	root->next = process;
 	process->state = PROC_RUNNING;
 	
-	process->gid = process->parent->pid + 1;
+	process->parent = current_proc;
+	process->gid = process->parent->parent->pid;
+	
+	//susp_proc(current_proc->pid);
 
 	return process->pid;
 }
 
 //Find out if a child process has died
 int wait_gid(uint gid, int* status){
-	virtix_proc_t* i = current_proc->next;
+	virtix_proc_t* i = root;
 
 	while(i != NULL){
 		if(i->gid == gid)
 			if(i->state == PROC_ASLEEP){
-				i->gid = 0;		//Set gid to 0 so we don't rescan
-				*status = i->registers.eax;
-				return WAIT_KILLED;
+				*status = i->registers.ebx;
+				return i->pid;
 			}
 			
 		i = i->next;
 	}
-
+	
 	return WAIT_OKAY;
 }
 
@@ -105,8 +104,8 @@ int wait_pid(uint pid, int* status){
 	while(i != NULL){
 		if(i->pid == pid)
 			if(i->state == PROC_ASLEEP){
-				*status = i->registers.eax;
-				return WAIT_KILLED;
+				*status = i->registers.ebx;
+				return i->pid;
 			}
 			else
 				return WAIT_OKAY;
@@ -180,6 +179,8 @@ virtix_proc_t* mk_empty_proc(){
 	int i;
 	for(i = 0; i < 1024; i++)
 		proc->cr3->tables[i] = root_vpage_dir->tables[i];
+	
+	proc->pid = pid++;
 
 	return proc;
 }

@@ -68,8 +68,7 @@ extern unsigned int stack_hold;
 #define PROC_PROC	1
 #define PROC_ROOT	2
 
-#define WAIT_KILLED	0
 #define WAIT_ERROR	(-1)
-#define WAIT_OKAY	1
+#define WAIT_OKAY	0
 
 #endif

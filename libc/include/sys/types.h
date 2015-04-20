@@ -26,5 +26,6 @@ typedef unsigned short	ushort;
 #define time_t		uint
 #define blksize_t	uint
 #define blkcnt_t	uint
+#define pid_t		uint
 
 #endif

@@ -21,6 +21,12 @@ __HEADER_START
 #define SYS_GETSTDOUT	13
 #define SYS_GETSTDERR	14
 #define SYS_EXEC	15
+#define SYS_SBRK	16
+#define SYS_RAISE	17
+#define SYS_SIGNAL	18
+#define SYS_SIGEXIT	19
+#define SYS_WAIT	20
+#define SYS_GETGID	21
 
 int syscall_0arg(uint call_no);
 int syscall_1arg(uint call_no, uint arg1);

@@ -30,6 +30,7 @@ typedef unsigned int uint;
 #define SYS_SIGNAL	18
 #define SYS_SIGEXIT	19
 #define SYS_WAIT	20
+#define SYS_GETGID	21
 
 uint fork();
 uint getpid();
@@ -39,6 +40,7 @@ uint write(uint fid, char* buffer, size_t length);
 uint read(uint fid, char* buffer, size_t length);
 uint close(uint fid);
 uint open(char* path, uint offset);
+int sys_wait(int pid, int* status, int options);
 
 uint _exit(registers_t* regs);
 

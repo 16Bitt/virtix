@@ -13,6 +13,5 @@ void _start(){
 	stdin = syscall_0arg(SYS_GETSTDIN);
 	stdout = syscall_0arg(SYS_GETSTDOUT);
 	stderr = syscall_0arg(SYS_GETSTDERR);
-	main(NULL, NULL);
-	_exit(0);
+	_exit(main(NULL, NULL));
 }
