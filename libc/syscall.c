@@ -40,3 +40,17 @@ int syscall_3arg(uint call_no, uint arg1, uint arg2, uint arg3){
 	asm volatile ("movl %%eax, %0" : "=r" (ret));
 	return ret;
 }
+
+int syscall_4arg(uint call_no, uint arg1, uint arg2, uint arg3, uint arg4){
+	int ret;
+	asm volatile ("movl %0, %%eax" :: "d" (call_no));
+	asm volatile ("pushl %eax");
+	asm volatile ("movl %0, %%esi" :: "a" (arg4));
+	asm volatile ("movl %0, %%edx" :: "a" (arg3));
+	asm volatile ("movl %0, %%ecx" :: "a" (arg2));
+	asm volatile ("movl %0, %%ebx" :: "a" (arg1));
+	asm volatile ("popl %eax");
+	asm volatile ("int $31");	
+	asm volatile ("movl %%eax, %0" : "=r" (ret));
+	return ret;
+}

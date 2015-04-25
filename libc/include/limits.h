@@ -28,6 +28,8 @@ __HEADER_START
 #define UINT_MAX	((INT_MAX * 2) - 1)
 #define ULONG_MAX	((LONG_MAX * 2) - 1)
 
+#define PATH_MAX	1024
+
 __HEADER_END
 
 #endif

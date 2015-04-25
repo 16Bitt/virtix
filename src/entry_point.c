@@ -107,7 +107,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
-	kexec("/bin/forker");
+	kexec("/bin/mallocer");
 
 	NOTIFY("syncing FAT")
 	fat_sync();

@@ -64,6 +64,12 @@ void userspace_handler(registers_t* regs){
 			regs->eax = current_proc->brk;
 			current_proc->brk += PAGE_S;
 			return;
+		case SYS_MALLOC:
+			regs->eax = (uint) umalloc(regs->ebx);
+			return;
+		case SYS_FREE:
+			ufree((void*)  regs->ebx);
+			return;
 		case SYS_RAISE:
 			raise(current_proc, regs->ebx);
 			return;

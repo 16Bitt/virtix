@@ -20,6 +20,7 @@ int fprintf(FILE* f, const char* fmt, ...);
 int fprint(FILE* f, char* s);
 int fputs(FILE* f, char* str);
 int fputchar(FILE* f, char c);
+int fputc(FILE* f, char c);
 
 //Terminal Output
 int putchar(char c);
@@ -29,6 +30,9 @@ int print(char* s);
 
 //File input
 int fgetc(FILE* f);
+int fgetchar(FILE* f);
+char* fgets(char* s, int size, FILE* file);
+char* gets(char* s);
 
 __HEADER_END
 

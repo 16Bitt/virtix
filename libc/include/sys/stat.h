@@ -7,6 +7,9 @@ __HEADER_START
 
 #include "sys/types.h"
 
+#define S_IFMT	1
+#define S_IFDIR	2
+
 struct stat{
 	dev_t	st_dev;
 	ino_t	st_ino;
@@ -22,6 +25,8 @@ struct stat{
 	blksize_t	st_blksize;
 	blkcnt_t	st_blocks;
 } stat_t;
+
+#define S_ISDIR(m) ((m) & S_IFDIR)
 
 __HEADER_END
 

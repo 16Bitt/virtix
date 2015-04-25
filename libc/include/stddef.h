@@ -12,9 +12,8 @@ __HEADER_START
 
 #define offsetof(st, m) __builtin_offsetof((st), (m))
 
-typedef ptrdiff_t int;
-typedef wchar_t char;
-typedef size_t unsigned int;
+typedef int ptrdiff_t;
+typedef char wchar_t;
 
 __HEADER_END
 

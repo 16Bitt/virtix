@@ -31,6 +31,10 @@ int getgid();
 int getpid();
 int fork();
 
+//Directories
+int chdir(char* path);
+char* getcwd(char* path, size_t size);
+
 __HEADER_END
 
 #endif

@@ -5,36 +5,45 @@ Virtix is an operating system with one goal in mind: simplicity. There are plent
 
 _Design_
 
-* Virtix is a monolithic kernel, with no module support. Once again, simplicity
+* Virtix is a monolithic kernel
 * The scheduler is a simple cooperative multitasker
-* The main file system is FAT16, for cross-platform compatibility
-* Made with GRUB in mind
-* Will eventually have a graphical mode, made for VESA
+* The main file system is a special metafs on top of FAT16, for cross-platform compatibility
+* Multiboot compliant
+
+_Layout_
+
+* Kernel code is in `virtix/src/`
+* Libc code is in `virtix/libc/`
+* Userland files are in `virtix/userland`
+* Userland binary sources are in `virtix/userland/src`
+* Documentation will eventually be in `virtix/doc`
 
 _Progress_
 
-* As of now, there is a simple paging implementation
+* Paging
+* Multitasking
 * A very simple ELF parser
 * File streams
+* ATA support
+* A small libc
+* devfs
 
 _TODO_
 
 * Heap implementation needs a lot of work
 * ELF loader could definitely be improved
-* Paging needs a rewrite
-* Scheduler still needs a lot of work
 
 _Building Requirements_
 
 * `nasm`
 * GNU coreutils
-* `gcc`
+* `i686-elf-gcc`
 * `ruby` (2.0+)
 * GNU `make`
 * `bash` or `zsh`
 * Optionally, `qemu` for running immedeatly
 
-To build simply navigate to `virtix/src/` and type `make`. If you have `qemu`, and you want to test, type `make run` to build and load into the VM.
+To build simply navigate to `virtix/` and type `make`. If you have `qemu`, and you want to test, type `make run` to build and load into the VM.
 
 _Special Thanks To_
 

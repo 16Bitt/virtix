@@ -11,6 +11,9 @@ extern int errno;
 #define ERANGE	(-2)
 #define EILSEQ	(-3)
 
+#define ENOENT	(-4)
+#define ENOTDIR	(-5)
+
 __HEADER_END
 
 #endif

@@ -27,11 +27,14 @@ __HEADER_START
 #define SYS_SIGEXIT	19
 #define SYS_WAIT	20
 #define SYS_GETGID	21
+#define SYS_GETCWD	22
+#define SYS_CHDIR	23
 
 int syscall_0arg(uint call_no);
 int syscall_1arg(uint call_no, uint arg1);
 int syscall_2arg(uint call_no, uint arg1, uint arg2);
 int syscall_3arg(uint call_no, uint arg1, uint arg2, uint arg3);
+int syscall_4arg(uint call_no, uint arg1, uint arg2, uint arg3, uint arg4);
 
 __HEADER_END
 
