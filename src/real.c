@@ -9,13 +9,13 @@ void run_stub16(char* file){
 	FILE f = kfopen(file, 0);
 	struct stat* st = (struct stat*) kmalloc(sizeof(struct stat));
 	kfstat(f, st);
-	if(st->length == 0){
+	if(st->st_size == 0){
 		kfclose(f);
 		WARN("16-bit stub load failed: empty file");
 		return;
 	}
 	
-	kfread(f, st->length, (char*) 0x7C00);
+	kfread(f, st->st_size, (char*) 0x7C00);
 
 	WARN("Entering real mode in 3 seconds");
 	sleep(3);

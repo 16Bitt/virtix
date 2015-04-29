@@ -20,7 +20,7 @@ uint dev_stdin_read(fs_node_t* node, uint offset, uchar* buffer){
 	}
 	
 	last_key = 0;
-	
+
 	cli();	//Disable them again just in case
 	return 0;
 }

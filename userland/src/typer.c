@@ -2,12 +2,12 @@
 #include "unistd.h"
 
 int main(char** argv, int argc){
-	FILE* f = open("/dev/null", 0);
-	
+	FILE* f = fopen("/typed.txt", "w");
+
 	print("Mash some keys! > ");
 
 	for(;;)
-		printf("%c", fgetc(stdin));
+		fprintf("%c", fgetc(stdin), f);
 
 	return 0;
 }

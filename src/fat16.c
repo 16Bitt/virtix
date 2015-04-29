@@ -51,6 +51,7 @@ fat_dir_t* fat_dir_search(char* fat_name){
 
 fat_dir_t* fat_search(char* fat_name){
 	int i;
+
 	for(i = 0; i < fat_header.dir_size; i++){
 		fat_dir[i].attributes = 0;
 		if(strcmp(fat_name, fat_dir[i].name) == 0)
@@ -149,7 +150,7 @@ char* fat_name_conv(char* actual){
 fat_dir_t* fat_create(char* name){
 	name = fat_name_conv(name);
 	fat_dir_t* target = NULL;
-
+	
 	if(fat_search(name)){
 		return NULL;
 	}

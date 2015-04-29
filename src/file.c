@@ -50,8 +50,8 @@ uint kstat(char* path, struct stat* buffer){
 	if(node == NULL)
 		return (uint) -1;
 
-	buffer->inode = node->inode;
-	buffer->length = buffer->length;
+	buffer->st_ino = node->inode;
+	buffer->st_size = node->length;
 
 	return 0;
 }
@@ -71,7 +71,7 @@ uint klseek(FILE file, uint offset, uint direction){
 			fd_seek(file, fd_offset(file) + offset);
 			break;
 		case SEEK_END:
-			fd_seek(file, status.length + offset);
+			fd_seek(file, status.st_size + offset);
 			break;
 
 		default:

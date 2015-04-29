@@ -13,7 +13,7 @@ uint kexec(char* path){
 
 	struct stat* st = (struct stat*) kmalloc(sizeof(struct stat));
 	kfstat(f, st);
-	size_t size = st->length;
+	size_t size = st->st_size;
 	kfree(st);
 	char* buffer = (char*) kmalloc(size);
 	kfread(f, size, buffer);
@@ -37,7 +37,7 @@ uint kexec_pipes(char* path, char* stdin, char* stdout, char* stderr){
 
 	struct stat* st = (struct stat*) kmalloc(sizeof(struct stat));
 	kfstat(f, st);
-	size_t size = st->length;
+	size_t size = st->st_size;
 	kfree(st);
 	char* buffer = (char*) kmalloc(size);
 	kfread(f, size, buffer);
@@ -63,7 +63,7 @@ uint uexec(char* path){
 
 	struct stat* st = (struct stat*) kmalloc(sizeof(struct stat));
 	kfstat(f, st);
-	size_t size = st->length;
+	size_t size = st->st_size;
 	kfree(st);
 	char* buffer = (char*) kmalloc(size);
 	kfread(f, size, buffer);

@@ -32,6 +32,13 @@ typedef unsigned int uint;
 #define SYS_WAIT	20
 #define SYS_GETGID	21
 
+#define SYS_GETCWD	22
+#define SYS_CHDIR	23
+#define SYS_EXECVE	24
+
+#define	SYS_STAT	25
+#define SYS_FSTAT	26
+
 uint fork();
 uint getpid();
 char** get_env();

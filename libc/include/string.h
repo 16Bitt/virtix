@@ -27,7 +27,7 @@ char* strdup(char* s);
 size_t strlen(char* s);
 char* strstr(char* haystack, char* needle);
 
-char* strerr(int err);
+char* strerror(int err);
 
 __HEADER_END
 

@@ -7,12 +7,25 @@ __HEADER_START
 
 #define SIGABRT	0
 #define SIGFPE	1
-#define SIGILL	4
-#define SIGINT	8
-#define SIGSEGV	16
-#define SIGTERM	32
+#define SIGILL	2
+#define SIGINT	3
+#define SIGSEGV	4
+#define SIGTERM	5
+#define SIGTTIN	6
+#define SIGTSTP	7
+#define SIGTTOU	8
+#define SIGCONT	9
+#define SIGPIPE	10
+#define SIGQUIT	11
+#define SIGHUP	12
+#define SIGCHLD	13
 
-#define SIG_ERR	(-1)
+#define NSIG	14
+
+extern char** sys_siglist;
+
+#define SIG_IGN	(-1)
+#define SIG_ERR	(-2)
 
 #define SIG_SETMASK 0
 
@@ -43,6 +56,13 @@ struct sigevent{
 	union sigval		sigev_value;
 	void (*sigev_notify_function)(union sigval);
 	pthread_attr_t*		sigev_notify_attributes;
+};
+
+struct sigaction{
+	void (*sa_handler)(int);
+	sigset_t 	sa_mask;
+	int 		sa_flags;
+	void (*sa_sigaction)(int, void*, void*);
 };
 
 __HEADER_END

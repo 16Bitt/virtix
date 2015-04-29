@@ -52,6 +52,12 @@ void userspace_handler(registers_t* regs){
 		case SYS_OPEN:
 			regs->eax = open((char*) regs->ebx, regs->ecx);
 			return;
+		case SYS_FSTAT:
+			regs->eax = kfstat((uint) regs->ebx, (struct stat*) regs->ecx);
+			return;
+		case SYS_STAT:
+			regs->eax = kstat((char*) regs->ebx, (struct stat*) regs->ecx);
+			return;
 		case SYS_EXEC:
 			if(uexec((char*) regs->ebx) != 0)
 				regs->eax = (uint) -1;

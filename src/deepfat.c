@@ -9,7 +9,7 @@
 #include "kheap.h"
 
 fs_node_t* df_root;
-uint	current_inode = 0;
+uint current_inode = 0;
 dev_t*  df_dev;
 
 fs_node_t* mk_empty_node(){
@@ -166,20 +166,17 @@ fs_node_t* df_finddir(fs_node_t* node, char* name){
 
 char fat_generated[13];
 char* df_mk_name(){
-	char* name = (char*) current_inode;
 	char* lookup = "0123456789ABCDEF";
 	char* extension = "FIL";
 	
 	fat_generated[8] = 0;
-
-	int i; int offs = 0;
-	for(i = 0; i < 8; i++){
-		char val = name[i];
-		fat_generated[offs++] = lookup[(val & 0xF0) >> 4];
-		fat_generated[offs++] = lookup[val & 0xF];
+	
+	int i, index;
+	for(i = 28, index = 0; i > -1; i -= 4, index++){
+		fat_generated[index] = lookup[(current_inode >> i) & 0xF];
 	}
 
-	current_inode += 1;
+	current_inode++;
 	
 	fat_generated[8] = '.';
 
@@ -187,7 +184,7 @@ char* df_mk_name(){
 		fat_generated[9 + i] = extension[i];
 	
 	fat_generated[12] = 0;
-	
+
 	return fat_generated;
 }
 

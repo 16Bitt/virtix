@@ -9,8 +9,15 @@ __HEADER_START
 
 #define S_IFMT	1
 #define S_IFDIR	2
+#define S_IFREG	4
+#define S_ISUID	8
+#define S_ISGID	16
+#define S_ISVTX	32
+#define S_IXUSR	64
+#define S_IXOTH	128
+#define S_IXGRP	256
 
-struct stat{
+typedef struct stat{
 	dev_t	st_dev;
 	ino_t	st_ino;
 	mode_t	st_mode;
@@ -27,6 +34,10 @@ struct stat{
 } stat_t;
 
 #define S_ISDIR(m) ((m) & S_IFDIR)
+#define S_ISREG(m) ((m) & S_IFREG)
+
+int stat(const char* path, struct stat* st);
+int fstat(int fd, struct stat* st);
 
 __HEADER_END
 

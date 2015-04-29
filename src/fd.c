@@ -193,8 +193,8 @@ uint fd_stat(uint fd, struct stat* buffer){
 	if(node == NULL)
 		return (uint) -1;
 
-	buffer->length = node->length;
-	buffer->inode = node->inode;
+	buffer->st_size = node->length;
+	buffer->st_ino = node->inode;
 
 	return 0;
 }

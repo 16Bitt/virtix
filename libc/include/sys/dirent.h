@@ -5,10 +5,7 @@
 
 __HEADER_START
 
-struct dirent{
-	char name[128];
-	uint ino;
-};
+#include "dirent.h"
 
 __HEADER_END
 

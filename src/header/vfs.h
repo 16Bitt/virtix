@@ -50,8 +50,19 @@ struct dirent{
 };
 
 struct stat{
-	uint inode;
-	uint length;
+	uint st_dev;
+	uint st_ino;
+	uint st_mode;
+	uint st_nlink;
+	uint st_uid;
+	uint st_gid;
+	uint st_rdev;
+	uint st_size;
+	uint st_atime;
+	uint st_mtime;
+	uint st_ctime;
+	uint st_blksize;
+	uint st_blocks;
 };
 
 #define FS_FILE		1

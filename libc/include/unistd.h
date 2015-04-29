@@ -13,20 +13,30 @@ __HEADER_START
 #define SEEK_CUR	1
 #define SEEK_END	2
 
+#define _PATH_BSHELL	"/bin/sh"
+#define _PATH_TTY	"/dev/tty"
+#define _PATH_DEVNULL	"/dev/null"
+
+#define W_OK	1
+#define R_OK	2
+#define X_OK	4
+
+#define PATH_MAX	2048
+
+int access(const char* path, int flags);
+
 //File system manipulation
 void sync();
 int close(int fd);
-int open(char* name, uint position);
 int write(int fd, void* addr, size_t length);
 int read(int fd, void* addr, size_t length);
 int lseek(int fd, int addr, int dir);
 
 //File execution
 int exec(char* path);
+int execve(char* path, char** argv, char** env);
 void _exit(int retcode);
 void exit(int status);int pipe(int fd[2]);
-int stat(char* path, struct stat* st);
-int fstat(int file, struct stat* st);
 int getgid();
 int getpid();
 int fork();

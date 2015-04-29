@@ -11,6 +11,8 @@ typedef int		size_t;
 typedef unsigned int	uint;
 typedef unsigned char	uchar;
 typedef unsigned short	ushort;
+typedef int		ssize_t;
+typedef uint	clock_t;
 
 #define NULL 0
 #define FALSE 0
@@ -27,5 +29,7 @@ typedef unsigned short	ushort;
 #define blksize_t	uint
 #define blkcnt_t	uint
 #define pid_t		uint
+
+#include "inttypes.h"
 
 #endif

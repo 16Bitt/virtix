@@ -5,19 +5,23 @@
 
 __HEADER_START
 
-#include "sys/stdlib.h"
+#include "stdlib.h"
 
-typedef DIR uint;
+#ifndef NAME_MAX
+#define NAME_MAX 256
+#endif
+
+typedef uint DIR;
 
 struct dirent{
 	ino_t	d_ino;
-	char	dname[NAME_MAX]
+	char	d_name[NAME_MAX];
 };
 
 int closedir(DIR* dir);
 int opendir(DIR* dir);
 struct dirent* readdir(DIR* dir);
-int readdir_r(DIR* dir, struct dirent* dir, struct dirent** list);
+int readdir_r(DIR* dir, struct dirent* entry, struct dirent** list);
 void rewinddir(DIR* dir);
 void seekdir(DIR* dir, uint to);
 uint telldir(DIR* dir);

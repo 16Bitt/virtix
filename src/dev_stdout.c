@@ -3,9 +3,10 @@
 #include "vfs.h"
 #include "deepfat.h"
 #include "monitor.h"
+#include "tty.h"
 
 uint stdout_write(fs_node_t* node, uint offset, uchar* buffer){
-	vga_putc(*buffer);
+	tty_putc(*buffer);
 
 	return 0;
 }

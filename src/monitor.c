@@ -7,7 +7,7 @@ uchar vga_color;
 
 unsigned short* vga_buffer = ((unsigned short*) 0xB8000);
 
-static void update_cursor(){
+void update_cursor(){
 	unsigned short location = cursor_y * 80 + cursor_x;
 	outb(0x3D4, 14);
 	outb(0x3D5, location >> 8);

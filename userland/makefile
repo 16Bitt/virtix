@@ -7,7 +7,7 @@ OUTPUTS	= $(SOURCES:.c=.o)
 EXECS	= $(OUTPUTS:.o=)
 LIBC	= ../libc/libc.a
 
-all: binclean $(EXECS) gfx.x16
+all: binclean $(EXECS) 
 	
 $(OUTPUTS): $(SOURCES)
 	$(CC) $(CFLAGS) $(@:.o=.c) -c -o $@

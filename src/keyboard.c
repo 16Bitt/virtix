@@ -3,6 +3,7 @@
 #include "isr.h"
 #include "monitor.h"
 #include "clock.h"
+#include "tty.h"
 
 uchar last_key = 0;
 bool shift_on = FALSE;
@@ -11,6 +12,7 @@ int keys_pressed;
 void keyboard_handler(registers_t* regs){
 	last_key = translate_scancode(inb(KEYBOARD_DATA));
 	keys_pressed++;
+	tty_putc(last_key);
 }
 
 void init_keyboard(){

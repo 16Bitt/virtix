@@ -22,6 +22,7 @@
 #include "fd.h"
 #include "exec.h"
 #include "cpu.h"
+#include "tty.h"
 
 void* stack = NULL;
 
@@ -97,7 +98,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	NOTIFY("checking for an FPU");
 	cpu_check_fpu();
-
+	
 	FILE f = kfopen("/dev/stdout", 0);
 	char* msg = "Test write to /dev/stdout\n";
 	kfwrite(f, strlen(msg), msg);
@@ -107,7 +108,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	kfwrite(f, strlen(msg), msg);
 	kfclose(f);
 	
-	kexec("/bin/mallocer");
+	kexec("/bin/typer");
 
 	NOTIFY("syncing FAT")
 	fat_sync();

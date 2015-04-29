@@ -29,6 +29,9 @@ __HEADER_START
 #define SYS_GETGID	21
 #define SYS_GETCWD	22
 #define SYS_CHDIR	23
+#define SYS_EXECVE	24
+#define SYS_STAT	25
+#define SYS_FSTAT	26
 
 int syscall_0arg(uint call_no);
 int syscall_1arg(uint call_no, uint arg1);

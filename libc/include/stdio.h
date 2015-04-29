@@ -5,14 +5,18 @@
 
 __HEADER_START
 
+#include "fcntl.h"
+
 typedef unsigned int FILE;
 
 extern FILE* stdin;
 extern FILE* stdout;
 extern FILE* stderr;
 
+#define EOF (-1)
+
 //General file management
-FILE* fopen(char* name, char* mode);
+FILE* fopen(const char* name, const char* mode);
 int fclose(FILE* f);
 
 //File output
