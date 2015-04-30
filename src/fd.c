@@ -5,6 +5,7 @@
 #include "deepfat.h"
 #include "kheap.h"
 #include "str-util.h"
+#include "fat.h"
 
 fd_t fd_list[MAX_FD];
 
@@ -123,9 +124,10 @@ uint fd_write(uint fd, uint size, char* buffer){
 			status = node->write_blk(node, 0, &buffer[i]);
 	}
 	
-	else
+	else{
 		for(i = 0; i < size; i++)
 			status = fd_writech(fd, &buffer[i]);
+	}
 
 	return status;
 
@@ -181,7 +183,7 @@ uint fd_flush(uint fd){
 
 	fd_t* desc = &fd_list[fd];
 	desc->node->length = calc_total_size(fd);
-	
+
 	if(desc->block_size == 0)
 		return 0;
 

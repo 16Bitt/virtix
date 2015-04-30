@@ -38,6 +38,7 @@ typedef unsigned int uint;
 
 #define	SYS_STAT	25
 #define SYS_FSTAT	26
+#define SYS_SYNC	27
 
 uint fork();
 uint getpid();

@@ -72,7 +72,7 @@ uchar ident_ata(uchar bus, uchar drive){
 
 void ata_wait(ushort io){
 	int i;
-	for(i = 0; i < 4; i++)
+	for(i = 0; i < 8; i++)
 		(void) inb(io + ATA_REG_ALTSTATUS);
 }
 

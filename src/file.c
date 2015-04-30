@@ -4,6 +4,7 @@
 #include "vfs.h"
 #include "deepfat.h"
 #include "fd.h"
+#include "fat.h"
 
 FILE kfopen(char* path, uint offset){
 	fs_node_t* node = fs_path(df_root, path);

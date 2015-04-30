@@ -2,12 +2,24 @@
 #include "unistd.h"
 
 int main(char** argv, int argc){
-	FILE* f = fopen("/typed.txt", "w");
-
+	FILE* f = (FILE*) open("/test.txt", 0);
+	
 	print("Mash some keys! > ");
+	
 
-	for(;;)
-		fprintf("%c", fgetc(stdin), f);
+	char c;
+
+	fputs(f, "I really hope this works...");
+
+	/*for(;;){
+		fputc(f, c = fgetc(stdin));
+		if(c == 'x')
+			break;
+	}*/
+	
+	close(f);
+	puts("\nDone.");
+	sync();
 
 	return 0;
 }

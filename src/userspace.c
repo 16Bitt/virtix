@@ -8,6 +8,7 @@
 #include "file.h"
 #include "exec.h"
 #include "signal.h"
+#include "fat.h"
 
 uint c_err;
 
@@ -34,6 +35,10 @@ void userspace_handler(registers_t* regs){
 			return;
 		case SYS_GETGID:
 			regs->eax = current_proc->gid;
+			return;
+		case SYS_SYNC:
+			fat_sync();
+			regs->eax = 0;
 			return;
 
 		//Need arguments

@@ -9,7 +9,7 @@
 #include "kheap.h"
 
 fs_node_t* df_root;
-uint current_inode = 0;
+uint current_inode = 9999;
 dev_t*  df_dev;
 
 fs_node_t* mk_empty_node(){
@@ -142,8 +142,9 @@ uint df_read_blk(fs_node_t* node, uint offset, uchar* buffer){
 uint df_write_blk(fs_node_t* node, uint offset, uchar* buffer){
 	uint status = fat_write_block(node->dos_name, offset, buffer);
 	fat_dir_t* dir = fat_search(node->dos_name);
-	if(dir != NULL)
+	if(dir != NULL){
 		dir->bytes = node->length;
+	}
 	return status;
 }
 

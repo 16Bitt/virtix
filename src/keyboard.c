@@ -5,14 +5,28 @@
 #include "clock.h"
 #include "tty.h"
 
-uchar last_key = 0;
+uchar last_key_pressed = 0;
 bool shift_on = FALSE;
 int keys_pressed;
 
 void keyboard_handler(registers_t* regs){
-	last_key = translate_scancode(inb(KEYBOARD_DATA));
+	uchar hold = last_key_pressed;
+	last_key_pressed = translate_scancode(inb(KEYBOARD_DATA));
 	keys_pressed++;
-	tty_putc(last_key);
+
+	if(last_key_pressed == 0){
+		last_key_pressed = hold;
+		hold = 0xFF;	//This was a dud, ignore
+	}
+	
+	if(hold != 0xFF)	//ignore the dud
+		tty_putc(last_key_pressed);
+}
+
+uint keyboard_getc(){
+	uchar hold = last_key_pressed;
+	last_key_pressed = 0;
+	return hold;
 }
 
 void init_keyboard(){

@@ -23,7 +23,7 @@ disk:
 	then \
 		dd if=/dev/zero of=hdd.img bs=512 count=419328; \
 	fi
-	/sbin/mkdosfs hdd.img
+	/sbin/mkdosfs -F 16 -f 3 hdd.img
 	bin/mkdf.sh . hdd.img
 
 binclean:

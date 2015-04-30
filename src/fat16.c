@@ -28,7 +28,7 @@ void init_fat(){
 	cluster_list = (ushort*) kmalloc(fat_header.sectors_per_fat * 512);
 	ata_read_blocks(cluster_list, fat_header.number_reserved, fat_header.sectors_per_fat);
 
-	fat_dir = (fat_dir_t*) kmalloc(sizeof(fat_dir_t) * fat_header.dir_size);
+	fat_dir = (fat_dir_t*) kmalloc(32 * fat_header.dir_size);
 	ata_read_blocks((ushort*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, FAT_DIR_SIZE);
 
 	ASSERT(((fat_header.dir_size * 32) % 512) == 0);
@@ -117,14 +117,17 @@ void disp_bpb(){
 void disp_fat_dir(){
 	vga_puts("init_fat(): FAT volume contains the following files\n");
 	
+	int count = 0;
+
 	int i;
 	for(i = 0; i < fat_header.dir_size; i++){
 		if(fat_dir[i].name[0] != 0){
-			vga_puts("\t* ");
-			vga_puts(fat_dir[i].name);
-			vga_puts("\n");
+			vga_fmt("\t* %s\t%d bytes\tfirst cluster %d\n", fat_dir[i].name, fat_dir[i].bytes, fat_dir[i].cluster_low);
+			count++;
 		}
 	}
+
+	vga_fmt("\nFAT directory contains %d files.\n", count);
 }
 
 char hold_name[12];
@@ -170,6 +173,7 @@ fat_dir_t* fat_create(char* name){
 	target->cluster_low = 0xFFFF;
 	target->bytes = 0;
 	
+	NOTIFY("making FAT file");
 	return target;
 }
 
@@ -316,7 +320,7 @@ uint fat_read(char* name, uint offset, uint length, char* buffer){
 uint fat_write(char* name, uint offset, uint length, char* buffer){
 	char* fname = fat_name_conv(name);
 	fat_dir_t* entry = fat_dir_search(fname);
-	
+
 	if(entry == NULL)
 		return (uint) -1;
 	
@@ -354,7 +358,14 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 
 void fat_sync(){
 	NOTIFY("Syncing FAT root directory")
-	ata_write_blocks((ushort*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, FAT_DIR_SIZE);
+		ata_write_blocks((ushort*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, (fat_header.dir_size * 32) / 512);
+	
 	NOTIFY("Syncing FAT cluster tables")
-	ata_write_blocks(cluster_list, fat_header.number_reserved, fat_header.sectors_per_fat * 2);
+	int i;
+	for(i = 0; i < fat_header.number_fats; i++){
+		NOTIFY("working...");
+		ata_write_blocks(cluster_list, fat_header.number_reserved + (fat_header.sectors_per_fat * i), fat_header.sectors_per_fat);
+	}
+
+	//disp_fat_dir();
 }
