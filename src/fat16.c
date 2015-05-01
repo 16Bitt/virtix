@@ -112,6 +112,8 @@ void disp_bpb(){
 	vga_puts("\t* with ");
 	vga_puts_hex(fat_header.dir_size);
 	vga_puts(" root entries\n");
+	
+	vga_fmt("\t* with %d sectors per fat\n", fat_header.sectors_per_fat);
 }
 
 void disp_fat_dir(){
@@ -173,7 +175,6 @@ fat_dir_t* fat_create(char* name){
 	target->cluster_low = 0xFFFF;
 	target->bytes = 0;
 	
-	NOTIFY("making FAT file");
 	return target;
 }
 
@@ -357,15 +358,10 @@ uint fat_write(char* name, uint offset, uint length, char* buffer){
 }
 
 void fat_sync(){
-	NOTIFY("Syncing FAT root directory")
-		ata_write_blocks((ushort*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, (fat_header.dir_size * 32) / 512);
-	
-	NOTIFY("Syncing FAT cluster tables")
 	int i;
 	for(i = 0; i < fat_header.number_fats; i++){
-		NOTIFY("working...");
 		ata_write_blocks(cluster_list, fat_header.number_reserved + (fat_header.sectors_per_fat * i), fat_header.sectors_per_fat);
 	}
 
-	//disp_fat_dir();
+	ata_write_blocks((void*) fat_dir, fat_header.number_reserved + FAT_TOTAL_SIZE, ((fat_header.dir_size * 32) / 512));
 }

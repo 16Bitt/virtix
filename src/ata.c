@@ -4,6 +4,7 @@
 #include "dev.h"
 #include "kheap.h"
 #include "str-util.h"
+#include "clock.h"
 
 ushort* ata_info;
 
@@ -72,8 +73,8 @@ uchar ident_ata(uchar bus, uchar drive){
 
 void ata_wait(ushort io){
 	int i;
-	for(i = 0; i < 8; i++)
-		(void) inb(io + ATA_REG_ALTSTATUS);
+	for(i = 0; i < 0xFF; i++)
+		inb(io + ATA_REG_ALTSTATUS);
 }
 
 void ata_poll(ushort io){

@@ -14,7 +14,7 @@ clean:
 	-rm *.iso *.log
 
 run: dimg
-	qemu-system-i386 -curses -net none -vga std -localtime -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide 
+	qemu-system-i386 -monitor stdio -net none -vga std -localtime -kernel src/build/kernel -cdrom grub.iso -drive file=userland/hdd.img,if=ide 
 
 debug: all
 	objcopy --only-keep-debug src/build/kernel src/build/ksym

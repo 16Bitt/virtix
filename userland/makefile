@@ -19,11 +19,11 @@ $(EXECS): $(OUTPUTS)
 
 disk:
 	cp mkdf.sh bin
-	if ! [ -a hdd.img ]; \
+	if ! [ -e hdd.img ]; \
 	then \
-		dd if=/dev/zero of=hdd.img bs=512 count=419328; \
+		dd if=/dev/zero of=hdd.img bs=512 count=819328; \
 	fi
-	/sbin/mkdosfs -F 16 -f 3 hdd.img
+	/sbin/mkdosfs -F16 -f1 -R1 -a hdd.img
 	bin/mkdf.sh . hdd.img
 
 binclean:

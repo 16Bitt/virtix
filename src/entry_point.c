@@ -77,7 +77,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	
 	NOTIFY("starting FAT driver")
 	init_fat();
-
+	
 	NOTIFY("starting deepFAT driver")
 	init_deepfat();
 	

@@ -6,16 +6,13 @@ int main(char** argv, int argc){
 	
 	print("Mash some keys! > ");
 	
-
 	char c;
 
-	fputs(f, "I really hope this works...");
-
-	/*for(;;){
+	for(;;){
 		fputc(f, c = fgetc(stdin));
 		if(c == 'x')
 			break;
-	}*/
+	}
 	
 	close(f);
 	puts("\nDone.");
