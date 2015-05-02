@@ -38,10 +38,10 @@ _Building Requirements_
 * `nasm`
 * GNU coreutils
 * `i686-elf-gcc`
-* `ruby` (2.0+)
 * GNU `make`
 * `bash` or `zsh`
-* Optionally, `qemu` for running immedeatly
+* `grub2` if you want to make bootable ISO images
+* Optionally, `qemu` or `bochs` for testing
 
 To build simply navigate to `virtix/` and type `make`. If you have `qemu`, and you want to test, type `make run` to build and load into the VM.
 

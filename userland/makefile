@@ -21,7 +21,7 @@ disk:
 	cp mkdf.sh bin
 	if ! [ -e hdd.img ]; \
 	then \
-		dd if=/dev/zero of=hdd.img bs=512 count=819328; \
+		dd if=/dev/zero of=hdd.img bs=512 count=219328; \
 	fi
 	/sbin/mkdosfs -F16 -f1 -R1 -a hdd.img
 	bin/mkdf.sh . hdd.img
