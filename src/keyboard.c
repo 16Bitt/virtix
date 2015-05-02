@@ -36,23 +36,59 @@ void init_keyboard(){
 
 #define BETWEEN(n, l, u) (((n) >= (l)) && ((n) <= (u)))
 
-char translate_scancode(char scancode){
-	char* qwertyuiop = "qwertyuiop";
-	if(BETWEEN(scancode, KBD_Q_DOWN, KBD_P_DOWN))
-		return qwertyuiop[scancode - KBD_Q_DOWN];
-	
-	char* asdfghjkl = "asdfghjkl";
-	if(BETWEEN(scancode, KBD_A_DOWN, KBD_L_DOWN))
-		return asdfghjkl[scancode - KBD_A_DOWN];
+char translate_scancode(uchar scancode){
+	if(shift_on == FALSE){
+		char* qwertyuiop = "qwertyuiop";
+		if(BETWEEN(scancode, KBD_Q_DOWN, KBD_P_DOWN))
+			return qwertyuiop[scancode - KBD_Q_DOWN];
+		
+		char* asdfghjkl = "asdfghjkl";
+		if(BETWEEN(scancode, KBD_A_DOWN, KBD_L_DOWN))
+			return asdfghjkl[scancode - KBD_A_DOWN];
 
-	
-	char* zxcvbnm = "zxcvbnm";
-	if(BETWEEN(scancode, KBD_Z_DOWN, KBD_M_DOWN))
-		return zxcvbnm[scancode - KBD_Z_DOWN];
-	
-	char* numbers = "1234567890";
-	if(BETWEEN(scancode, KBD_1_DOWN, KBD_0_DOWN))
-		return numbers[scancode - KBD_1_DOWN];
+		
+		char* zxcvbnm = "zxcvbnm";
+		if(BETWEEN(scancode, KBD_Z_DOWN, KBD_M_DOWN))
+			return zxcvbnm[scancode - KBD_Z_DOWN];
+		
+		char* numbers = "1234567890";
+		if(BETWEEN(scancode, KBD_1_DOWN, KBD_0_DOWN))
+			return numbers[scancode - KBD_1_DOWN];
+	}
+
+	else{
+		char* up_qwertyuiop = "QWERTYUIOP";
+		if(BETWEEN(scancode, KBD_Q_DOWN, KBD_P_DOWN))
+			return up_qwertyuiop[scancode - KBD_Q_DOWN];
+		
+		char* up_asdfghjkl = "ASDFGHJKL";
+		if(BETWEEN(scancode, KBD_A_DOWN, KBD_L_DOWN))
+			return up_asdfghjkl[scancode - KBD_A_DOWN];
+
+		
+		char* up_zxcvbnm = "ZXCVBNM";
+		if(BETWEEN(scancode, KBD_Z_DOWN, KBD_M_DOWN))
+			return up_zxcvbnm[scancode - KBD_Z_DOWN];
+		
+		char* up_numbers = "!@#$%^&*()";
+		if(BETWEEN(scancode, KBD_1_DOWN, KBD_0_DOWN))
+			return up_numbers[scancode - KBD_1_DOWN];
+	}
+
+	switch(scancode){
+		case RIGHTSHIFT_DOWN:
+		case LEFTSHIFT_DOWN:
+			shift_on = TRUE;
+			break;
+		
+		case RIGHTSHIFT_UP:
+		case LEFTSHIFT_UP:
+			shift_on = FALSE;
+			break;
+
+		default:
+			break;
+	}
 
 	return 0;
 }

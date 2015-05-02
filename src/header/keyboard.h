@@ -6,7 +6,7 @@
 void init_keyboard();		//Register the keyboard interrupt handler, etc.
 char getkey_scancode();	//Poll the handler for the scan code
 char getkey_ascii();		//Translate the scan code to ascii and return
-char translate_scancode(char scancode);
+char translate_scancode(uchar scancode);
 
 //PS/2 Ports
 #define KEYBOARD_DATA	0x60
