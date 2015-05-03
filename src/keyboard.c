@@ -51,8 +51,8 @@ char translate_scancode(uchar scancode){
 		if(BETWEEN(scancode, KBD_Z_DOWN, KBD_M_DOWN))
 			return zxcvbnm[scancode - KBD_Z_DOWN];
 		
-		char* numbers = "1234567890";
-		if(BETWEEN(scancode, KBD_1_DOWN, KBD_0_DOWN))
+		char* numbers = "1234567890-=\b";
+		if(BETWEEN(scancode, KBD_1_DOWN, KBD_BKSP_DOWN))
 			return numbers[scancode - KBD_1_DOWN];
 	}
 
@@ -70,8 +70,8 @@ char translate_scancode(uchar scancode){
 		if(BETWEEN(scancode, KBD_Z_DOWN, KBD_M_DOWN))
 			return up_zxcvbnm[scancode - KBD_Z_DOWN];
 		
-		char* up_numbers = "!@#$%^&*()";
-		if(BETWEEN(scancode, KBD_1_DOWN, KBD_0_DOWN))
+		char* up_numbers = "!@#$%^&*()_+\b";
+		if(BETWEEN(scancode, KBD_1_DOWN, KBD_BKSP_DOWN))
 			return up_numbers[scancode - KBD_1_DOWN];
 	}
 
@@ -85,6 +85,12 @@ char translate_scancode(uchar scancode){
 		case LEFTSHIFT_UP:
 			shift_on = FALSE;
 			break;
+		
+		case KBD_SPC_DOWN:
+			return ' ';
+		
+		case KBD_ENTER:	
+			return '\n';		
 
 		default:
 			break;

@@ -142,16 +142,20 @@ void tty_reset(){
 }
 
 void tty_backspace(){
-	if(tty_col == 0)
-		if(tty_row > 0){
-			tty_row--;
+	if(cursor_x == 0){
+		if(cursor_y > 0){
 			cursor_y--;
-			tty_col = TTY_WIDTH - 1;
-			cursor_x = tty_col;
+			cursor_x = TTY_WIDTH - 1;
 			update_cursor();
 		}
-	else
-		vga_putc(0x08);
+	}
+
+	else{
+		cursor_x--;
+		vga_putc(' ');
+		cursor_x--;
+		update_cursor();
+	}
 }
 
 void tty_putc(char c){
@@ -159,7 +163,7 @@ void tty_putc(char c){
 		case 27:	//Escape
 			tty_esc_mode = true;
 			break;
-		case 8:		//Backspace
+		case '\b':		//Backspace
 			tty_backspace();
 			break;
 		default:

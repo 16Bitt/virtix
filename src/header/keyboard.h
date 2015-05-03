@@ -54,6 +54,13 @@ char translate_scancode(uchar scancode);
 #define KBD_8_DOWN	0x09
 #define KBD_9_DOWN	0x0A
 #define KBD_0_DOWN	0x0B
+#define KBD_MINUS_DOWN	0x0C
+#define KBD_PLUS_DOWN	0x0D
+#define KBD_BKSP_DOWN	0x0E
+
+//Special keys
+#define KBD_ENTER	0x1C
+#define KBD_SPC_DOWN	0x39
 
 //PS/2 Statuses
 #define KBDSTAT_ACK	0xFA
