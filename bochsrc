@@ -1,3 +1,4 @@
 boot:	cdrom
+megs:	512
 ata1-master:	type=cdrom,	path=./grub.iso,	status=inserted
 ata0-master:	type=disk,	path=userland/hdd.img,	status=inserted

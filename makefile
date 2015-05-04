@@ -30,11 +30,7 @@ dimg: all
 	-grub-mkrescue -o grub.iso src/build
 
 bochs: dimg
-	bochs
-
-test-image: all dimg
-	cp /usr/lib/grub/x86_64-pc/stage2 src/build/boot/grub
-	grub-mkimage -O x86_64-pc -p src/build -o grub.img multiboot sh fat
+	-echo c | bochs -q
 
 vbox: dimg
 	VBoxManage convertfromraw userland/hdd.img userland/hdd.vdi --format vdi
