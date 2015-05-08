@@ -136,6 +136,7 @@ uint fork(registers_t* regs){
 	proc->cr3 = dir;
 	memcpy(&proc->registers, regs, sizeof(registers_t));
 	proc->registers.eax = proc->pid;
+	proc->pid = current_proc->pid;
 
 	spawn_proc(proc);
 
@@ -168,6 +169,6 @@ uint write(FILE fid, char* buffer, size_t length){
 }
 
 uint _exit(registers_t* regs){
-	kill_proc(getpid());
+	current_proc->state = PROC_ASLEEP;
 	return regs->eax;
 }

@@ -73,7 +73,6 @@ unsigned int spawn_proc(virtix_proc_t* process){
 	process->state = PROC_RUNNING;
 	
 	process->parent = current_proc;
-	process->gid = process->parent->parent->pid;
 	
 	//susp_proc(current_proc->pid);
 
@@ -83,7 +82,7 @@ unsigned int spawn_proc(virtix_proc_t* process){
 //Find out if a child process has died
 int wait_gid(uint gid, int* status){
 	virtix_proc_t* i = root;
-
+	
 	while(i != NULL){
 		if(i->gid == gid)
 			if(i->state == PROC_ASLEEP){

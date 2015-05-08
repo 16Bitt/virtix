@@ -112,7 +112,7 @@ int main(struct multiboot* mboot_ptr, unsigned int esp){
 	fat_write_block("test.txt", 0, "This is a test write to see if FAT is garbage.");
 	fat_sync();
 
-	kexec("/bin/typer");
+	kexec("/bin/badsh");
 
 	NOTIFY("syncing FAT")
 	fat_sync();
